@@ -1,0 +1,176 @@
+:root {
+    --vngine-loading-background: black;
+
+    --vngine-color-ui-main: pink;
+    --vngine-color-ui-border: #f58295;
+    --vngine-color-ui-text: white;
+    --vngine-color-ui-main-hover: #fad3da;
+    --vngine-color-ui-border-hover: #f58295;
+    --vngine-color-ui-text-hover: #f58295;
+
+    --vngine-border-thickness: 4px;
+    --vngine-dialog-box-opacity: 0.85;
+
+    --vngine-text-large: 80px;
+    --vngine-text-medium: 35px;
+    --vngine-text-small: 15px;
+}
+
+#vngine-div {
+    display: flex;
+    position: relative;
+    margin: auto;
+    padding: 0;
+    width: 1280px;
+    height: 720px;
+
+    user-select: none;
+}
+
+.vngine-screen {
+    width: 100%;
+}
+
+.vngine-btn-group {
+    z-index: 2;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, -75%);
+}
+
+.vngine-btn {
+    /* display */
+    display: block;
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 25px;
+    margin-bottom: 25px;
+
+    /* text */
+    font-size: var(--vngine-text-medium);
+
+    /* colors and border */
+    background-color: var(--vngine-color-ui-main);
+    color: var(--vngine-color-ui-text);
+    border: var(--vngine-border-thickness) solid var(--vngine-color-ui-border);
+    border-radius: 10px;
+}
+
+.vngine-btn:hover {
+    /* text */
+    font-size: var(--vngine-text-medium);
+
+    /* colors and border */
+    background-color: var(--vngine-color-ui-main-hover);
+    color: var(--vngine-color-ui-text-hover);
+    border-color: var(--vngine-color-ui-border-hover);
+}
+
+/*---------------------------------*/
+/*            LOADING              */
+/*---------------------------------*/
+
+.vngine-loading {
+    background-color: var(--vngine-loading-background);
+}
+
+.vngine-loading-text-wrapper {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+}
+
+.vngine-loading-text {
+    color: white;
+    margin-right: auto;
+    margin-left: auto;
+    transform: translate(0, -50%);
+}
+
+
+/*---------------------------------*/
+/*              MENU               */
+/*---------------------------------*/
+
+.vngine-menu {
+    background-color: black;
+    color: white;
+}
+
+
+/*---------------------------------*/
+/*              GAME               */
+/*---------------------------------*/
+
+.vngine-game {
+    background-color: black;
+}
+
+.vngine-game-click-detector {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+
+    min-width: 100%;
+    min-height: 100%;
+    
+    z-index: 1;
+    cursor: pointer;
+}
+
+.vngine-characters-div {
+    display: flexbox;
+    width: 100%;
+    height: 100%;
+
+    position: absolute;
+    bottom: 0;
+    
+    padding: 0;
+}
+
+.vngine-character {
+    max-height: 100%;
+}
+
+.vngine-character-right {
+    float: right;
+}
+
+.vngine-character-left {
+    float: left;
+}
+
+.vngine-dialog-box {
+    position: absolute;
+    bottom: 0%;
+    width: calc(100% - 10px - 2*var(--vngine-border-thickness));
+    height: 20%;
+    margin: 5px;
+
+    opacity: var(--vngine-dialog-box-opacity);
+
+    background-color: var(--vngine-color-ui-main);
+    color: var(--vngine-color-ui-text);
+    border: var(--vngine-border-thickness) solid var(--vngine-color-ui-border);
+    border-radius: 10px;
+}
+
+.vngine-dialog-character {
+    color: black;
+    margin-top: 15px;
+    margin-left: 15px;
+    font-weight: bold;
+}
+
+.vngine-dialog-text {
+    display: inline-block;
+    vertical-align: middle;
+    color: black;
+    margin-left: 30px;
+    font-size: var(--vngine-text-small);
+}
