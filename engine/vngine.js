@@ -37,9 +37,17 @@
     const textSlowTime = 200;   //time that takes to write the next character (in ms)
     let textSpeed = textMediumTime;
     let writingText = false;
+
+    //Keyboard
+    let spaceHold = false;
     
     //Initialization
     window.onload = function () {
+        if (!mainDiv) {
+            console.error("VNGINE_ERROR: no element with id 'vngine-div' was found!");
+            return;
+        }
+
         generateLoadingScreen();
         generateGameScreen();
         generateMenuScreen();
@@ -61,6 +69,22 @@
                 gameFileLoaded();
             });
     }
+
+    //Keyboard events
+    window.addEventListener("keydown", e => {
+        if (e.code == "Space") {
+            if (!spaceHold) {
+                gameClickEvent();
+                spaceHold = true;
+            }
+        }
+    });
+
+    window.addEventListener("keyup", e => {
+        if (e.code == "Space") {
+            spaceHold = false;
+        }
+    });
 
     function generateLoadingScreen () {
         loadingDiv = document.createElement("div");
@@ -420,7 +444,6 @@
             }
         }
     }
-
     //---------------Helpers---------------//
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
