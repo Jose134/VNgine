@@ -8,6 +8,9 @@
     --vngine-color-ui-border-hover: #f58295;
     --vngine-color-ui-text-hover: #f58295;
 
+    --vngine-color-ui-option-text: rgb(202, 115, 129);
+    --vngine-color-ui-option-text-hover: white;
+
     --vngine-border-thickness: 4px;
     --vngine-dialog-box-opacity: 0.85;
 
@@ -173,4 +176,27 @@
     color: black;
     margin-left: 30px;
     font-size: var(--vngine-text-small);
+}
+
+.vngine-option-text-container {
+    z-index: 3;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.vngine-option-text {
+    margin-left: 8px;
+    cursor: pointer;
+    color: var(--vngine-color-ui-option-text);
+}
+
+.vngine-option-text-hold {
+    color: var(--vngine-color-ui-option-text-hover);
+}
+
+.vngine-option-text:hover {
+    color: var(--vngine-color-ui-option-text-hover);
 }

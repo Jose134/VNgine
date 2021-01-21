@@ -101,6 +101,7 @@
             "dialog": [
                 {
                     "character": 1,
+                    "changeCharacterPicture": [ { "character": 1, "picture": 0 } ],
                     "text": "Hello"
                 },
                 {

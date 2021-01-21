@@ -86,6 +86,7 @@
         }
     });
 
+    //Creates all the DOM elements needed for the loading screen
     function generateLoadingScreen () {
         loadingDiv = document.createElement("div");
         loadingDiv.setAttribute("id", "vngine-loading");
@@ -134,8 +135,22 @@
         dialogBoxText = document.createElement("p");
         dialogBoxText.classList.add("vngine-dialog-text");
 
+        let optionsContainer = document.createElement("div");
+        optionsContainer.classList.add("vngine-option-text-container");
+
+        let saveText = document.createElement("a");
+        saveText.innerText = "Save";
+        saveText.classList.add("vngine-option-text");
+        
+        let skipText = document.createElement("a");
+        skipText.innerText = "Skip";
+        skipText.classList.add("vngine-option-text");
+
+        optionsContainer.appendChild(saveText);
+        optionsContainer.appendChild(skipText);
         vngineDialogBox.appendChild(dialogBoxCharacter);
         vngineDialogBox.appendChild(dialogBoxText);
+        gameDiv.appendChild(optionsContainer);
         gameDiv.appendChild(clickDetector);
         gameDiv.appendChild(decisionButtonsDiv);
         gameDiv.appendChild(charactersDiv);
