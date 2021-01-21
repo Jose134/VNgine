@@ -60,14 +60,20 @@
         let gamePath = mainDiv.getAttribute("data-game-file");
         if (!gamePath) {
             //Default path
-            gamePath = "/game/game.json"
+            gamePath = "game/game.json"
         }
-        fetch(gamePath)
+
+        game = gameJSON;
+        gameFileLoaded();
+
+        /* Old method to get the game file
+            fetch(gamePath)
             .then(res => res.json())
             .then(data => {
                 game = data;
                 gameFileLoaded();
             });
+        */
     }
 
     //Keyboard events
@@ -275,7 +281,7 @@
         else {
             //Set Background
             if (previousBackground != currentNode.background) {
-                gameDiv.style.background = `url("/game/res/img/backgrounds/${currentNode.background}")`;
+                gameDiv.style.background = `url("game/res/img/backgrounds/${currentNode.background}")`;
                 previousBackground = currentNode.background;
             }
 
@@ -289,7 +295,7 @@
                     
                     for (let i = 0; i < currentNode.charactersRight.length; i++) {
                         let characterIndex = currentNode.charactersRight[i];
-                        let picURL = `/game/res/img/characters/${game.characters[characterIndex].pictures[0]}`;
+                        let picURL = `game/res/img/characters/${game.characters[characterIndex].pictures[0]}`;
                         
                         //Add new DOM element if needed
                         if (rightCharacters[i] == null || rightCharacters[i] == undefined) {
@@ -316,7 +322,7 @@
                     
                     for (let i = 0; i < currentNode.charactersLeft.length; i++) {
                         let characterIndex = currentNode.charactersLeft[i];
-                        let picURL = `/game/res/img/characters/${game.characters[characterIndex].pictures[0]}`;
+                        let picURL = `game/res/img/characters/${game.characters[characterIndex].pictures[0]}`;
                         
                         //Add new DOM element if needed
                         if (leftCharacters[i] == null || leftCharacters[i] == undefined) {
@@ -386,7 +392,7 @@
             updatePicture.forEach(data => {
                 let e = getCharacterDOMimg(data.character);
                 if (e != null) {
-                    let picURL = `/game/res/img/characters/${game.characters[data.character].pictures[data.picture]}`;
+                    let picURL = `game/res/img/characters/${game.characters[data.character].pictures[data.picture]}`;
                     e.setAttribute("src", picURL);
                 }
             });
