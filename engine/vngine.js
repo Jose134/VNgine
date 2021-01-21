@@ -286,13 +286,13 @@
             }
 
             //Set characters
-            if(currentNode.charactersRight) {
-                if (!compareArrays(currentNode.charactersRight, previousRightCharacterIndexes)) {
-                    Array.from(rightCharacters).forEach(e => {
-                        e.setAttribute("src", "");
-                        e.setAttribute("data-character", "");
-                    });
-                    
+            if (!compareArrays(currentNode.charactersRight, previousRightCharacterIndexes)) {
+                Array.from(rightCharacters).forEach(e => {
+                    e.setAttribute("src", "");
+                    e.setAttribute("data-character", "");
+                });
+
+                if(currentNode.charactersRight) {
                     for (let i = 0; i < currentNode.charactersRight.length; i++) {
                         let characterIndex = currentNode.charactersRight[i];
                         let picURL = `game/res/img/characters/${game.characters[characterIndex].pictures[0]}`;
@@ -308,18 +308,18 @@
                         rightCharacters[i].setAttribute("data-character", characterIndex);
                         rightCharacters[i].setAttribute("src", picURL);
                     }
-
+    
                     previousRightCharacterIndexes = currentNode.charactersRight;
                 }
             }
             
-            if(currentNode.charactersLeft) {
-                if (!compareArrays(currentNode.charactersLeft, previousLeftCharacterIndexes)) {
-                    Array.from(leftCharacters).forEach(e => {
-                        e.setAttribute("src", "");
-                        e.setAttribute("data-character", "");
-                    });
-                    
+            if (!compareArrays(currentNode.charactersLeft, previousLeftCharacterIndexes)) {
+                Array.from(leftCharacters).forEach(e => {
+                    e.setAttribute("src", "");
+                    e.setAttribute("data-character", "");
+                });
+                
+                if(currentNode.charactersLeft) {
                     for (let i = 0; i < currentNode.charactersLeft.length; i++) {
                         let characterIndex = currentNode.charactersLeft[i];
                         let picURL = `game/res/img/characters/${game.characters[characterIndex].pictures[0]}`;
