@@ -55,14 +55,8 @@
         }
 
         //Loads the game JSON file into the "game" variable
-        let gamePath = mainDiv.getAttribute("data-game-file");
-        if (!gamePath) {
-            //Default path
-            gamePath = "game/game.json"
-        }
-        
         game = gameJSON;
-
+        
         generateLoadingScreen();
         generateGameScreen();
         generateMenuScreen();
@@ -72,10 +66,16 @@
         switchToScreen("loading");
         
         gameFileLoaded();
-
+        
         /* Old method to get the game file
-            fetch(gamePath)
-            .then(res => res.json())
+        let gamePath = mainDiv.getAttribute("data-game-file");
+        if (!gamePath) {
+            //Default path
+            gamePath = "game/game.json"
+        }
+
+        fetch(gamePath)
+        .then(res => res.json())
             .then(data => {
                 game = data;
                 gameFileLoaded();
