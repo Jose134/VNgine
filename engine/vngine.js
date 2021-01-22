@@ -8,7 +8,7 @@
     let gameDiv = null;
     let menuDiv = null;
     let settingsDiv = null;
-    let loadsaveDiv = null;
+    let savefilesDiv = null;
 
     //Game DOM
     let dialogBoxCharacter = null;
@@ -17,21 +17,23 @@
     let charactersDiv = null;
     let rightCharacters = [];
     let leftCharacters  = [];
-
+    
+    //Decision making
+    let decisionButtonsDiv = null;
+    let decisionButtons = [];
+    let decisionHandlers = [];
+    
     //Avoid reloading images
     let previousRightCharacterIndexes = [];
     let previousLeftCharacterIndexes = [];
     let previousBackground = null;
 
-    let decisionButtonsDiv = null;
-    let decisionButtons = [];
-    let decisionHandlers = [];
-
     //Game status
     let currentNode = null;
+    let currentNodeIndex = 0;
     let currentDialogIndex = 0;
 
-    //Settings
+    //Text animation
     const textFastTime = 50;   //time that takes to write the next character (in ms)
     const textMediumTime = 100; //time that takes to write the next character (in ms)
     const textSlowTime = 200;   //time that takes to write the next character (in ms)
@@ -40,6 +42,10 @@
 
     //Keyboard
     let spaceHold = false;
+
+    //Savefiles DOM
+    let savefileList = null;
+    let loadHandlers = [];
     
     //Initialization
     window.onload = function () {
@@ -48,22 +54,23 @@
             return;
         }
 
-        generateLoadingScreen();
-        generateGameScreen();
-        generateMenuScreen();
-        generateSettingsScreen();
-        generateLoadSaveScreen();
-
-        switchToScreen("loading");
-        
         //Loads the game JSON file into the "game" variable
         let gamePath = mainDiv.getAttribute("data-game-file");
         if (!gamePath) {
             //Default path
             gamePath = "game/game.json"
         }
-
+        
         game = gameJSON;
+
+        generateLoadingScreen();
+        generateGameScreen();
+        generateMenuScreen();
+        generateSettingsScreen();
+        generateSavefilesScreen();
+        
+        switchToScreen("loading");
+        
         gameFileLoaded();
 
         /* Old method to get the game file
@@ -147,12 +154,32 @@
         let saveText = document.createElement("a");
         saveText.innerText = "Save";
         saveText.classList.add("vngine-option-text");
+        saveText.setAttribute("id", "saveText");
+        document.addEventListener("click", e => {
+            if (e.target && e.target.id == "saveText") {
+                let now = new Date();
+                let key = now.getUTCFullYear() + "-" + now.getMonth() + "-" + now.getDay() + "   "
+                        + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+                save(key);
+            }
+        });
         
+        let loadText = document.createElement("a");
+        loadText.innerText = "Load";
+        loadText.classList.add("vngine-option-text");
+        loadText.setAttribute("id", "loadText");
+        document.addEventListener("click", e => {
+            if (e.target && e.target.id == "loadText") {
+                switchToScreen("savefiles");
+            }
+        });
+
         let skipText = document.createElement("a");
         skipText.innerText = "Skip";
         skipText.classList.add("vngine-option-text");
 
         optionsContainer.appendChild(saveText);
+        optionsContainer.appendChild(loadText);
         optionsContainer.appendChild(skipText);
         vngineDialogBox.appendChild(dialogBoxCharacter);
         vngineDialogBox.appendChild(dialogBoxText);
@@ -223,8 +250,113 @@
     }
     
     //Creates all the DOM elements needed for the Load/Save screen
-    function generateLoadSaveScreen () {
-        loadsaveDiv = document.createElement("div");
+    function generateSavefilesScreen () {
+        /* HTML to generate
+        <div id="vngine-savefiles" class="vngine-screen vngine-savefiles">
+            <div id="vngine-savefiles-header" class="vngine-savefiles-header">
+                <p id="vngine-savefiles-text" class="vngine-savefiles-header-text">Load</p>
+            </div>
+            <div id="vngine-savefile-list" class="vngine-savefile-list">
+                
+            </div>
+        </div>
+        */
+        savefilesDiv = document.createElement("div");
+        savefilesDiv.setAttribute("id", "vngine-savefiles");
+        savefilesDiv.classList.add("vngine-screen", "vngine-savefiles");
+
+        let savefilesHeader = document.createElement("div");
+        savefilesHeader.setAttribute("id", "vngine-savefiles-header");
+        savefilesHeader.classList.add("vngine-savefiles-header");
+
+        let savefilesHeaderText = document.createElement("p");
+        savefilesHeaderText.setAttribute("id", "vngine-savefiles-header-text");
+        savefilesHeaderText.classList.add("vngine-savefiles-header-text");
+        savefilesHeaderText.innerText = "Load";
+
+        savefileList = document.createElement("div");
+        savefileList.setAttribute("id", "vngine-savefile-list");
+        savefileList.classList.add("vngine-savefile-list");
+
+        generateSavefileList();
+
+        //Appending
+        savefilesHeader.appendChild(savefilesHeaderText);
+        savefilesDiv.appendChild(savefilesHeader);
+        savefilesDiv.appendChild(savefileList);
+        mainDiv.appendChild(savefilesDiv);
+    }
+
+    function generateSavefileList () {
+        if (!savefileList) return; //Don't forget to use protection
+        /* HTML to generate
+        <div class="vngine-savefile">
+            <div class="vngine-savefile-picture"></div>
+            <h1 class="vngine-savefile-name">22-2-2021 10:03PM</h1>
+            <p class="vngine-savefile-sentence">This is a test, bitch!</p>
+            <button class="vngine-btn vngine-btn-small">Load</button>
+            <button class="vngine-btn vngine-btn-small">Delete</button>
+        </div>
+        */
+
+        for (let i = 0; i < loadHandlers.length; i++) {
+            document.removeEventListener("click", loadHandlers[i]);
+        }
+        loadHandlers.splice(0, loadHandlers.length);
+
+        let keys = Object.keys(localStorage);
+        for (let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+            let data = JSON.parse(localStorage.getItem(key));
+            console.log(data);
+
+            let savefileDiv = document.createElement("div");
+            savefileDiv.setAttribute("id", `vngine-savefile-${key}`);
+            savefileDiv.classList.add("vngine-savefile");
+            
+            let savefileImg = document.createElement("div");
+            savefileImg.classList.add("vngine-savefile-picture");
+            if (game.nodes[data.nodeIndex].background) {
+                savefileImg.style.backgroundImage = `url(game/res/img/backgrounds/${game.nodes[data.nodeIndex].background})`;
+            }
+
+            let savefileName = document.createElement("h1");
+            savefileName.classList.add("vngine-savefile-name");
+            savefileName.innerText = key;
+            
+            let savefileText = document.createElement("p");
+            savefileText.classList.add("vngine-savefile-sentence");
+            if(game.nodes[data.nodeIndex].dialog) {
+                savefileText.innerText = game.nodes[data.nodeIndex].dialog[data.dialogIndex].text;
+            }
+            else {
+                savefileText.innerHTML = "<i>Decision</i>";
+            }
+
+            let loadButton = document.createElement("button");
+            loadButton.innerText = "Load";
+            loadButton.setAttribute("id", `load-${key}`);
+            loadButton.classList.add("vngine-btn", "vngine-btn-small");
+            loadHandlers[i] = function (e) {
+                if (e.target && e.target.id == `load-${key}`) {
+                    load(key);
+                }
+            };
+            document.addEventListener("click", loadHandlers[i]);
+            
+            let deleteButton = document.createElement("button");
+            deleteButton.innerText = "Delete";
+            deleteButton.setAttribute("id", `delete-${key}`);
+            deleteButton.classList.add("vngine-btn", "vngine-btn-small");
+
+            //Appending
+            savefileDiv.appendChild(savefileImg);
+            savefileDiv.appendChild(savefileName);
+            savefileDiv.appendChild(savefileText);
+            savefileDiv.appendChild(loadButton);
+            savefileDiv.appendChild(deleteButton);
+            savefileList.appendChild(savefileDiv);
+        }
     }
 
     function switchToScreen (screen) {
@@ -232,7 +364,7 @@
         menuDiv.style.display     = "none";
         gameDiv.style.display     = "none";
         settingsDiv.style.display = "none";
-        loadsaveDiv.style.display = "none";
+        savefilesDiv.style.display = "none";
 
         switch (screen) {
             case "loading":
@@ -247,8 +379,8 @@
             case "settings":
                 settingsDiv.style.display = "block";
                 break;
-            case "loadsave":
-                loadsaveDiv.style.display = "block";
+            case "savefiles":
+                savefilesDiv.style.display = "block";
                 break;
         }
     }
@@ -259,7 +391,7 @@
     }
 
     function menuContinueClick () {
-        switchToScreen("loadsave");
+        switchToScreen("savefiles");
     }
 
     function menuSettingsClick () {
@@ -272,10 +404,12 @@
         switchToScreen("menu");
     }
 
-    //Loads a node from the game given its id
+    //Loads a node from the game given its id (index)
     function loadNode (id) {
         currentNode = game.nodes[id];
-        if (currentNode == undefined || currentNode == null) {
+        currentNodeIndex = id;
+
+        if (!currentNode) {
             console.error(`VNGINE_ERROR: Couldn't load game node with id ${id}`);
         }
         else {
@@ -465,6 +599,37 @@
             }
         }
     }
+
+    //Save
+    function save (saveFile) {
+        if (!saveFile) return;
+
+        let saveData = {
+            "nodeIndex": currentNodeIndex,
+            "dialogIndex": currentDialogIndex-1
+        };
+
+        localStorage.setItem(saveFile, JSON.stringify(saveData))
+    }
+
+    //Load
+    function load (saveFile) {
+        let loadedData = localStorage.getItem(saveFile);
+        if (loadedData) {
+            loadedData = JSON.parse(loadedData);
+
+            loadNode(loadedData.nodeIndex);
+            if (currentNode.dialog) {
+                while (currentDialogIndex < loadedData.dialogIndex) {
+                    updateDialog();
+                    skipTextAnimation();
+                }
+            }
+        }
+
+        switchToScreen("game");
+    }
+
     //---------------Helpers---------------//
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
