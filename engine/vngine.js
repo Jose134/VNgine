@@ -4,6 +4,7 @@
     let mainDiv = document.getElementById("vngine-div");;
     
     //Screens
+    let currentScreen = "";
     let loadingDiv = null;
     let gameDiv = null;
     let menuDiv = null;
@@ -46,6 +47,10 @@
     //Savefiles DOM
     let savefileList = null;
     let loadHandlers = [];
+
+    //Audio
+    let audioBGM = null;
+    let audioEffects = null;
     
     //Initialization
     window.onload = function () {
@@ -57,6 +62,14 @@
         //Loads the game JSON file into the "game" variable
         game = gameJSON;
         
+        //Create audio elements
+        audioBGM = document.createElement("audio");
+        audioBGM.setAttribute("id", "vngine-audio-bgm");
+        
+        audioEffects = document.createElement("audio");
+        audioEffects.setAttribute("id", "vngine-audio-effects");
+
+        //Generate screens
         generateLoadingScreen();
         generateGameScreen();
         generateMenuScreen();
@@ -151,6 +164,16 @@
         let optionsContainer = document.createElement("div");
         optionsContainer.classList.add("vngine-option-text-container");
 
+        let menuText = document.createElement("a");
+        menuText.innerText = "Menu";
+        menuText.classList.add("vngine-option-text");
+        menuText.setAttribute("id", "menuText");
+        document.addEventListener("click", e => {
+            if (e.target && e.target.id == "menuText") {
+                switchToScreen("menu");
+            }
+        });
+
         let saveText = document.createElement("a");
         saveText.innerText = "Save";
         saveText.classList.add("vngine-option-text");
@@ -178,6 +201,7 @@
         skipText.innerText = "Skip";
         skipText.classList.add("vngine-option-text");
 
+        optionsContainer.appendChild(menuText);
         optionsContainer.appendChild(saveText);
         optionsContainer.appendChild(loadText);
         optionsContainer.appendChild(skipText);
@@ -308,7 +332,6 @@
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i];
             let data = JSON.parse(localStorage.getItem(key));
-            console.log(data);
 
             let savefileDiv = document.createElement("div");
             savefileDiv.setAttribute("id", `vngine-savefile-${key}`);
@@ -360,6 +383,8 @@
     }
 
     function switchToScreen (screen) {
+        currentScreen = screen;
+
         loadingDiv.style.display  = "none";
         menuDiv.style.display     = "none";
         gameDiv.style.display     = "none";
@@ -381,6 +406,10 @@
                 break;
             case "savefiles":
                 savefilesDiv.style.display = "block";
+                break;
+            default:
+                currentScreen = "";
+                console.error(`VNGINE_ERROR: Couldn't load screen named ${screen}`);
                 break;
         }
     }
@@ -530,6 +559,16 @@
                     e.setAttribute("src", picURL);
                 }
             });
+        }
+
+        let changeMusic = currentNode.dialog[currentDialogIndex].changeMusic;
+        if(changeMusic) {
+            audioBGM.setAttribute("src", `game/res/audio/${changeMusic}`);
+            audioBGM.play();
+        }
+        else if (changeMusic === "") {
+            audioBGM.pause();
+            audioBGM.currentTime = 0;
         }
         
         //Updates dialog text
