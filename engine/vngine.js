@@ -224,6 +224,12 @@
         menuDiv.classList.add("vngine-screen", "vngine-menu");
         menuDiv.style.display = "none";
         
+        //Title text
+        let titleText = document.createElement("h1");
+        titleText.setAttribute("id", "vngine-menu-title");
+        titleText.classList.add("vngine-menu-title");
+        titleText.innerText = game.title;
+
         //Buttons div
         let btnGroup = document.createElement("div");
         btnGroup.classList.add("vngine-btn-group");
@@ -263,6 +269,7 @@
         btnGroup.appendChild(newGameBtn);
         btnGroup.appendChild(continueBtn);
         btnGroup.appendChild(settingsBtn);
+        menuDiv.appendChild(titleText);
         menuDiv.appendChild(btnGroup);
 
         mainDiv.appendChild(menuDiv);
@@ -429,7 +436,6 @@
 
     //Function called when the game.json file is loaded
     function gameFileLoaded () {
-        menuDiv.innerHTML += game.title + " by " + game.author;
         switchToScreen("menu");
     }
 

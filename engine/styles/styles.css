@@ -116,7 +116,14 @@
 /*---------------------------------*/
 
 .vngine-menu {
-    color: white;
+    color: var(--vngine-color-ui-text);
+}
+
+.vngine-menu-title {
+    font-size: var(--vngine-text-large);
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /*---------------------------------*/
