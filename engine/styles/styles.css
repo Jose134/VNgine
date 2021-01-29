@@ -50,7 +50,7 @@
     top: 50%;
     left: 50%;
     width: 100%;
-    transform: translate(-50%, -75%);
+    transform: translate(-50%, -65%);
 }
 
 .vngine-btn {
@@ -175,7 +175,6 @@
 }
 
 .vngine-savefile-picture {
-    display:inline-block;
     float: left;
     margin-left: 100px;
     margin-right: 10px;

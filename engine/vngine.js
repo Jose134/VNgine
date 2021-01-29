@@ -5,7 +5,6 @@
     
     //Screens
     let currentScreen = "";
-    let loadingDiv = null;
     let gameDiv = null;
     let menuDiv = null;
     let settingsDiv = null;
@@ -51,6 +50,8 @@
     //Audio
     let audioBGM = null;
     let audioEffects = null;
+
+    let audioUIClick = "game/res/audio/ui_click.wav";
     
     //Initialization
     window.onload = function () {
@@ -70,7 +71,6 @@
         audioEffects.setAttribute("id", "vngine-audio-effects");
 
         //Generate screens
-        generateLoadingScreen();
         generateGameScreen();
         generateMenuScreen();
         generateSettingsScreen();
@@ -111,25 +111,6 @@
             spaceHold = false;
         }
     });
-
-    //Creates all the DOM elements needed for the loading screen
-    function generateLoadingScreen () {
-        loadingDiv = document.createElement("div");
-        loadingDiv.setAttribute("id", "vngine-loading");
-        loadingDiv.classList.add("vngine-screen", "vngine-loading");
-
-        let textWrapper = document.createElement("div");
-        textWrapper.classList.add("vngine-loading-text-wrapper");
-
-        let loadingText = document.createElement("h1");
-        loadingText.classList.add("vngine-loading-text");
-        loadingText.innerText = "Loading...";
-
-        textWrapper.appendChild(loadingText);
-        loadingDiv.appendChild(textWrapper);
-
-        mainDiv.appendChild(loadingDiv);
-    }
 
     //Creates all the DOM elements needed for the game screen
     function generateGameScreen () {
@@ -392,16 +373,12 @@
     function switchToScreen (screen) {
         currentScreen = screen;
 
-        loadingDiv.style.display  = "none";
-        menuDiv.style.display     = "none";
-        gameDiv.style.display     = "none";
-        settingsDiv.style.display = "none";
+        menuDiv.style.display      = "none";
+        gameDiv.style.display      = "none";
+        settingsDiv.style.display  = "none";
         savefilesDiv.style.display = "none";
 
         switch (screen) {
-            case "loading":
-                loadingDiv.style.display = "block";
-                break;
             case "menu":
                 menuDiv.style.display = "block";
                 break;
@@ -567,16 +544,14 @@
             });
         }
 
-        let changeMusic = currentNode.dialog[currentDialogIndex].changeMusic;
-        if(changeMusic) {
-            audioBGM.setAttribute("src", `game/res/audio/${changeMusic}`);
-            audioBGM.play();
-        }
-        else if (changeMusic === "") {
-            audioBGM.pause();
-            audioBGM.currentTime = 0;
+        let music = currentNode.dialog[currentDialogIndex].playMusic;
+        if(music) {
+            music = `game/res/audio/${music}`;
+            playMusic(music);
         }
         
+        playEffect(audioUIClick);
+
         //Updates dialog text
         dialogBoxCharacter.innerText = game.characters[characterIndex].name;
         writeDialogTextAnimation(currentNode.dialog[currentDialogIndex].text);
@@ -627,6 +602,7 @@
     //Event handler
     function gameClickEvent () {
         if(!currentNode.dialog) return;
+        console.log(currentDialogIndex);
 
         if (writingText) {
             skipTextAnimation();
@@ -645,7 +621,40 @@
         }
     }
 
-    //Save
+    //Plays an audio effect
+    function playEffect (src) {
+        if (audioEffects.getAttribute(src) != src) {
+            audioEffects.setAttribute("src", src);
+        }
+        
+        if (src === "") {
+            audioEffects.pause();
+        }
+        else {
+            audioEffects.currentTime = 0;
+            audioEffects.play();
+        }
+    }
+
+    //Plays background music
+    function playMusic (src) {
+        if (audioBGM.getAttribute("src") != src) {
+            audioBGM.setAttribute("src", src);
+        }
+        
+        if (src === "") {
+            audioBGM.pause();
+        }
+        else {
+            audioBGM.currentTime = 0;
+            audioBGM.play();
+        }
+        
+    }
+
+    //---------------SAVE-LOAD---------------//
+
+    //Saves game information on localStorage
     function save (saveFile) {
         if (!saveFile) return;
 
@@ -657,7 +666,7 @@
         localStorage.setItem(saveFile, JSON.stringify(saveData))
     }
 
-    //Load
+    //Loads game information from localStorage
     function load (saveFile) {
         let loadedData = localStorage.getItem(saveFile);
         if (loadedData) {
@@ -675,7 +684,7 @@
         switchToScreen("game");
     }
 
-    //---------------Helpers---------------//
+    //---------------HELPERS---------------//
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
