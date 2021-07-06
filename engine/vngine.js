@@ -1,7 +1,7 @@
 (function () {
     let game = null; //Game data object
 
-    let mainDiv = document.getElementById("vngine-div");;
+    let mainDiv = document.getElementById("vngine-div");
     
     //Screens
     let currentScreen = "";
@@ -48,10 +48,51 @@
     let loadHandlers = [];
 
     //Audio
-    let audioBGM = null;
-    let audioEffects = null;
-
     let audioUIClick = "game/res/audio/ui_click.wav";
+
+    const Audio = class {
+        static sfxAudioElement = null;
+        static bgmAudioElement = null;
+
+        static init = function () {
+            this.sfxAudioElement = document.createElement("audio");
+            this.sfxAudioElement.setAttribute("id", "vngine-audio-sfx");
+
+            this.bgmAudioElement = document.createElement("audio");
+            this.bgmAudioElement.setAttribute("id", "vngine-audio-bgm");
+        }
+
+        //Plays an audio effect
+        static playEffect = function (src) {
+            if (this.sfxAudioElement.getAttribute(src) != src) {
+                this.sfxAudioElement.setAttribute("src", src);
+            }
+            
+            if (src === "") {
+                this.sfxAudioElement.pause();
+            }
+            else {
+                this.sfxAudioElement.currentTime = 0;
+                this.sfxAudioElement.play();
+            }
+        }
+
+        //Plays background music
+        static playMusic = function playMusic (src) {
+            if (this.bgmAudioElement.getAttribute("src") != src) {
+                this.bgmAudioElement.setAttribute("src", src);
+            }
+            
+            if (src === "") {
+                this.bgmAudioElement.pause();
+            }
+            else {
+                this.bgmAudioElement.currentTime = 0;
+                this.bgmAudioElement.play();
+            }
+            
+        }
+    }
     
     //Initialization
     window.onload = function () {
@@ -63,12 +104,8 @@
         //Loads the game JSON file into the "game" variable
         game = gameJSON;
         
-        //Create audio elements
-        audioBGM = document.createElement("audio");
-        audioBGM.setAttribute("id", "vngine-audio-bgm");
-        
-        audioEffects = document.createElement("audio");
-        audioEffects.setAttribute("id", "vngine-audio-effects");
+        //Initialize subsystems
+        Audio.init();
 
         //Generate screens
         generateGameScreen();
@@ -547,10 +584,10 @@
         let music = currentNode.dialog[currentDialogIndex].playMusic;
         if(music) {
             music = `game/res/audio/${music}`;
-            playMusic(music);
+            Audio.playMusic(music);
         }
         
-        playEffect(audioUIClick);
+        Audio.playEffect(audioUIClick);
 
         //Updates dialog text
         dialogBoxCharacter.innerText = game.characters[characterIndex].name;
@@ -619,37 +656,6 @@
                 updateDialog();
             }
         }
-    }
-
-    //Plays an audio effect
-    function playEffect (src) {
-        if (audioEffects.getAttribute(src) != src) {
-            audioEffects.setAttribute("src", src);
-        }
-        
-        if (src === "") {
-            audioEffects.pause();
-        }
-        else {
-            audioEffects.currentTime = 0;
-            audioEffects.play();
-        }
-    }
-
-    //Plays background music
-    function playMusic (src) {
-        if (audioBGM.getAttribute("src") != src) {
-            audioBGM.setAttribute("src", src);
-        }
-        
-        if (src === "") {
-            audioBGM.pause();
-        }
-        else {
-            audioBGM.currentTime = 0;
-            audioBGM.play();
-        }
-        
     }
 
     //---------------SAVE-LOAD---------------//
