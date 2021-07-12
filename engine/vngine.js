@@ -32,7 +32,6 @@
     //Avoid reloading images
     let previousRightCharacterIndexes = [];
     let previousLeftCharacterIndexes = [];
-    let previousBackground = null;
 
     //Game status
     let currentNode = null;
@@ -115,6 +114,56 @@
             generateSavefilesScreen();
         }
     }
+
+    const DialogBox = class {
+        static writingInterval;
+        static dialogBoxText;
+        static dialogBoxCharacter;
+
+        static isWriting = false;
+        static currentTargetText;
+        static writtenCharacters = 0;
+
+        static init = function () {
+            this.dialogBoxText = document.getElementById("vngine-dialog-text");
+            this.dialogBoxCharacter = document.getElementById("vngine-dialog-character");
+        }
+
+        static setCharacter = function (character) {
+            this.dialogBoxCharacter.innerText = character;
+        }
+
+        static writeText = function (str) {
+            this.dialogBoxText.innerText = "";
+            this.writtenCharacters = 0;
+
+            this.currentTargetText = str;
+            this.isWriting = true;
+            
+            this.writingInterval = setInterval(() => {
+                if (this.writtenCharacters == str.length) {
+                    this.isWriting = false;
+                    clearInterval(this.writingInterval);
+                    return;
+                }
+
+                if (str[this.writtenCharacters] == " ") {
+                    this.dialogBoxText.innerText += " " + str[this.writtenCharacters+1];
+                    this.writtenCharacters += 2;
+                }
+                else {
+                    this.dialogBoxText.innerText += str[this.writtenCharacters];
+                    this.writtenCharacters++;
+                }
+            }, textSpeed);
+        }
+
+        static cancelWritingAnimation = function () {
+            this.isWriting = false;
+            clearInterval(this.writingInterval);
+            this.dialogBoxText.innerText = this.currentTargetText;
+        }
+    }
     
     //Initialization
     window.onload = function () {
@@ -127,8 +176,9 @@
         game = gameJSON;
         
         //Initialize subsystems
-        Audio.init();
         ScreenManager.init();
+        Audio.init();
+        DialogBox.init();
         
         gameFileLoaded();
     }
@@ -174,9 +224,11 @@
         vngineDialogBox.classList.add("vngine-dialog-box");
 
         dialogBoxCharacter = document.createElement("p");
+        dialogBoxCharacter.setAttribute("id", "vngine-dialog-character");
         dialogBoxCharacter.classList.add("vngine-dialog-character");
 
         dialogBoxText = document.createElement("p");
+        dialogBoxText.setAttribute("id", "vngine-dialog-text");
         dialogBoxText.classList.add("vngine-dialog-text");
 
         let optionsContainer = document.createElement("div");
@@ -364,8 +416,9 @@
             
             let savefileImg = document.createElement("div");
             savefileImg.classList.add("vngine-savefile-picture");
-            if (game.nodes[data.nodeIndex].background) {
-                savefileImg.style.backgroundImage = `url(game/res/img/backgrounds/${game.nodes[data.nodeIndex].background})`;
+            background = getNodeBackground(data.nodeIndex);
+            if (background) {
+                savefileImg.style.backgroundImage = `url(game/res/img/backgrounds/${background})`;
             }
 
             let savefileName = document.createElement("h1");
@@ -435,6 +488,19 @@
         }
     }
 
+    function getNodeBackground (nodeIndex) {
+        let index = nodeIndex;
+        let background = undefined;
+        while (index >= 0 && !background) {
+            background = game.nodes[index].setBackground;
+            index--;
+
+            if (background) break;
+        }
+
+        return background;
+    }
+
     function menuNewGameClick () {
         loadNode(0);
         switchToScreen(screens.GAME);
@@ -453,20 +519,29 @@
         switchToScreen(screens.MENU);
     }
 
-    //Loads a node from the game given its id (index)
-    function loadNode (id) {
-        currentNode = game.nodes[id];
-        currentNodeIndex = id;
+    //Loads a node from the game given its index
+    function loadNode (index) {
+        currentNode = game.nodes[index];
+        currentNodeIndex = index;
 
         if (!currentNode) {
-            console.error(`VNGINE_ERROR: Couldn't load game node with id ${id}`);
+            console.error(`VNGINE_ERROR: Couldn't load game node with index ${index}`);
         }
         else {
             //Set Background
-            if (previousBackground != currentNode.background) {
-                gameDiv.style.background = `url("game/res/img/backgrounds/${currentNode.background}")`;
-                previousBackground = currentNode.background;
+            if (currentNode.setBackground) {
+                gameDiv.style.background = `url("game/res/img/backgrounds/${currentNode.setBackground}")`;
             }
+            else if (!gameDiv.style.background) {
+                let background = getNodeBackground(currentNodeIndex);
+                if (background) {
+                    gameDiv.style.background = `url("game/res/img/backgrounds/${background}")`;
+                }
+                else {
+                    console.error(`VNGINE_ERROR: Couldn't get background for node index ${currentNodeIndex}`)
+                }
+            }
+
 
             //Set characters
             if (!compareArrays(currentNode.charactersRight, previousRightCharacterIndexes)) {
@@ -583,45 +658,18 @@
 
         let music = currentNode.dialog[currentDialogIndex].playMusic;
         if(music) {
-            music = `game/res/audio/${music}`;
-            //Audio.playMusic(music);
+            Audio.playMusic(`game/res/audio/${music}`);
         }
-        
-        Audio.playEffect(audioUIClick);
+
+        let effect = currentNode.dialog[currentDialogIndex].playEffect;
+        if (effect) {
+            Audio.playEffect(`game/res/audio/${effect}`)
+        }
 
         //Updates dialog text
-        dialogBoxCharacter.innerText = game.characters[characterIndex].name;
-        writeDialogTextAnimation(currentNode.dialog[currentDialogIndex].text);
-    }
+        DialogBox.setCharacter(game.characters[characterIndex].name);
+        DialogBox.writeText(currentNode.dialog[currentDialogIndex].text);
 
-    //Text writing animation for dialogBoxText
-    async function writeDialogTextAnimation (str) {
-        let text = Array.from(str);
-        let writtenText = "";
-        
-        writingText = true;
-        
-        dialogBoxText.innerText = "";
-        for (let i = 0; i < text.length; i++) {
-            if (!writingText) return;
-
-            writtenText += text[i];
-            if (text[i] == " ") {
-                i++;
-                writtenText += text[i];
-            }
-            dialogBoxText.innerText = writtenText;
-            await sleep(textSpeed);
-        }
-
-        currentDialogIndex++;
-        writingText = false;
-    }
-
-    //Stops the writing animation and writes the whole text
-    function skipTextAnimation () {
-        writingText = false;
-        dialogBoxText.innerText = currentNode.dialog[currentDialogIndex].text;
         currentDialogIndex++;
     }
 
@@ -640,8 +688,8 @@
     function gameClickEvent () {
         if(!currentNode.dialog) return;
 
-        if (writingText) {
-            skipTextAnimation();
+        if (DialogBox.isWriting) {
+            DialogBox.cancelWritingAnimation();
         }
         else {
             if (currentDialogIndex >= currentNode.dialog.length) {
@@ -677,12 +725,12 @@
         if (loadedData) {
             loadedData = JSON.parse(loadedData);
 
+            
             loadNode(loadedData.nodeIndex);
-            if (currentNode.dialog) {
-                while (currentDialogIndex < loadedData.dialogIndex) {
-                    updateDialog();
-                    skipTextAnimation();
-                }
+            if (game.nodes[loadedData.nodeIndex].dialog) {
+                currentDialogIndex = loadedData.dialogIndex;
+                DialogBox.cancelWritingAnimation();
+                updateDialog();
             }
         }
 

@@ -19,11 +19,11 @@ gameJSON = {
     ],
     "nodes": [
         {
-            "background": "background.jpg",
+            "setBackground": "background.jpg",
             "charactersRight": [ 0 ],
             "dialog": [
                 {
-                    "playMusic": "cannonball.mp3",
+                    "playEffect": "ui_click.wav",
                     "character": 0,
                     "text": "This is so dope"
                 }
@@ -31,7 +31,7 @@ gameJSON = {
             "nextNode": 1
         },
         {
-            "background": "background2.jpg",
+            "setBackground": "background2.jpg",
             "charactersRight": [ 0 ],
             "charactersLeft": [ 1 ],
             "dialog": [
@@ -54,7 +54,6 @@ gameJSON = {
             "nextNode": 2
         },
         {
-            "background": "background2.jpg",
             "charactersLeft": [ 1 ],
             "charactersRight": [ 0 ],
             "decision": [
@@ -73,7 +72,6 @@ gameJSON = {
             ]
         },
         {
-            "background": "background2.jpg",
             "charactersRight": [ 0 ],
             "dialog": [
                 {
@@ -85,7 +83,6 @@ gameJSON = {
             "nextNode": null
         },
         {
-            "background": "background2.jpg",
             "charactersRight": [ 0 ],
             "charactersLeft": [ 1 ],
             "dialog": [
@@ -98,7 +95,6 @@ gameJSON = {
             "nextNode": null
         },
         {
-            "background": "background2.jpg",
             "charactersRight": [ 0 ],
             "charactersLeft": [ 1 ],
             "dialog": [
