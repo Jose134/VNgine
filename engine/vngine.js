@@ -4,7 +4,13 @@
     let mainDiv = document.getElementById("vngine-div");
     
     //Screens
-    let currentScreen = "";
+    const screens = {
+        GAME:      "game",
+        MENU:      "menu",
+        SETTINGS:  "settings",
+        SAVEFILES: "savefiles"
+    }
+    let currentScreen = null;
     let gameDiv = null;
     let menuDiv = null;
     let settingsDiv = null;
@@ -34,10 +40,11 @@
     let currentDialogIndex = 0;
 
     //Text animation
-    const textFastTime = 50;   //time that takes to write the next character (in ms)
-    const textMediumTime = 100; //time that takes to write the next character (in ms)
-    const textSlowTime = 200;   //time that takes to write the next character (in ms)
-    let textSpeed = textMediumTime;
+    const textVeryFastTime = 15; //time that takes to write the next character (in ms)
+    const textFastTime = 50;   
+    const textMediumTime = 100;
+    const textSlowTime = 200;  
+    let textSpeed = textFastTime;
     let writingText = false;
 
     //Keyboard
@@ -66,13 +73,13 @@
         static playEffect = function (src) {
             if (this.sfxAudioElement.getAttribute(src) != src) {
                 this.sfxAudioElement.setAttribute("src", src);
+                this.sfxAudioElement.load();
             }
             
             if (src === "") {
                 this.sfxAudioElement.pause();
             }
             else {
-                this.sfxAudioElement.currentTime = 0;
                 this.sfxAudioElement.play();
             }
         }
@@ -81,16 +88,31 @@
         static playMusic = function playMusic (src) {
             if (this.bgmAudioElement.getAttribute("src") != src) {
                 this.bgmAudioElement.setAttribute("src", src);
+                this.bgmAudioElement.load();
             }
             
             if (src === "") {
                 this.bgmAudioElement.pause();
             }
             else {
-                this.bgmAudioElement.currentTime = 0;
                 this.bgmAudioElement.play();
             }
             
+        }
+    }
+
+    const ScreenManager = class {
+        static currentScreen = null;
+        static gameDiv = null;
+        static menuDiv = null;
+        static settingsDiv = null;
+        static savefilesDiv = null;
+
+        static init = function () {
+            generateGameScreen();
+            generateMenuScreen();
+            generateSettingsScreen();
+            generateSavefilesScreen();
         }
     }
     
@@ -106,31 +128,9 @@
         
         //Initialize subsystems
         Audio.init();
-
-        //Generate screens
-        generateGameScreen();
-        generateMenuScreen();
-        generateSettingsScreen();
-        generateSavefilesScreen();
-        
-        switchToScreen("loading");
+        ScreenManager.init();
         
         gameFileLoaded();
-        
-        /* Old method to get the game file
-        let gamePath = mainDiv.getAttribute("data-game-file");
-        if (!gamePath) {
-            //Default path
-            gamePath = "game/game.json"
-        }
-
-        fetch(gamePath)
-        .then(res => res.json())
-            .then(data => {
-                game = data;
-                gameFileLoaded();
-            });
-        */
     }
 
     //Keyboard events
@@ -188,7 +188,7 @@
         menuText.setAttribute("id", "menuText");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "menuText") {
-                switchToScreen("menu");
+                switchToScreen(screens.MENU);
             }
         });
 
@@ -211,7 +211,7 @@
         loadText.setAttribute("id", "loadText");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "loadText") {
-                switchToScreen("savefiles");
+                switchToScreen(screens.SAVEFILES);
             }
         });
 
@@ -416,20 +416,20 @@
         savefilesDiv.style.display = "none";
 
         switch (screen) {
-            case "menu":
+            case screens.MENU:
                 menuDiv.style.display = "block";
                 break;
-            case "game":
+            case screens.GAME:
                 gameDiv.style.display = "block";
                 break;
-            case "settings":
+            case screens.SETTINGS:
                 settingsDiv.style.display = "block";
                 break;
-            case "savefiles":
+            case screens.SAVEFILES:
                 savefilesDiv.style.display = "block";
                 break;
             default:
-                currentScreen = "";
+                currentScreen = null;
                 console.error(`VNGINE_ERROR: Couldn't load screen named ${screen}`);
                 break;
         }
@@ -437,20 +437,20 @@
 
     function menuNewGameClick () {
         loadNode(0);
-        switchToScreen("game");
+        switchToScreen(screens.GAME);
     }
 
     function menuContinueClick () {
-        switchToScreen("savefiles");
+        switchToScreen(screens.SAVEFILES);
     }
 
     function menuSettingsClick () {
-        switchToScreen("settings");
+        switchToScreen(screens.SETTINGS);
     }
 
     //Function called when the game.json file is loaded
     function gameFileLoaded () {
-        switchToScreen("menu");
+        switchToScreen(screens.MENU);
     }
 
     //Loads a node from the game given its id (index)
@@ -584,7 +584,7 @@
         let music = currentNode.dialog[currentDialogIndex].playMusic;
         if(music) {
             music = `game/res/audio/${music}`;
-            Audio.playMusic(music);
+            //Audio.playMusic(music);
         }
         
         Audio.playEffect(audioUIClick);
@@ -639,7 +639,6 @@
     //Event handler
     function gameClickEvent () {
         if(!currentNode.dialog) return;
-        console.log(currentDialogIndex);
 
         if (writingText) {
             skipTextAnimation();
@@ -687,7 +686,7 @@
             }
         }
 
-        switchToScreen("game");
+        switchToScreen(screens.GAME);
     }
 
     //---------------HELPERS---------------//
