@@ -134,6 +134,8 @@
         }
 
         static writeText = function (str) {
+            this.cancelWritingAnimation();
+            
             this.dialogBoxText.innerText = "";
             this.writtenCharacters = 0;
 
@@ -538,106 +540,117 @@
                     gameDiv.style.background = `url("game/res/img/backgrounds/${background}")`;
                 }
                 else {
-                    console.error(`VNGINE_ERROR: Couldn't get background for node index ${currentNodeIndex}`)
+                    console.error(`VNGINE_ERROR: Couldn't get background for node with index ${currentNodeIndex}`)
                 }
             }
-
 
             //Set characters
-            if (!compareArrays(currentNode.charactersRight, previousRightCharacterIndexes)) {
-                Array.from(rightCharacters).forEach(e => {
-                    e.setAttribute("src", "");
-                    e.setAttribute("data-character", "");
-                });
-
-                if(currentNode.charactersRight) {
-                    for (let i = 0; i < currentNode.charactersRight.length; i++) {
-                        let characterIndex = currentNode.charactersRight[i];
-                        let picURL = `game/res/img/characters/${game.characters[characterIndex].pictures[0]}`;
-                        
-                        //Add new DOM element if needed
-                        if (rightCharacters[i] == null || rightCharacters[i] == undefined) {
-                            let character = document.createElement("img");
-                            character.classList.add("vngine-character", "vngine-character-right");
-                            charactersDiv.append(character);
-                            rightCharacters[i] = character;
-                        }
-    
-                        rightCharacters[i].setAttribute("data-character", characterIndex);
-                        rightCharacters[i].setAttribute("src", picURL);
-                    }
-    
-                    previousRightCharacterIndexes = currentNode.charactersRight;
-                }
-            }
-            
-            if (!compareArrays(currentNode.charactersLeft, previousLeftCharacterIndexes)) {
-                Array.from(leftCharacters).forEach(e => {
-                    e.setAttribute("src", "");
-                    e.setAttribute("data-character", "");
-                });
-                
-                if(currentNode.charactersLeft) {
-                    for (let i = 0; i < currentNode.charactersLeft.length; i++) {
-                        let characterIndex = currentNode.charactersLeft[i];
-                        let picURL = `game/res/img/characters/${game.characters[characterIndex].pictures[0]}`;
-                        
-                        //Add new DOM element if needed
-                        if (leftCharacters[i] == null || leftCharacters[i] == undefined) {
-                            let character = document.createElement("img");
-                            character.classList.add("vngine-character", "vngine-character-left");
-                            charactersDiv.append(character);
-                            leftCharacters[i] = character;
-                        }
-    
-                        leftCharacters[i].setAttribute("data-character", characterIndex);
-                        leftCharacters[i].setAttribute("src", picURL);
-                    }
-
-                    previousLeftCharacterIndexes = currentNode.charactersLeft;
-                }
-            }
+            renderCharacters(currentNode.charactersRight, currentNode.charactersLeft);
                 
             //Checks for decision/dialog
             if (currentNode.decision) {
-                //Remove old decision data
-                decisionButtonsDiv.innerHTML = "";
-                decisionButtons.splice(0, decisionButtons.length);
-
-                for (let i = 0; i < decisionHandlers.length; i++) {
-                    document.removeEventListener("click", decisionHandlers[i]);
-                }
-                decisionHandlers.splice(0, decisionHandlers.length);
-                
-                //Set up new decision buttons
-                for (let i = 0; i < currentNode.decision.length; i++) {
-                    decisionButtons.push(document.createElement("button"));
-                    decisionButtons[i].classList.add("vngine-btn");
-                    decisionButtons[i].innerText = currentNode.decision[i].text;
-                    decisionButtons[i].setAttribute("id", `vngine-decision-btn-${i}`);
-                    
-                    decisionHandlers[i] = function (e) {
-                        if (e.target && e.target.id == `vngine-decision-btn-${i}`) {
-                            loadNode(currentNode.decision[i].targetNode);
-                        }
-                    }
-                    document.addEventListener("click", decisionHandlers[i]);
-
-                    decisionButtonsDiv.appendChild(decisionButtons[i]);
-                }
-                
-                //Show decision buttons
-                decisionButtonsDiv.style.display = "block";
+                renderDecisionOptions(currentNode.decision);
             }
             else if (currentNode.dialog) {
-                //Hide decision buttons
-                decisionButtonsDiv.style.display = "none";
-                
                 //Starts dialog
                 currentDialogIndex = 0;
                 updateDialog();
             }
+            else {
+                console.warn(`VNGINE_WARNING: node with index ${index} doesn't have either dialog or decision`);
+            }
         }
+    }
+
+    function renderCharacters (charactersRight, charactersLeft) {
+        if (!compareArrays(charactersRight, previousRightCharacterIndexes)) {
+            Array.from(rightCharacters).forEach(e => {
+                e.setAttribute("src", "");
+                e.setAttribute("data-character", "");
+            });
+
+            if(charactersRight) {
+                for (let i = 0; i < charactersRight.length; i++) {
+                    let characterIndex = charactersRight[i];
+                    let picURL = `game/res/img/characters/${game.characters[characterIndex].pictures[0]}`;
+                    
+                    //Add new DOM element if needed
+                    if (rightCharacters[i] == null || rightCharacters[i] == undefined) {
+                        let character = document.createElement("img");
+                        character.classList.add("vngine-character", "vngine-character-right");
+                        charactersDiv.append(character);
+                        rightCharacters[i] = character;
+                    }
+
+                    rightCharacters[i].setAttribute("data-character", characterIndex);
+                    rightCharacters[i].setAttribute("src", picURL);
+                }
+
+                previousRightCharacterIndexes = charactersRight;
+            }
+        }
+        
+        if (!compareArrays(charactersLeft, previousLeftCharacterIndexes)) {
+            Array.from(leftCharacters).forEach(e => {
+                e.setAttribute("src", "");
+                e.setAttribute("data-character", "");
+            });
+            
+            if(charactersLeft) {
+                for (let i = 0; i < charactersLeft.length; i++) {
+                    let characterIndex = charactersLeft[i];
+                    let picURL = `game/res/img/characters/${game.characters[characterIndex].pictures[0]}`;
+                    
+                    //Add new DOM element if needed
+                    if (leftCharacters[i] == null || leftCharacters[i] == undefined) {
+                        let character = document.createElement("img");
+                        character.classList.add("vngine-character", "vngine-character-left");
+                        charactersDiv.append(character);
+                        leftCharacters[i] = character;
+                    }
+
+                    leftCharacters[i].setAttribute("data-character", characterIndex);
+                    leftCharacters[i].setAttribute("src", picURL);
+                }
+
+                previousLeftCharacterIndexes = charactersLeft;
+            }
+        }
+    }
+
+    function renderDecisionOptions (options) {
+        //Remove old decision data
+        decisionButtonsDiv.innerHTML = "";
+        decisionButtons.splice(0, decisionButtons.length);
+
+        for (let i = 0; i < decisionHandlers.length; i++) {
+            document.removeEventListener("click", decisionHandlers[i]);
+        }
+        decisionHandlers.splice(0, decisionHandlers.length);
+        
+        //Set up new decision buttons
+        for (let i = 0; i < options.length; i++) {
+            decisionButtons.push(document.createElement("button"));
+            decisionButtons[i].classList.add("vngine-btn");
+            decisionButtons[i].innerText = options[i].text;
+            decisionButtons[i].setAttribute("id", `vngine-decision-btn-${i}`);
+            
+            decisionHandlers[i] = function (e) {
+                if (e.target && e.target.id == `vngine-decision-btn-${i}`) {
+                    //Hide decision buttons
+                    decisionButtonsDiv.style.display = "none";
+
+                    //Loads the target node of the decision
+                    loadNode(options[i].targetNode);
+                }
+            }
+            document.addEventListener("click", decisionHandlers[i]);
+
+            decisionButtonsDiv.appendChild(decisionButtons[i]);
+        }
+        
+        //Show decision buttons
+        decisionButtonsDiv.style.display = "block";
     }
 
     //Writes the dialog text
@@ -729,7 +742,6 @@
             loadNode(loadedData.nodeIndex);
             if (game.nodes[loadedData.nodeIndex].dialog) {
                 currentDialogIndex = loadedData.dialogIndex;
-                DialogBox.cancelWritingAnimation();
                 updateDialog();
             }
         }
