@@ -535,6 +535,19 @@
         return background;
     }
 
+    function getNodeCharacters (nodeIndex) {
+        let index = nodeIndex;
+        let characters = undefined;
+        while (index >= 0 && !background) {
+            characters = game.nodes[index].setCharacters;
+            index--;
+
+            if (characters) break;
+        }
+
+        return characters;
+    }
+
     function menuNewGameClick () {
         loadNode(0);
         DialogBox.setVisible(true);
@@ -581,6 +594,15 @@
             if (currentNode.setCharacters) {
                 renderCharacters(currentNode.setCharacters);
             }
+            else if (!characterImgs.map(c => c.getAttribute("src") != "").includes(true)) {
+                let characters = getNodeCharacters(currentNodeIndex);
+                if (background) {
+                    renderCharacters(characters)
+                }
+                else {
+                    console.error(`VNGINE_ERROR: Couldn't get character pictures for node with index ${currentNodeIndex}`)
+                }
+            }
                 
             //Checks for decision/dialog
             if (currentNode.decision) {
@@ -606,7 +628,8 @@
         });
 
         if (characters.length > characterImgs.length) {
-            for (let i = 0; i < characters.length - characterImgs.length; i++) {
+            let imgAmount = characters.length - characterImgs.length
+            for (let i = 0; i < imgAmount; i++) {
                 let character = document.createElement("img");
                 character.classList.add("vngine-character");
                 charactersDiv.append(character);
@@ -615,7 +638,8 @@
         }
 
         characters.forEach((character, i) => {
-            let picURL = `game/res/img/characters/${game.characters[character.index].pictures[0]}`;
+            let pictureIndex = character.picture == undefined ? 0 : character.picture;
+            let picURL = `game/res/img/characters/${game.characters[character.index].pictures[pictureIndex]}`;
             
             if (character.left != undefined) {
                 characterImgs[i].style.left = `${character.left}%`;
@@ -699,10 +723,9 @@
 
     //Returns the DOM img element displaying the given character
     function getCharacterDOMimg (character) {
-        let elements = Array.from(leftCharacters).concat(Array.from(rightCharacters));
-        for (let i = 0; i < elements.length; i++) {
-            if (elements[i].getAttribute("data-character") == character) {
-                return elements[i];
+        for (let i = 0; i < characterImgs.length; i++) {
+            if (characterImgs[i].getAttribute("data-character") == character) {
+                return characterImgs[i];
             }
         }
         return null;
