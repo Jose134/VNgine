@@ -10,11 +10,6 @@
         SETTINGS:  "settings",
         SAVEFILES: "savefiles"
     }
-    let currentScreen = null;
-    let gameDiv = null;
-    let menuDiv = null;
-    let settingsDiv = null;
-    let savefilesDiv = null;
 
     //Characters DOM
     let characterImgs = [];
@@ -42,7 +37,6 @@
     let spaceHold = false;
 
     //Savefiles DOM
-    let savefileList = null;
     let loadHandlers = [];
 
     //Audio
@@ -100,10 +94,38 @@
         static savefilesDiv = null;
 
         static init = function () {
-            generateGameScreen();
-            generateMenuScreen();
-            generateSettingsScreen();
-            generateSavefilesScreen();
+            this.gameDiv      = generateGameScreen();
+            this.menuDiv      = generateMenuScreen();
+            this.settingsDiv  = generateSettingsScreen();
+            this.savefilesDiv = generateSavefilesScreen();
+        }
+
+        static switchToScreen = function (screen) {
+            this.currentScreen = screen;
+    
+            this.menuDiv.style.display      = "none";
+            this.gameDiv.style.display      = "none";
+            this.settingsDiv.style.display  = "none";
+            this.savefilesDiv.style.display = "none";
+    
+            switch (screen) {
+                case screens.MENU:
+                    this.menuDiv.style.display = "block";
+                    break;
+                case screens.GAME:
+                    this.gameDiv.style.display = "block";
+                    break;
+                case screens.SETTINGS:
+                    this.settingsDiv.style.display = "block";
+                    break;
+                case screens.SAVEFILES:
+                    this.savefilesDiv.style.display = "block";
+                    break;
+                default:
+                    this.currentScreen = null;
+                    console.error(`VNGINE_ERROR: Couldn't load screen named ${screen}`);
+                    break;
+            }
         }
     }
 
@@ -234,7 +256,7 @@
 
     //Creates all the DOM elements needed for the game screen
     function generateGameScreen () {
-        gameDiv = document.createElement("div");
+        let gameDiv = document.createElement("div");
         gameDiv.setAttribute("id", "vngine-game");
         gameDiv.classList.add("vngine-screen", "vngine-game");
 
@@ -274,7 +296,7 @@
         menuText.setAttribute("id", "menuText");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "menuText") {
-                switchToScreen(screens.MENU);
+                ScreenManager.switchToScreen(screens.MENU);
             }
         });
 
@@ -297,7 +319,7 @@
         loadText.setAttribute("id", "loadText");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "loadText") {
-                switchToScreen(screens.SAVEFILES);
+                ScreenManager.switchToScreen(screens.SAVEFILES);
             }
         });
 
@@ -318,12 +340,24 @@
         gameDiv.appendChild(vngineDialogBox);
 
         mainDiv.appendChild(gameDiv);
+
+        return gameDiv;
     }
     
     //Creates all the DOM elements needed for the menu screen
     function generateMenuScreen () {
+        /* HTML to generate
+        <div id="vngine-menu" class="vngine-screen vngine-menu" style="display: block;">
+            <h1 id="vngine-menu-title" class="vngine-menu-title">Test Game</h1>
+            <div class="vngine-btn-group">
+                <button class="vngine-btn" id="vngine-menu-newgame-btn">New Game</button>
+                <button id="vngine-menu-continue-btn" class="vngine-btn">Continue</button>
+                <button id="vngine-menu-settings-btn" class="vngine-btn">Settings</button>
+            </div>
+        </div>
+        */
         //Menu Screen
-        menuDiv = document.createElement("div");
+        let menuDiv = document.createElement("div");
         menuDiv.setAttribute("id", "vngine-menu");
         menuDiv.classList.add("vngine-screen", "vngine-menu");
         menuDiv.style.display = "none";
@@ -377,11 +411,15 @@
         menuDiv.appendChild(btnGroup);
 
         mainDiv.appendChild(menuDiv);
+
+        return menuDiv;
     }
     
     //Creates all the DOM elements needed for the settings screen
     function generateSettingsScreen () {
-        settingsDiv = document.createElement("div");
+        let settingsDiv = document.createElement("div");
+
+        return settingsDiv;
     }
     
     //Creates all the DOM elements needed for the Load/Save screen
@@ -396,7 +434,7 @@
             </div>
         </div>
         */
-        savefilesDiv = document.createElement("div");
+        let savefilesDiv = document.createElement("div");
         savefilesDiv.setAttribute("id", "vngine-savefiles");
         savefilesDiv.classList.add("vngine-screen", "vngine-savefiles");
 
@@ -409,21 +447,18 @@
         savefilesHeaderText.classList.add("vngine-savefiles-header-text");
         savefilesHeaderText.innerText = "Load";
 
-        savefileList = document.createElement("div");
-        savefileList.setAttribute("id", "vngine-savefile-list");
-        savefileList.classList.add("vngine-savefile-list");
-
-        generateSavefileList();
+        savefileList = generateSavefileList();
 
         //Appending
         savefilesHeader.appendChild(savefilesHeaderText);
         savefilesDiv.appendChild(savefilesHeader);
         savefilesDiv.appendChild(savefileList);
         mainDiv.appendChild(savefilesDiv);
+
+        return savefilesDiv;
     }
 
     function generateSavefileList () {
-        if (!savefileList) return; //Don't forget to use protection
         /* HTML to generate
         <div class="vngine-savefile">
             <div class="vngine-savefile-picture"></div>
@@ -433,6 +468,9 @@
             <button class="vngine-btn vngine-btn-small">Delete</button>
         </div>
         */
+        let savefileList = document.createElement("div");
+        savefileList.setAttribute("id", "vngine-savefile-list");
+        savefileList.classList.add("vngine-savefile-list");
 
         for (let i = 0; i < loadHandlers.length; i++) {
             document.removeEventListener("click", loadHandlers[i]);
@@ -491,35 +529,10 @@
             savefileDiv.appendChild(loadButton);
             savefileDiv.appendChild(deleteButton);
             savefileList.appendChild(savefileDiv);
+
         }
-    }
 
-    function switchToScreen (screen) {
-        currentScreen = screen;
-
-        menuDiv.style.display      = "none";
-        gameDiv.style.display      = "none";
-        settingsDiv.style.display  = "none";
-        savefilesDiv.style.display = "none";
-
-        switch (screen) {
-            case screens.MENU:
-                menuDiv.style.display = "block";
-                break;
-            case screens.GAME:
-                gameDiv.style.display = "block";
-                break;
-            case screens.SETTINGS:
-                settingsDiv.style.display = "block";
-                break;
-            case screens.SAVEFILES:
-                savefilesDiv.style.display = "block";
-                break;
-            default:
-                currentScreen = null;
-                console.error(`VNGINE_ERROR: Couldn't load screen named ${screen}`);
-                break;
-        }
+        return savefileList;
     }
 
     function getNodeBackground (nodeIndex) {
@@ -551,20 +564,20 @@
     function menuNewGameClick () {
         loadNode(0);
         DialogBox.setVisible(true);
-        switchToScreen(screens.GAME);
+        ScreenManager.switchToScreen(screens.GAME);
     }
 
     function menuContinueClick () {
-        switchToScreen(screens.SAVEFILES);
+        ScreenManager.switchToScreen(screens.SAVEFILES);
     }
 
     function menuSettingsClick () {
-        switchToScreen(screens.SETTINGS);
+        ScreenManager.switchToScreen(screens.SETTINGS);
     }
 
     //Function called when the game.json file is loaded
     function gameFileLoaded () {
-        switchToScreen(screens.MENU);
+        ScreenManager.switchToScreen(screens.MENU);
     }
 
     //Loads a node from the game given its index
@@ -578,12 +591,12 @@
         else {
             //Set Background
             if (currentNode.setBackground) {
-                gameDiv.style.background = `url("game/res/img/backgrounds/${currentNode.setBackground}")`;
+                ScreenManager.gameDiv.style.background = `url("game/res/img/backgrounds/${currentNode.setBackground}")`;
             }
-            else if (!gameDiv.style.background) {
+            else if (!ScreenManager.gameDiv.style.background) {
                 let background = getNodeBackground(currentNodeIndex);
                 if (background) {
-                    gameDiv.style.background = `url("game/res/img/backgrounds/${background}")`;
+                    ScreenManager.gameDiv.style.background = `url("game/res/img/backgrounds/${background}")`;
                 }
                 else {
                     console.error(`VNGINE_ERROR: Couldn't get background for node with index ${currentNodeIndex}`)
@@ -780,7 +793,7 @@
             }
         }
 
-        switchToScreen(screens.GAME);
+        ScreenManager.switchToScreen(screens.GAME);
     }
 
     //---------------HELPERS---------------//
