@@ -17,9 +17,6 @@
     let savefilesDiv = null;
 
     //Game DOM
-    let dialogBoxCharacter = null;
-    let dialogBoxText = null;
-
     let charactersDiv = null;
     let rightCharacters = [];
     let leftCharacters  = [];
@@ -116,6 +113,9 @@
     }
 
     const DialogBox = class {
+        static dialogBoxDiv;
+        static visible = true;
+
         static writingInterval;
         static dialogBoxText;
         static dialogBoxCharacter;
@@ -125,6 +125,7 @@
         static writtenCharacters = 0;
 
         static init = function () {
+            this.dialogBoxDiv = document.getElementById("vngine-dialog-box");
             this.dialogBoxText = document.getElementById("vngine-dialog-text");
             this.dialogBoxCharacter = document.getElementById("vngine-dialog-character");
         }
@@ -165,6 +166,48 @@
             clearInterval(this.writingInterval);
             this.dialogBoxText.innerText = this.currentTargetText;
         }
+
+        static toggleVisibility = function () {
+            console.log("hi");
+            this.visible = !this.visible;
+            this.dialogBoxDiv.style.display = this.visible ? "block" : "none";
+        }
+    }
+
+    const KeyboardInput = class {
+        static keyInfo = {};
+
+        static init = function () {
+            //Set up event listeners
+            window.addEventListener("keydown", e => {
+                if (this.keyInfo[e.code] && !this.keyInfo[e.code].held) {
+                    //Set key as held
+                    this.keyInfo[e.code].held = true;
+
+                    //Call all the callbacks
+                    if (this.keyInfo[e.code].callbacks) {
+                        this.keyInfo[e.code].callbacks.forEach(c => c());
+                    }
+                }
+            });
+        
+            window.addEventListener("keyup", e => {
+                if (this.keyInfo[e.code]) {
+                    this.keyInfo[e.code].held = false;
+                }
+            });
+        }
+
+        static addKeyCallback = function (keycode, callback) {
+            if (!this.keyInfo[keycode]) {
+                this.keyInfo[keycode] = {};
+                this.keyInfo[keycode].held = false;
+                this.keyInfo[keycode].callbacks = new Array();
+            }
+
+            this.keyInfo[keycode].callbacks.push(callback);
+            console.log(this.keyInfo[keycode]);
+        }
     }
     
     //Initialization
@@ -179,27 +222,17 @@
         
         //Initialize subsystems
         ScreenManager.init();
+        KeyboardInput.init();
         Audio.init();
         DialogBox.init();
+
+        //Sets up keyboard callbacks
+        KeyboardInput.addKeyCallback("Space",        () => gameClickEvent());
+        KeyboardInput.addKeyCallback("ControlLeft",  () => DialogBox.toggleVisibility());
+        KeyboardInput.addKeyCallback("ControlRight", () => DialogBox.toggleVisibility());
         
         gameFileLoaded();
     }
-
-    //Keyboard events
-    window.addEventListener("keydown", e => {
-        if (e.code == "Space") {
-            if (!spaceHold) {
-                gameClickEvent();
-                spaceHold = true;
-            }
-        }
-    });
-
-    window.addEventListener("keyup", e => {
-        if (e.code == "Space") {
-            spaceHold = false;
-        }
-    });
 
     //Creates all the DOM elements needed for the game screen
     function generateGameScreen () {
@@ -223,6 +256,7 @@
         charactersDiv.classList.add("vngine-characters-div");
 
         let vngineDialogBox = document.createElement("div");
+        vngineDialogBox.setAttribute("id", "vngine-dialog-box");
         vngineDialogBox.classList.add("vngine-dialog-box");
 
         dialogBoxCharacter = document.createElement("p");
@@ -699,7 +733,7 @@
 
     //Event handler
     function gameClickEvent () {
-        if(!currentNode.dialog) return;
+        if(!DialogBox.visible || !currentNode.dialog) return;
 
         if (DialogBox.isWriting) {
             DialogBox.cancelWritingAnimation();
