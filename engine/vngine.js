@@ -168,8 +168,12 @@
         }
 
         static toggleVisibility = function () {
-            console.log("hi");
             this.visible = !this.visible;
+            this.dialogBoxDiv.style.display = this.visible ? "block" : "none";
+        }
+
+        static setVisible = function (visible) {
+            this.visible = visible;
             this.dialogBoxDiv.style.display = this.visible ? "block" : "none";
         }
     }
@@ -539,6 +543,7 @@
 
     function menuNewGameClick () {
         loadNode(0);
+        DialogBox.setVisible(true);
         switchToScreen(screens.GAME);
     }
 
@@ -583,10 +588,12 @@
                 
             //Checks for decision/dialog
             if (currentNode.decision) {
+                DialogBox.setVisible(false);
                 renderDecisionOptions(currentNode.decision);
             }
             else if (currentNode.dialog) {
                 //Starts dialog
+                DialogBox.setVisible(true);
                 currentDialogIndex = 0;
                 updateDialog();
             }
