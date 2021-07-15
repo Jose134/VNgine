@@ -16,19 +16,14 @@
     let settingsDiv = null;
     let savefilesDiv = null;
 
-    //Game DOM
+    //Characters DOM
+    let characterImgs = [];
     let charactersDiv = null;
-    let rightCharacters = [];
-    let leftCharacters  = [];
     
     //Decision making
     let decisionButtonsDiv = null;
     let decisionButtons = [];
     let decisionHandlers = [];
-    
-    //Avoid reloading images
-    let previousRightCharacterIndexes = [];
-    let previousLeftCharacterIndexes = [];
 
     //Game status
     let currentNode = null;
@@ -210,7 +205,6 @@
             }
 
             this.keyInfo[keycode].callbacks.push(callback);
-            console.log(this.keyInfo[keycode]);
         }
     }
     
@@ -584,7 +578,9 @@
             }
 
             //Set characters
-            renderCharacters(currentNode.charactersRight, currentNode.charactersLeft);
+            if (currentNode.setCharacters) {
+                renderCharacters(currentNode.setCharacters);
+            }
                 
             //Checks for decision/dialog
             if (currentNode.decision) {
@@ -603,60 +599,34 @@
         }
     }
 
-    function renderCharacters (charactersRight, charactersLeft) {
-        if (!compareArrays(charactersRight, previousRightCharacterIndexes)) {
-            Array.from(rightCharacters).forEach(e => {
-                e.setAttribute("src", "");
-                e.setAttribute("data-character", "");
-            });
+    function renderCharacters (characters) {
+        characterImgs.forEach(img => {
+            img.setAttribute("src", "");
+            img.setAttribute("data-character", "");
+        });
 
-            if(charactersRight) {
-                for (let i = 0; i < charactersRight.length; i++) {
-                    let characterIndex = charactersRight[i];
-                    let picURL = `game/res/img/characters/${game.characters[characterIndex].pictures[0]}`;
-                    
-                    //Add new DOM element if needed
-                    if (rightCharacters[i] == null || rightCharacters[i] == undefined) {
-                        let character = document.createElement("img");
-                        character.classList.add("vngine-character", "vngine-character-right");
-                        charactersDiv.append(character);
-                        rightCharacters[i] = character;
-                    }
-
-                    rightCharacters[i].setAttribute("data-character", characterIndex);
-                    rightCharacters[i].setAttribute("src", picURL);
-                }
-
-                previousRightCharacterIndexes = charactersRight;
+        if (characters.length > characterImgs.length) {
+            for (let i = 0; i < characters.length - characterImgs.length; i++) {
+                let character = document.createElement("img");
+                character.classList.add("vngine-character");
+                charactersDiv.append(character);
+                characterImgs.push(character);
             }
         }
-        
-        if (!compareArrays(charactersLeft, previousLeftCharacterIndexes)) {
-            Array.from(leftCharacters).forEach(e => {
-                e.setAttribute("src", "");
-                e.setAttribute("data-character", "");
-            });
+
+        characters.forEach((character, i) => {
+            let picURL = `game/res/img/characters/${game.characters[character.index].pictures[0]}`;
             
-            if(charactersLeft) {
-                for (let i = 0; i < charactersLeft.length; i++) {
-                    let characterIndex = charactersLeft[i];
-                    let picURL = `game/res/img/characters/${game.characters[characterIndex].pictures[0]}`;
-                    
-                    //Add new DOM element if needed
-                    if (leftCharacters[i] == null || leftCharacters[i] == undefined) {
-                        let character = document.createElement("img");
-                        character.classList.add("vngine-character", "vngine-character-left");
-                        charactersDiv.append(character);
-                        leftCharacters[i] = character;
-                    }
-
-                    leftCharacters[i].setAttribute("data-character", characterIndex);
-                    leftCharacters[i].setAttribute("src", picURL);
-                }
-
-                previousLeftCharacterIndexes = charactersLeft;
+            if (character.left != undefined) {
+                characterImgs[i].style.left = `${character.left}%`;
             }
-        }
+            else if (character.right != undefined) {
+                characterImgs[i].style.right = `${character.right}%`;
+            }
+
+            characterImgs[i].setAttribute("data-character", character.index);
+            characterImgs[i].setAttribute("src", picURL);
+        });
     }
 
     function renderDecisionOptions (options) {

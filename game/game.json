@@ -20,7 +20,9 @@ gameJSON = {
     "nodes": [
         {
             "setBackground": "background.jpg",
-            "charactersRight": [ 0 ],
+            "setCharacters": [
+                { index: 0, right: 5 }
+            ],
             "dialog": [
                 {
                     "playEffect": "ui_click.wav",
@@ -32,8 +34,10 @@ gameJSON = {
         },
         {
             "setBackground": "background2.jpg",
-            "charactersRight": [ 0 ],
-            "charactersLeft": [ 1 ],
+            "setCharacters": [
+                { index: 0, right: 5 },
+                { index: 1, left: 5 }
+            ],
             "dialog": [
                 {
                     "character": 0,
@@ -54,8 +58,6 @@ gameJSON = {
             "nextNode": 2
         },
         {
-            "charactersLeft": [ 1 ],
-            "charactersRight": [ 0 ],
             "decision": [
                 {
                     "text": "Run away",
@@ -72,7 +74,9 @@ gameJSON = {
             ]
         },
         {
-            "charactersRight": [ 0 ],
+            "setCharacters": [
+                { index: 0, right: 0 }
+            ],
             "dialog": [
                 {
                     "playMusic": "",
@@ -83,8 +87,6 @@ gameJSON = {
             "nextNode": null
         },
         {
-            "charactersRight": [ 0 ],
-            "charactersLeft": [ 1 ],
             "dialog": [
                 {
                     "playMusic": "",
@@ -95,8 +97,6 @@ gameJSON = {
             "nextNode": null
         },
         {
-            "charactersRight": [ 0 ],
-            "charactersLeft": [ 1 ],
             "dialog": [
                 {
                     "character": 1,
