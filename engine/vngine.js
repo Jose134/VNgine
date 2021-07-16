@@ -250,8 +250,8 @@
         KeyboardInput.addKeyCallback("Space",        () => gameClickEvent());
         KeyboardInput.addKeyCallback("ControlLeft",  () => DialogBox.toggleVisibility());
         KeyboardInput.addKeyCallback("ControlRight", () => DialogBox.toggleVisibility());
-        
-        gameFileLoaded();
+
+        ScreenManager.switchToScreen(screens.MENU);
     }
 
     //Creates all the DOM elements needed for the game screen
@@ -535,6 +535,7 @@
         return savefileList;
     }
 
+    //Returns the background that should be displayed in a given node
     function getNodeBackground (nodeIndex) {
         let index = nodeIndex;
         let background = undefined;
@@ -548,6 +549,7 @@
         return background;
     }
 
+    //Returns the characters that should be displayed in a given node
     function getNodeCharacters (nodeIndex) {
         let index = nodeIndex;
         let characters = undefined;
@@ -573,11 +575,6 @@
 
     function menuSettingsClick () {
         ScreenManager.switchToScreen(screens.SETTINGS);
-    }
-
-    //Function called when the game.json file is loaded
-    function gameFileLoaded () {
-        ScreenManager.switchToScreen(screens.MENU);
     }
 
     //Loads a node from the game given its index
@@ -634,10 +631,13 @@
         }
     }
 
+    //Display the given characters on the game screen
     function renderCharacters (characters) {
         characterImgs.forEach(img => {
             img.setAttribute("src", "");
             img.setAttribute("data-character", "");
+            img.style.left = "";
+            img.style.right = "";
         });
 
         if (characters.length > characterImgs.length) {
@@ -666,6 +666,7 @@
         });
     }
 
+    //Display and sets up decision buttons for the given options
     function renderDecisionOptions (options) {
         //Remove old decision data
         decisionButtonsDiv.innerHTML = "";
@@ -797,9 +798,6 @@
     }
 
     //---------------HELPERS---------------//
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
 
     //Returns true if both arrays are equal (can be different references), false otherwise
     function compareArrays (a, b) {
