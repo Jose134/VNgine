@@ -18,7 +18,6 @@
     //Decision making
     let decisionButtonsDiv = null;
     let decisionButtons = [];
-    let decisionHandlers = [];
 
     //Game status
     let currentNode = null;
@@ -35,9 +34,6 @@
 
     //Keyboard
     let spaceHold = false;
-
-    //Savefiles DOM
-    let loadHandlers = [];
 
     //Audio
     let audioUIClick = "game/res/audio/ui_click.wav";
@@ -208,6 +204,7 @@
         static init = function () {
             //Set up event listeners
             window.addEventListener("keydown", e => {
+                console.log(e.code);
                 if (this.keyInfo[e.code] && !this.keyInfo[e.code].held) {
                     //Set key as held
                     this.keyInfo[e.code].held = true;
@@ -257,6 +254,7 @@
         KeyboardInput.addKeyCallback("Space",        () => gameClickEvent());
         KeyboardInput.addKeyCallback("ControlLeft",  () => DialogBox.toggleVisibility());
         KeyboardInput.addKeyCallback("ControlRight", () => DialogBox.toggleVisibility());
+        KeyboardInput.addKeyCallback("Escape",       () => escapePressedEvent());
 
         ScreenManager.switchToScreen(screens.MENU);
     }
@@ -396,6 +394,7 @@
         menuDiv.setAttribute("id", "vngine-menu");
         menuDiv.classList.add("vngine-screen", "vngine-menu");
         menuDiv.style.display = "none";
+        menuDiv.style.backgroundImage = `url(game/res/img/backgrounds/${game.menuBackground})`;
         
         //Title text
         let titleText = document.createElement("h1");
@@ -453,15 +452,7 @@
     //Creates all the DOM elements needed for the settings screen
     function generateSettingsScreen () {
         /* HTML to generate
-        <div id="vngine-savefiles" class="vngine-screen vngine-savefiles">
-            <div id="vngine-savefiles-header" class="vngine-savefiles-header">
-                <button id="vngine-savefiles-back" class="vngine-btn vngine-back-btn">Back</button>
-                <p id="vngine-savefiles-text" class="vngine-savefiles-header-text">Load</p>
-            </div>
-            <div id="vngine-savefile-list" class="vngine-savefile-list">
-                
-            </div>
-        </div>
+        
         */
         let settingsDiv = document.createElement("div");
         settingsDiv.setAttribute("id", "vngine-settings");
@@ -486,10 +477,117 @@
         settingsHeaderText.classList.add("vngine-settings-header-text");
         settingsHeaderText.innerText = "Settings";
 
+        let settingsBody = document.createElement("div");
+        settingsBody.setAttribute("id", "vngine-settings-body");
+        settingsBody.classList.add("vngine-settings-body");
+
+        let settingsTextSpeedDiv = document.createElement("div");
+        settingsTextSpeedDiv.setAttribute("id", "vngine-settings-text-speed");
+        settingsTextSpeedDiv.classList.add("vngine-settings-text-speed");
+
+        let textSpeedLabel = document.createElement("label");
+        textSpeedLabel.setAttribute("for", "vngine-text-speed-range");
+        textSpeedLabel.innerText = "Text Speed: ";
+
+        let textSpeedSelect = document.createElement("select");
+        textSpeedSelect.setAttribute("id", "vngine-text-speed-select");
+        textSpeedSelect.setAttribute("name", "vngine-text-speed-select");
+
+        let textSpeedOptionVeryFast = document.createElement("option");
+        textSpeedOptionVeryFast.setAttribute("value", "veryfast");
+        textSpeedOptionVeryFast.innerText = "Very Fast";
+        
+        let textSpeedOptionFast = document.createElement("option");
+        textSpeedOptionFast.setAttribute("value", "fast");
+        textSpeedOptionFast.innerText = "Fast";
+        
+        let textSpeedOptionMedium = document.createElement("option");
+        textSpeedOptionMedium.setAttribute("value", "medium");
+        textSpeedOptionMedium.innerText = "Medium";
+        
+        let textSpeedOptionSlow = document.createElement("option");
+        textSpeedOptionSlow.setAttribute("value", "slow");
+        textSpeedOptionSlow.innerText = "Slow";
+        
+        let settingsSoundDiv = document.createElement("div");
+        settingsSoundDiv.setAttribute("id", "vngine-settings-sound");
+        settingsSoundDiv.classList.add("vngine-settings-sound");
+
+        let masterVolumeLabel = document.createElement("label");
+        masterVolumeLabel.setAttribute("for", "vngine-settings-master-volume-range");
+        masterVolumeLabel.innerText = "Master";
+
+        let masterVolumeRange = document.createElement("input");
+        masterVolumeRange.setAttribute("type", "range");
+        masterVolumeRange.setAttribute("id", "vngine-settings-master-volume-range");
+        masterVolumeRange.setAttribute("name", "vngine-settings-master-volume-range");
+
+        let bgmVolumeLabel = document.createElement("label");
+        bgmVolumeLabel.setAttribute("for", "vngine-settings-bgm-volume-range");
+        bgmVolumeLabel.innerText = "Music";
+
+        let bgmVolumeRange = document.createElement("input");
+        bgmVolumeRange.setAttribute("type", "range");
+        masterVolumeRange.setAttribute("id", "vngine-settings-bgm-volume-range");
+        masterVolumeRange.setAttribute("name", "vngine-settings-bgm-volume-range");
+
+        let sfxVolumeLabel = document.createElement("label");
+        sfxVolumeLabel.setAttribute("for", "vngine-settings-sfx-volume-range");
+        sfxVolumeLabel.innerText = "Effects";
+
+        let sfxVolumeRange = document.createElement("input");
+        sfxVolumeRange.setAttribute("type", "range");
+        masterVolumeRange.setAttribute("id", "vngine-settings-sfx-volume-range");
+        masterVolumeRange.setAttribute("name", "vngine-settings-sfx-volume-range");
+        
+        let settingsFooterDiv = document.createElement("div");
+        settingsFooterDiv.setAttribute("id", "vngine-settings-footer");
+        settingsFooterDiv.classList.add("vngine-settings-footer");
+
+        let clearDataBtn = document.createElement("button");
+        clearDataBtn.setAttribute("id", "vngine-settings-clear-data");
+        clearDataBtn.classList.add("vngine-btn", "vngine-btn-inline", "vngine-btn-medium", "vngine-btn-left");
+        clearDataBtn.innerText = "Clear Data";
+
+        let applyBtn = document.createElement("button");
+        applyBtn.setAttribute("id", "vngine-settings-apply");
+        applyBtn.classList.add("vngine-btn", "vngine-btn-inline", "vngine-btn-medium", "vngine-btn-right");
+        applyBtn.innerText = "Apply";
+
+        let cancelBtn = document.createElement("button");
+        cancelBtn.setAttribute("id", "vngine-settings-cancel");
+        cancelBtn.classList.add("vngine-btn", "vngine-btn-inline", "vngine-btn-medium", "vngine-btn-right");
+        cancelBtn.innerText = "Cancel";
+
         //Appending
         settingsHeader.appendChild(backBtn);
         settingsHeader.appendChild(settingsHeaderText);
+        textSpeedSelect.appendChild(textSpeedOptionVeryFast);
+        textSpeedSelect.appendChild(textSpeedOptionFast);
+        textSpeedSelect.appendChild(textSpeedOptionMedium);
+        textSpeedSelect.appendChild(textSpeedOptionSlow);
+        settingsTextSpeedDiv.appendChild(textSpeedLabel);
+        settingsTextSpeedDiv.appendChild(document.createElement("br"));
+        settingsTextSpeedDiv.appendChild(textSpeedSelect);
+        settingsSoundDiv.appendChild(masterVolumeLabel);
+        settingsSoundDiv.appendChild(document.createElement("br"));
+        settingsSoundDiv.appendChild(masterVolumeRange);
+        settingsSoundDiv.appendChild(document.createElement("br"));
+        settingsSoundDiv.appendChild(bgmVolumeLabel);
+        settingsSoundDiv.appendChild(document.createElement("br"));
+        settingsSoundDiv.appendChild(bgmVolumeRange);
+        settingsSoundDiv.appendChild(document.createElement("br"));
+        settingsSoundDiv.appendChild(sfxVolumeLabel);
+        settingsSoundDiv.appendChild(document.createElement("br"));
+        settingsSoundDiv.appendChild(sfxVolumeRange);
+        settingsFooterDiv.appendChild(clearDataBtn);
+        settingsFooterDiv.appendChild(applyBtn);
+        settingsFooterDiv.appendChild(cancelBtn);
+        settingsBody.appendChild(settingsTextSpeedDiv);
+        settingsBody.appendChild(settingsSoundDiv);
+        settingsBody.appendChild(settingsFooterDiv);
         settingsDiv.appendChild(settingsHeader);
+        settingsDiv.appendChild(settingsBody);
         mainDiv.appendChild(settingsDiv);
 
         return settingsDiv;
@@ -557,11 +655,6 @@
         savefileList.setAttribute("id", "vngine-savefile-list");
         savefileList.classList.add("vngine-savefile-list");
 
-        for (let i = 0; i < loadHandlers.length; i++) {
-            document.removeEventListener("click", loadHandlers[i]);
-        }
-        loadHandlers.splice(0, loadHandlers.length);
-
         let keys = Object.keys(localStorage);
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i];
@@ -595,17 +688,21 @@
             loadButton.innerText = "Load";
             loadButton.setAttribute("id", `load-${key}`);
             loadButton.classList.add("vngine-btn", "vngine-btn-small");
-            loadHandlers[i] = function (e) {
+            loadButton.addEventListener("click", e => {
                 if (e.target && e.target.id == `load-${key}`) {
                     load(key);
                 }
-            };
-            document.addEventListener("click", loadHandlers[i]);
+            });
             
             let deleteButton = document.createElement("button");
             deleteButton.innerText = "Delete";
             deleteButton.setAttribute("id", `delete-${key}`);
             deleteButton.classList.add("vngine-btn", "vngine-btn-small");
+            deleteButton.addEventListener("click", e => {
+                if (e.target && e.target.id == `delete-${key}`) {
+                    deleteSavefile(key);
+                }
+            });
 
             //Appending
             savefileDiv.appendChild(savefileImg);
@@ -756,11 +853,6 @@
         //Remove old decision data
         decisionButtonsDiv.innerHTML = "";
         decisionButtons.splice(0, decisionButtons.length);
-
-        for (let i = 0; i < decisionHandlers.length; i++) {
-            document.removeEventListener("click", decisionHandlers[i]);
-        }
-        decisionHandlers.splice(0, decisionHandlers.length);
         
         //Set up new decision buttons
         for (let i = 0; i < options.length; i++) {
@@ -769,7 +861,7 @@
             decisionButtons[i].innerText = options[i].text;
             decisionButtons[i].setAttribute("id", `vngine-decision-btn-${i}`);
             
-            decisionHandlers[i] = function (e) {
+            decisionButtons[i].addEventListener("click", e => {
                 if (e.target && e.target.id == `vngine-decision-btn-${i}`) {
                     //Hide decision buttons
                     decisionButtonsDiv.style.display = "none";
@@ -777,8 +869,7 @@
                     //Loads the target node of the decision
                     loadNode(options[i].targetNode);
                 }
-            }
-            document.addEventListener("click", decisionHandlers[i]);
+            });
 
             decisionButtonsDiv.appendChild(decisionButtons[i]);
         }
@@ -851,6 +942,14 @@
         }
     }
 
+    function escapePressedEvent () {
+        if (ScreenManager.currentScreen == screens.SETTINGS ||
+            ScreenManager.currentScreen == screens.SAVEFILES) {
+            
+            ScreenManager.switchToPreviousScreen();
+        }
+    }
+
     //---------------SAVE-LOAD---------------//
 
     //Saves game information on localStorage
@@ -880,6 +979,10 @@
         }
 
         ScreenManager.switchToScreen(screens.GAME);
+    }
+
+    function deleteSavefile (saveFile) {
+        localStorage.removeItem(saveFile);
     }
 
     //---------------HELPERS---------------//

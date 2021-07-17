@@ -1,5 +1,6 @@
 gameJSON = {
     "title": "Test Game",
+    "menuBackground": "background.jpg",
     "author": "DarkBird",
     "characters": [
         {
@@ -21,7 +22,7 @@ gameJSON = {
         {
             "setBackground": "background.jpg",
             "setCharacters": [
-                { index: 0, right: 5, picture: 1 }
+                { "index": 0, "right": 5, "picture": 1 }
             ],
             "dialog": [
                 {
@@ -35,8 +36,8 @@ gameJSON = {
         {
             "setBackground": "background2.jpg",
             "setCharacters": [
-                { index: 0, right: 5 },
-                { index: 1, left: 5 }
+                { "index": 0, "right": 5 },
+                { "index": 1, "left": 5 }
             ],
             "dialog": [
                 {
@@ -75,7 +76,7 @@ gameJSON = {
         },
         {
             "setCharacters": [
-                { index: 0, right: 0 }
+                { "index": 0, "right": 0 }
             ],
             "dialog": [
                 {
