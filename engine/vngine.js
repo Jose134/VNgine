@@ -394,7 +394,9 @@
         menuDiv.setAttribute("id", "vngine-menu");
         menuDiv.classList.add("vngine-screen", "vngine-menu");
         menuDiv.style.display = "none";
-        menuDiv.style.backgroundImage = `url(game/res/img/backgrounds/${game.menuBackground})`;
+        if (game.menuBackground) {
+            menuDiv.style.backgroundImage = `url(game/res/img/backgrounds/${game.menuBackground})`;
+        }
         
         //Title text
         let titleText = document.createElement("h1");
@@ -457,6 +459,9 @@
         let settingsDiv = document.createElement("div");
         settingsDiv.setAttribute("id", "vngine-settings");
         settingsDiv.classList.add("vngine-screen", "vngine-settings");
+        if (game.settingsBackground) {
+            settingsDiv.style.backgroundImage = `url(game/res/img/backgrounds/${game.settingsBackground})`;
+        }
         
         let settingsHeader = document.createElement("div");
         settingsHeader.setAttribute("id", "vngine-settings-header");
@@ -609,6 +614,9 @@
         let savefilesDiv = document.createElement("div");
         savefilesDiv.setAttribute("id", "vngine-savefiles");
         savefilesDiv.classList.add("vngine-screen", "vngine-savefiles");
+        if (game.savefilesBackground) {
+            savefilesDiv.style.backgroundImage = `url(game/res/img/backgrounds/${game.savefilesBackground})`;
+        }
         
         let savefilesHeader = document.createElement("div");
         savefilesHeader.setAttribute("id", "vngine-savefiles-header");
