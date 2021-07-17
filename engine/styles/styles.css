@@ -35,6 +35,7 @@
     padding: 0;
     width: 1280px;
     height: 720px;
+    font-family: 'Poppins', sans-serif;
 
     user-select: none;
 }
@@ -88,6 +89,13 @@
     border-radius: 5px;
 }
 
+.vngine-back-btn {
+    position: absolute;
+    margin: 0;
+    margin-left: 10px;
+    width: 150px;
+}
+
 /*---------------------------------*/
 /*            LOADING              */
 /*---------------------------------*/
@@ -127,7 +135,7 @@
 }
 
 /*---------------------------------*/
-/*            SAVE/LOAD            */
+/*            SAVEFILES            */
 /*---------------------------------*/
 
 .vngine-savefiles {
@@ -203,6 +211,32 @@
     margin-bottom: 20px;
 }
 
+/*---------------------------------*/
+/*            SETTINGS             */
+/*---------------------------------*/
+
+.vngine-settings {
+    color: white;
+}
+
+.vngine-settings-header {
+    display: flex;
+    position: sticky;
+    margin: 0;
+    height: 10%;
+    align-items: center;
+    max-height: 100px;
+    background-color: var(--vngine-color-ui-main);
+}
+
+.vngine-settings-header-text {
+    margin-left: auto;
+    margin-right: auto;
+    font-size: var(--vngine-text-medium);
+    font-weight: bold;
+    color: var(--vngine-color-ui-text);
+}
+
 
 /*---------------------------------*/
 /*              GAME               */
@@ -210,6 +244,8 @@
 
 .vngine-game {
     background-color: black;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .vngine-game-click-detector {

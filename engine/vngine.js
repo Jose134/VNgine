@@ -88,6 +88,7 @@
 
     const ScreenManager = class {
         static currentScreen = null;
+        static previousScreen = null;
         static gameDiv = null;
         static menuDiv = null;
         static settingsDiv = null;
@@ -101,6 +102,7 @@
         }
 
         static switchToScreen = function (screen) {
+            this.previousScreen = this.currentScreen;
             this.currentScreen = screen;
     
             this.menuDiv.style.display      = "none";
@@ -127,6 +129,11 @@
                     break;
             }
         }
+
+        static switchToPreviousScreen = function () {
+            this.switchToScreen(this.previousScreen);
+        }
+    
     }
 
     const DialogBox = class {
@@ -256,6 +263,23 @@
 
     //Creates all the DOM elements needed for the game screen
     function generateGameScreen () {
+        /* HTML to generate
+        <div id="vngine-game" class="vngine-screen vngine-game">
+            <div class="vngine-option-text-container">
+                <a class="vngine-option-text" id="menuText">Menu</a>
+                <a class="vngine-option-text" id="saveText">Save</a>
+                <a class="vngine-option-text" id="loadText">Load</a>
+                <a class="vngine-option-text">Skip</a>
+                <a class="vngine-option-text" id="settingsText">Settings</a>
+            </div>
+            <div id="vngine-game-click-detector" class="vngine-game-click-detector"></div>
+            <div class="vngine-btn-group"></div><div class="vngine-characters-div"></div>
+            <div id="vngine-dialog-box" class="vngine-dialog-box" style="display: block;">
+                <p id="vngine-dialog-character" class="vngine-dialog-character"></p>
+                <p id="vngine-dialog-text" class="vngine-dialog-text"></p>
+            </div>
+        </div>
+        */
         let gameDiv = document.createElement("div");
         gameDiv.setAttribute("id", "vngine-game");
         gameDiv.classList.add("vngine-screen", "vngine-game");
@@ -327,10 +351,21 @@
         skipText.innerText = "Skip";
         skipText.classList.add("vngine-option-text");
 
+        let settingsText = document.createElement("a");
+        settingsText.innerText = "Settings";
+        settingsText.classList.add("vngine-option-text");
+        settingsText.setAttribute("id", "settingsText");
+        document.addEventListener("click", e => {
+            if (e.target && e.target.id == "settingsText") {
+                ScreenManager.switchToScreen(screens.SETTINGS);
+            }
+        });
+
         optionsContainer.appendChild(menuText);
         optionsContainer.appendChild(saveText);
         optionsContainer.appendChild(loadText);
         optionsContainer.appendChild(skipText);
+        optionsContainer.appendChild(settingsText);
         vngineDialogBox.appendChild(dialogBoxCharacter);
         vngineDialogBox.appendChild(dialogBoxText);
         gameDiv.appendChild(optionsContainer);
@@ -417,7 +452,45 @@
     
     //Creates all the DOM elements needed for the settings screen
     function generateSettingsScreen () {
+        /* HTML to generate
+        <div id="vngine-savefiles" class="vngine-screen vngine-savefiles">
+            <div id="vngine-savefiles-header" class="vngine-savefiles-header">
+                <button id="vngine-savefiles-back" class="vngine-btn vngine-back-btn">Back</button>
+                <p id="vngine-savefiles-text" class="vngine-savefiles-header-text">Load</p>
+            </div>
+            <div id="vngine-savefile-list" class="vngine-savefile-list">
+                
+            </div>
+        </div>
+        */
         let settingsDiv = document.createElement("div");
+        settingsDiv.setAttribute("id", "vngine-settings");
+        settingsDiv.classList.add("vngine-screen", "vngine-settings");
+        
+        let settingsHeader = document.createElement("div");
+        settingsHeader.setAttribute("id", "vngine-settings-header");
+        settingsHeader.classList.add("vngine-settings-header");
+
+        let backBtn = document.createElement("button");
+        backBtn.setAttribute("id", "vngine-settings-back");
+        backBtn.classList.add("vngine-btn", "vngine-back-btn");
+        backBtn.innerText = "Back";
+        backBtn.addEventListener("click", e => {
+            if (e.target && e.target.id == "vngine-settings-back") {
+                ScreenManager.switchToPreviousScreen();
+            }
+        });
+        
+        let settingsHeaderText = document.createElement("p");
+        settingsHeaderText.setAttribute("id", "vngine-settings-header-text");
+        settingsHeaderText.classList.add("vngine-settings-header-text");
+        settingsHeaderText.innerText = "Settings";
+
+        //Appending
+        settingsHeader.appendChild(backBtn);
+        settingsHeader.appendChild(settingsHeaderText);
+        settingsDiv.appendChild(settingsHeader);
+        mainDiv.appendChild(settingsDiv);
 
         return settingsDiv;
     }
@@ -427,6 +500,7 @@
         /* HTML to generate
         <div id="vngine-savefiles" class="vngine-screen vngine-savefiles">
             <div id="vngine-savefiles-header" class="vngine-savefiles-header">
+                <button id="vngine-savefiles-back" class="vngine-btn vngine-back-btn">Back</button>
                 <p id="vngine-savefiles-text" class="vngine-savefiles-header-text">Load</p>
             </div>
             <div id="vngine-savefile-list" class="vngine-savefile-list">
@@ -437,11 +511,21 @@
         let savefilesDiv = document.createElement("div");
         savefilesDiv.setAttribute("id", "vngine-savefiles");
         savefilesDiv.classList.add("vngine-screen", "vngine-savefiles");
-
+        
         let savefilesHeader = document.createElement("div");
         savefilesHeader.setAttribute("id", "vngine-savefiles-header");
         savefilesHeader.classList.add("vngine-savefiles-header");
 
+        let backBtn = document.createElement("button");
+        backBtn.setAttribute("id", "vngine-savefiles-back");
+        backBtn.classList.add("vngine-btn", "vngine-back-btn");
+        backBtn.innerText = "Back";
+        backBtn.addEventListener("click", e => {
+            if (e.target && e.target.id == "vngine-savefiles-back") {
+                ScreenManager.switchToPreviousScreen();
+            }
+        });
+        
         let savefilesHeaderText = document.createElement("p");
         savefilesHeaderText.setAttribute("id", "vngine-savefiles-header-text");
         savefilesHeaderText.classList.add("vngine-savefiles-header-text");
@@ -450,6 +534,7 @@
         savefileList = generateSavefileList();
 
         //Appending
+        savefilesHeader.appendChild(backBtn);
         savefilesHeader.appendChild(savefilesHeaderText);
         savefilesDiv.appendChild(savefilesHeader);
         savefilesDiv.appendChild(savefileList);
@@ -588,12 +673,12 @@
         else {
             //Set Background
             if (currentNode.setBackground) {
-                ScreenManager.gameDiv.style.background = `url("game/res/img/backgrounds/${currentNode.setBackground}")`;
+                ScreenManager.gameDiv.style.backgroundImage = `url("game/res/img/backgrounds/${currentNode.setBackground}")`;
             }
-            else if (!ScreenManager.gameDiv.style.background) {
+            else if (!ScreenManager.gameDiv.style.backgroundImage) {
                 let background = getNodeBackground(currentNodeIndex);
                 if (background) {
-                    ScreenManager.gameDiv.style.background = `url("game/res/img/backgrounds/${background}")`;
+                    ScreenManager.gameDiv.style.backgroundImage = `url("game/res/img/backgrounds/${background}")`;
                 }
                 else {
                     console.error(`VNGINE_ERROR: Couldn't get background for node with index ${currentNodeIndex}`)
