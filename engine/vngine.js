@@ -41,6 +41,10 @@
     const Audio = class {
         static sfxAudioElement = null;
         static bgmAudioElement = null;
+        
+        static masterVolume = 100;
+        static bgmVolume = 100;
+        static sfxVolume = 100;
 
         static init = function () {
             this.sfxAudioElement = document.createElement("audio");
@@ -61,6 +65,7 @@
                 this.sfxAudioElement.pause();
             }
             else {
+                this.sfxAudioElement.volume = this.masterVolume / 100 * this.sfxVolume / 100;
                 this.sfxAudioElement.play();
             }
         }
@@ -76,6 +81,8 @@
                 this.bgmAudioElement.pause();
             }
             else {
+                this.bgmAudioElement.volume = this.masterVolume / 100 * this.bgmVolume / 100;
+                this.bgmAudioElement.loop = true;
                 this.bgmAudioElement.play();
             }
             
@@ -204,7 +211,6 @@
         static init = function () {
             //Set up event listeners
             window.addEventListener("keydown", e => {
-                console.log(e.code);
                 if (this.keyInfo[e.code] && !this.keyInfo[e.code].held) {
                     //Set key as held
                     this.keyInfo[e.code].held = true;
@@ -233,6 +239,51 @@
             this.keyInfo[keycode].callbacks.push(callback);
         }
     }
+
+    const Settings = class {
+        static defaultSettings = {
+            "textSpeed": textFastTime,
+            "masterVolume": 100,
+            "bgmVolume": 100,
+            "sfxVolume": 100
+        };
+
+        static load = function () {
+            let userSettings = localStorage.getItem("userSettings");
+            if (userSettings == null) {
+                userSettings = this.defaultSettings;
+            }
+            else {
+                try {
+                    userSettings = JSON.parse(userSettings);
+                }
+                catch (e) {
+                    console.warn(`VNGINE_WARNING: Exception thrown while trying to parse userSettings ${e}`);
+                    userSettings = this.defaultSettings;
+                }
+            }
+            textSpeed = userSettings.textSpeed
+            Audio.masterVolume = userSettings.masterVolume;
+            Audio.bgmVolume = userSettings.bgmVolume;
+            Audio.sfxVolume = userSettings.sfxVolume;
+        }
+        
+        static save = function () {
+            let userSettings = {
+                "textSpeed": textSpeed,
+                "masterVolume": Audio.masterVolume,
+                "bgmVolume": Audio.bgmVolume,
+                "sfxVolume": Audio.sfxVolume
+            };
+
+            localStorage.setItem("userSettings", JSON.stringify(userSettings));
+        }
+
+        static clear = function () {
+            localStorage.setItem("userSettings", JSON.stringify(this.defaultSettings));
+            this.load();
+        }
+    }
     
     //Initialization
     window.onload = function () {
@@ -244,18 +295,22 @@
         //Loads the game JSON file into the "game" variable
         game = gameJSON;
         
+        //Loads user settings
+        Settings.load();
+        
         //Initialize subsystems
-        ScreenManager.init();
         KeyboardInput.init();
         Audio.init();
+        ScreenManager.init();
         DialogBox.init();
-
+        
         //Sets up keyboard callbacks
         KeyboardInput.addKeyCallback("Space",        () => gameClickEvent());
         KeyboardInput.addKeyCallback("ControlLeft",  () => DialogBox.toggleVisibility());
         KeyboardInput.addKeyCallback("ControlRight", () => DialogBox.toggleVisibility());
         KeyboardInput.addKeyCallback("Escape",       () => escapePressedEvent());
 
+        //Goes to the main menu
         ScreenManager.switchToScreen(screens.MENU);
     }
 
@@ -454,7 +509,7 @@
     //Creates all the DOM elements needed for the settings screen
     function generateSettingsScreen () {
         /* HTML to generate
-        
+
         */
         let settingsDiv = document.createElement("div");
         settingsDiv.setAttribute("id", "vngine-settings");
@@ -486,6 +541,8 @@
         settingsBody.setAttribute("id", "vngine-settings-body");
         settingsBody.classList.add("vngine-settings-body");
 
+
+        //Text speed panel
         let settingsTextSpeedDiv = document.createElement("div");
         settingsTextSpeedDiv.setAttribute("id", "vngine-settings-text-speed");
         settingsTextSpeedDiv.classList.add("vngine-settings-text-speed");
@@ -497,6 +554,23 @@
         let textSpeedSelect = document.createElement("select");
         textSpeedSelect.setAttribute("id", "vngine-text-speed-select");
         textSpeedSelect.setAttribute("name", "vngine-text-speed-select");
+        textSpeedSelect.addEventListener("change", e => {
+            switch (e.target.value) {
+                case "veryfast":
+                    textSpeed = textVeryFastTime;
+                    break;
+                case "fast":
+                    textSpeed = textFastTime;
+                    break;
+                case "medium":
+                    textSpeed = textMediumTime;
+                    break;
+                case "slow":
+                    textSpeed = textSlowTime;
+                    break;
+            }
+            Settings.save();
+        });
 
         let textSpeedOptionVeryFast = document.createElement("option");
         textSpeedOptionVeryFast.setAttribute("value", "veryfast");
@@ -513,7 +587,23 @@
         let textSpeedOptionSlow = document.createElement("option");
         textSpeedOptionSlow.setAttribute("value", "slow");
         textSpeedOptionSlow.innerText = "Slow";
+
+        //NOTE: We need to append the options before being able to modify the selectedIndex
+        textSpeedSelect.appendChild(textSpeedOptionVeryFast);
+        textSpeedSelect.appendChild(textSpeedOptionFast);
+        textSpeedSelect.appendChild(textSpeedOptionMedium);
+        textSpeedSelect.appendChild(textSpeedOptionSlow);
         
+        textSpeedSelect.selectedIndex =
+            textSpeed == textVeryFastTime ? 0 :
+            textSpeed == textFastTime     ? 1 : 
+            textSpeed == textMediumTime   ? 2 :
+            textSpeed == textSlowTime     ? 3 :
+            1
+        ;
+        
+
+        //Sound panel
         let settingsSoundDiv = document.createElement("div");
         settingsSoundDiv.setAttribute("id", "vngine-settings-sound");
         settingsSoundDiv.classList.add("vngine-settings-sound");
@@ -526,6 +616,16 @@
         masterVolumeRange.setAttribute("type", "range");
         masterVolumeRange.setAttribute("id", "vngine-settings-master-volume-range");
         masterVolumeRange.setAttribute("name", "vngine-settings-master-volume-range");
+        masterVolumeRange.value = Audio.masterVolume;
+        masterVolumeRange.addEventListener("change", e => {
+            document.getElementById("vngine-settings-master-volume-text").innerText = e.target.value + '%';
+            Audio.masterVolume = e.target.value;
+            Settings.save();
+        });
+
+        let masterVolumePercentageText = document.createElement("a");
+        masterVolumePercentageText.setAttribute("id", "vngine-settings-master-volume-text");
+        masterVolumePercentageText.innerText = masterVolumeRange.value + '%';
 
         let bgmVolumeLabel = document.createElement("label");
         bgmVolumeLabel.setAttribute("for", "vngine-settings-bgm-volume-range");
@@ -533,8 +633,18 @@
 
         let bgmVolumeRange = document.createElement("input");
         bgmVolumeRange.setAttribute("type", "range");
-        masterVolumeRange.setAttribute("id", "vngine-settings-bgm-volume-range");
-        masterVolumeRange.setAttribute("name", "vngine-settings-bgm-volume-range");
+        bgmVolumeRange.setAttribute("id", "vngine-settings-bgm-volume-range");
+        bgmVolumeRange.setAttribute("name", "vngine-settings-bgm-volume-range");
+        bgmVolumeRange.value = Audio.bgmVolume;
+        bgmVolumeRange.addEventListener("change", e => {
+            document.getElementById("vngine-settings-bgm-volume-text").innerText = e.target.value + '%';
+            Audio.bgmVolume = e.target.value;
+            Settings.save();
+        });
+
+        let bgmVolumePercentageText = document.createElement("a");
+        bgmVolumePercentageText.setAttribute("id", "vngine-settings-bgm-volume-text");
+        bgmVolumePercentageText.innerText = bgmVolumeRange.value + '%';
 
         let sfxVolumeLabel = document.createElement("label");
         sfxVolumeLabel.setAttribute("for", "vngine-settings-sfx-volume-range");
@@ -542,52 +652,69 @@
 
         let sfxVolumeRange = document.createElement("input");
         sfxVolumeRange.setAttribute("type", "range");
-        masterVolumeRange.setAttribute("id", "vngine-settings-sfx-volume-range");
-        masterVolumeRange.setAttribute("name", "vngine-settings-sfx-volume-range");
+        sfxVolumeRange.setAttribute("id", "vngine-settings-sfx-volume-range");
+        sfxVolumeRange.setAttribute("name", "vngine-settings-sfx-volume-range");
+        sfxVolumeRange.value = Audio.sfxVolume;
+        sfxVolumeRange.addEventListener("change", e => {
+            document.getElementById("vngine-settings-sfx-volume-text").innerText = e.target.value + '%';
+            Audio.sfxVolume = e.target.value;
+            Settings.save();
+        });
+
+        let sfxVolumePercentageText = document.createElement("a");
+        sfxVolumePercentageText.setAttribute("id", "vngine-settings-sfx-volume-text");
+        sfxVolumePercentageText.innerText = sfxVolumeRange.value + '%';
         
+
+        //Footer
         let settingsFooterDiv = document.createElement("div");
         settingsFooterDiv.setAttribute("id", "vngine-settings-footer");
         settingsFooterDiv.classList.add("vngine-settings-footer");
 
-        let clearDataBtn = document.createElement("button");
-        clearDataBtn.setAttribute("id", "vngine-settings-clear-data");
-        clearDataBtn.classList.add("vngine-btn", "vngine-btn-inline", "vngine-btn-medium", "vngine-btn-left");
-        clearDataBtn.innerText = "Clear Data";
-
-        let applyBtn = document.createElement("button");
-        applyBtn.setAttribute("id", "vngine-settings-apply");
-        applyBtn.classList.add("vngine-btn", "vngine-btn-inline", "vngine-btn-medium", "vngine-btn-right");
-        applyBtn.innerText = "Apply";
-
-        let cancelBtn = document.createElement("button");
-        cancelBtn.setAttribute("id", "vngine-settings-cancel");
-        cancelBtn.classList.add("vngine-btn", "vngine-btn-inline", "vngine-btn-medium", "vngine-btn-right");
-        cancelBtn.innerText = "Cancel";
+        let setToDefaultBtn = document.createElement("button");
+        setToDefaultBtn.setAttribute("id", "vngine-settings-clear-data");
+        setToDefaultBtn.classList.add("vngine-btn");
+        setToDefaultBtn.innerText = "Set to default";
+        setToDefaultBtn.addEventListener("click", e => {
+            Settings.clear();
+            textSpeedSelect.selectedIndex = 
+                textSpeed == textVeryFastTime ? 0 :
+                textSpeed == textFastTime     ? 1 : 
+                textSpeed == textMediumTime   ? 2 :
+                textSpeed == textSlowTime     ? 3 :
+                1
+            ;
+            masterVolumeRange.value = Audio.masterVolume;
+            masterVolumePercentageText.innerText = masterVolumeRange.value + '%';
+            
+            bgmVolumeRange.value = Audio.bgmVolume;
+            bgmVolumePercentageText.innerText = bgmVolumeRange.value + '%';
+            
+            sfxVolumeRange.value = Audio.sfxVolume;
+            sfxVolumePercentageText.innerText = sfxVolumeRange.value + '%';
+        });
 
         //Appending
         settingsHeader.appendChild(backBtn);
         settingsHeader.appendChild(settingsHeaderText);
-        textSpeedSelect.appendChild(textSpeedOptionVeryFast);
-        textSpeedSelect.appendChild(textSpeedOptionFast);
-        textSpeedSelect.appendChild(textSpeedOptionMedium);
-        textSpeedSelect.appendChild(textSpeedOptionSlow);
         settingsTextSpeedDiv.appendChild(textSpeedLabel);
         settingsTextSpeedDiv.appendChild(document.createElement("br"));
         settingsTextSpeedDiv.appendChild(textSpeedSelect);
         settingsSoundDiv.appendChild(masterVolumeLabel);
         settingsSoundDiv.appendChild(document.createElement("br"));
         settingsSoundDiv.appendChild(masterVolumeRange);
+        settingsSoundDiv.appendChild(masterVolumePercentageText);
         settingsSoundDiv.appendChild(document.createElement("br"));
         settingsSoundDiv.appendChild(bgmVolumeLabel);
         settingsSoundDiv.appendChild(document.createElement("br"));
         settingsSoundDiv.appendChild(bgmVolumeRange);
+        settingsSoundDiv.appendChild(bgmVolumePercentageText);
         settingsSoundDiv.appendChild(document.createElement("br"));
         settingsSoundDiv.appendChild(sfxVolumeLabel);
         settingsSoundDiv.appendChild(document.createElement("br"));
         settingsSoundDiv.appendChild(sfxVolumeRange);
-        settingsFooterDiv.appendChild(clearDataBtn);
-        settingsFooterDiv.appendChild(applyBtn);
-        settingsFooterDiv.appendChild(cancelBtn);
+        settingsSoundDiv.appendChild(sfxVolumePercentageText);
+        settingsFooterDiv.appendChild(setToDefaultBtn);
         settingsBody.appendChild(settingsTextSpeedDiv);
         settingsBody.appendChild(settingsSoundDiv);
         settingsBody.appendChild(settingsFooterDiv);
@@ -666,6 +793,8 @@
         let keys = Object.keys(localStorage);
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i];
+            if (key == "userSettings") continue;
+
             let data = JSON.parse(localStorage.getItem(key));
 
             let savefileDiv = document.createElement("div");

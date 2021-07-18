@@ -25,6 +25,7 @@
 
     --vngine-text-large: 80px;
     --vngine-text-medium: 35px;
+    --vngine-text-medium-nerfed: 25px;
     --vngine-text-small: 15px;
 }
 
@@ -244,19 +245,23 @@
     padding-bottom: 0px;
     grid-gap: 20px;
     height: 90%;
-    font-size: var(--vngine-text-medium);
+    font-size: var(--vngine-text-medium-nerfed);
 }
 
 .vngine-settings-text-speed {
     grid-row: 1 / 5;
     grid-column: 1;
-    /* background-color: red; */
+    background-color: rgba(0,0,0,0.4);
+    border-radius: 5px;
+    padding: 15px;
 }
 
 .vngine-settings-sound {
     grid-row: 1 / 5;
     grid-column: 2;
-    /* background-color: blue; */
+    background-color: rgba(0,0,0,0.4);
+    border-radius: 5px;
+    padding: 15px;
 }
 
 .vngine-settings-footer {
