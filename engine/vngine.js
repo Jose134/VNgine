@@ -34,9 +34,10 @@
 
     let skip = false;
     let skipInterval = null;
+    let skipIntervalTime = 50;
 
     //Update needed flags
-    let needToUpdateSavefilesScreen= true;
+    let needToUpdateSavefilesScreen = true;
     let needToUpdateBacklogScreen = true;
 
     //Audio
@@ -258,6 +259,31 @@
         }
     }
 
+    const MouseWheelInput = class {
+        static wheelUpCallbacks = [];
+        static wheelDownCallbacks = [];
+
+        static init = function () {
+            //Set up event listeners
+            window.addEventListener("wheel", e => {
+                if (e.deltaY < 0) {
+                    this.wheelUpCallbacks.forEach(c => c());
+                }
+                else if (e.deltaY > 0) {
+                    this.wheelDownCallbacks.forEach(c => c());
+                }
+            })
+        }
+
+        static addWheelUpCallback = function (callback) {
+            this.wheelUpCallbacks.push(callback);
+        }
+        
+        static addWheelDownCallback = function (callback) {
+            this.wheelDownCallbacks.push(callback);
+        }
+    }
+
     const Settings = class {
         static defaultSettings = {
             "textSpeed": textFastTime,
@@ -351,15 +377,21 @@
         
         //Initialize subsystems
         KeyboardInput.init();
+        MouseWheelInput.init();
         Audio.init();
         ScreenManager.init();
         DialogBox.init();
         
         //Sets up keyboard callbacks
         KeyboardInput.addKeyCallback("Space",        () => gameClickEvent());
+        KeyboardInput.addKeyCallback("Enter",        () => gameClickEvent());
         KeyboardInput.addKeyCallback("ControlLeft",  () => DialogBox.toggleVisibility());
         KeyboardInput.addKeyCallback("ControlRight", () => DialogBox.toggleVisibility());
         KeyboardInput.addKeyCallback("Escape",       () => escapePressedEvent());
+        KeyboardInput.addKeyCallback("KeyS",         () => toggleSkip());
+
+        //Sets up mouse wheel callbacks
+        MouseWheelInput.addWheelDownCallback(() => gameClickEvent());
 
         //Goes to the main menu
         ScreenManager.switchToScreen(screens.MENU);
@@ -467,15 +499,7 @@
         skipText.setAttribute("id", "skipText");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "skipText") {
-                skip = !skip; //Invert the bool
-                if (skip) {
-                    e.target.classList.add("vngine-option-text-hold");
-                    skipInterval = setInterval(skipIntervalFunction, 50);
-                }
-                else {
-                    e.target.classList.remove("vngine-option-text-hold");
-                    clearInterval(skipInterval);
-                }
+                toggleSkip();
             }
         });
 
@@ -1218,7 +1242,7 @@
 
     //Event handler
     function gameClickEvent () {
-        if(!DialogBox.visible || !currentNode.dialog) return;
+        if(ScreenManager.currentScreen != screens.GAME || !DialogBox.visible || !currentNode.dialog) return;
 
         if (DialogBox.isWriting) {
             DialogBox.cancelWritingAnimation();
@@ -1234,6 +1258,18 @@
             else {
                 updateDialog();
             }
+        }
+    }
+
+    function toggleSkip () {
+        skip = !skip; //Invert the bool
+        if (skip) {
+            document.getElementById("skipText").classList.add("vngine-option-text-hold");
+            skipInterval = setInterval(skipIntervalFunction, skipIntervalTime);
+        }
+        else {
+            document.getElementById("skipText").classList.remove("vngine-option-text-hold");
+            clearInterval(skipInterval);
         }
     }
 
@@ -1277,7 +1313,6 @@
         let loadedData = localStorage.getItem(saveFile);
         if (loadedData) {
             loadedData = JSON.parse(loadedData);
-
             
             loadNode(loadedData.nodeIndex);
             if (game.nodes[loadedData.nodeIndex].dialog) {
