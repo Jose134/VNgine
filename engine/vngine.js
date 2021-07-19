@@ -32,6 +32,10 @@
     const textSlowTime = 200;  
     let textSpeed = textFastTime;
 
+    //Update needed flags
+    let needToUpdateSavefilesScreen= true;
+    let needToUpdateBacklogScreen = true;
+
     //Audio
     let audioUIClick = "game/res/audio/ui_click.wav";
 
@@ -124,10 +128,17 @@
                     this.settingsDiv.style.display = "block";
                     break;
                 case screens.SAVEFILES:
+                    if (needToUpdateSavefilesScreen) {
+                        renderSavefileList();
+                        needToUpdateSavefilesScreen = false;
+                    }
                     this.savefilesDiv.style.display = "block";
                     break;
                 case screens.BACKLOG:
-                    renderBacklog();
+                    if (needToUpdateBacklogScreen) {
+                        renderBacklog();
+                        needToUpdateBacklogScreen = false;
+                    }
                     this.backlogDiv.style.display = "block";
                     break;
                 default:
@@ -812,19 +823,20 @@
         savefilesHeaderText.classList.add("vngine-header-text");
         savefilesHeaderText.innerText = "Load";
 
-        savefileList = generateSavefileList();
+        let savefilesBody = document.createElement("div");
+        savefilesBody.setAttribute("id", "vngine-savefiles-body");
 
         //Appending
         savefilesHeader.appendChild(backBtn);
         savefilesHeader.appendChild(savefilesHeaderText);
         savefilesDiv.appendChild(savefilesHeader);
-        savefilesDiv.appendChild(savefileList);
+        savefilesDiv.appendChild(savefilesBody);
         mainDiv.appendChild(savefilesDiv);
 
         return savefilesDiv;
     }
 
-    function generateSavefileList () {
+    function renderSavefileList () {
         /* HTML to generate
         <div class="vngine-savefile">
             <div class="vngine-savefile-picture"></div>
@@ -834,6 +846,9 @@
             <button class="vngine-btn vngine-btn-small">Delete</button>
         </div>
         */
+        let savefilesBody = document.getElementById("vngine-savefiles-body");
+        savefilesBody.innerHTML = "";
+
         let savefileList = document.createElement("div");
         savefileList.setAttribute("id", "vngine-savefile-list");
         savefileList.classList.add("vngine-savefile-list");
@@ -899,7 +914,7 @@
 
         }
 
-        return savefileList;
+        savefilesBody.appendChild(savefileList);
     }
 
     function generateBacklogScreen () {
@@ -1119,6 +1134,7 @@
                         nodeIndex: currentNodeIndex,
                         decisionIndex: i
                     });
+                    needToUpdateBacklogScreen = true;
 
                     //Loads the target node of the decision
                     loadNode(options[i].targetNode);
@@ -1140,6 +1156,7 @@
             nodeIndex: currentNodeIndex,
             dialogIndex: currentDialogIndex
         });
+        needToUpdateBacklogScreen = true;
 
         let characterIndex = currentNode.dialog[currentDialogIndex].character;
 
@@ -1223,7 +1240,8 @@
             "dialogIndex": currentDialogIndex-1
         };
 
-        localStorage.setItem(saveFile, JSON.stringify(saveData))
+        localStorage.setItem(saveFile, JSON.stringify(saveData));
+        needToUpdateSavefilesScreen = true;
     }
 
     //Loads game information from localStorage
@@ -1245,6 +1263,7 @@
 
     function deleteSavefile (saveFile) {
         localStorage.removeItem(saveFile);
+        needToUpdateSavefilesScreen = true;
     }
       
 }())
