@@ -877,6 +877,57 @@
         return savefilesDiv;
     }
 
+    function generateBacklogScreen () {
+        /* HTML to generate
+        
+        */
+
+        let backlogDiv = document.createElement("div");
+        backlogDiv.setAttribute("id", "vngine-savefiles");
+        backlogDiv.classList.add("vngine-screen", "vngine-savefiles");
+        if (game.backlogBackground) {
+            backlogDiv.style.backgroundImage = `url(game/res/img/backgrounds/${game.backlogBackground})`;
+        }
+        
+        let backlogHeader = document.createElement("div");
+        backlogHeader.setAttribute("id", "vngine-savefiles-header");
+        backlogHeader.classList.add("vngine-header");
+
+        let backBtn = document.createElement("button");
+        backBtn.setAttribute("id", "vngine-savefiles-back");
+        backBtn.classList.add("vngine-btn", "vngine-back-btn");
+        backBtn.innerText = "Back";
+        backBtn.addEventListener("click", e => {
+            if (e.target && e.target.id == "vngine-savefiles-back") {
+                ScreenManager.switchToPreviousScreen();
+            }
+        });
+        
+        let backlogHeaderText = document.createElement("p");
+        backlogHeaderText.setAttribute("id", "vngine-savefiles-header-text");
+        backlogHeaderText.classList.add("vngine-header-text");
+        backlogHeaderText.innerText = "Backlog";
+
+        let backlogBody = document.createElement("div");
+        backlogBody.setAttribute("id", "vngine-backlog-body");
+        backlogBody.classList.add("vngine-backlog-body");
+
+        let backlogList = document.createElement("ol");
+        backlogList.setAttribute("id", "vngine-backlog-list");
+        backlogList.classList.add("vngine-backlog-list");
+
+        //Appending
+        backlogHeader.appendChild(backBtn);
+        backlogHeader.appendChild(backlogHeaderText);
+        backlogBody.append(backlogList);
+        backlogDiv.appendChild(backlogHeader);
+        backlogDiv.appendChild(backlogBody);
+        mainDiv.appendChild(backlogDiv);
+
+        return backlogDiv;
+    }
+    
+    //Displays the savefiles
     function renderSavefileList () {
         /* HTML to generate
         <div class="vngine-savefile">
@@ -958,54 +1009,90 @@
         savefilesBody.appendChild(savefileList);
     }
 
-    function generateBacklogScreen () {
-        /* HTML to generate
-        
-        */
+    //Displays the backlog messages
+    function renderBacklog () {
+        let backlogList = document.getElementById("vngine-backlog-list");
 
-        let backlogDiv = document.createElement("div");
-        backlogDiv.setAttribute("id", "vngine-savefiles");
-        backlogDiv.classList.add("vngine-screen", "vngine-savefiles");
-        if (game.backlogBackground) {
-            backlogDiv.style.backgroundImage = `url(game/res/img/backgrounds/${game.backlogBackground})`;
+        let backlog = Backlog.getAsTextArray();
+        let html = "";
+        backlog.forEach(str => {
+            html += `<li>${str}</li>`;
+        });
+
+        backlogList.innerHTML = html;
+    }
+
+    //Display the given characters on the game screen
+    function renderCharacters (characters) {
+        characterImgs.forEach(img => {
+            img.setAttribute("src", "");
+            img.setAttribute("data-character", "");
+            img.style.left = "";
+            img.style.right = "";
+        });
+
+        if (characters.length > characterImgs.length) {
+            let imgAmount = characters.length - characterImgs.length
+            for (let i = 0; i < imgAmount; i++) {
+                let character = document.createElement("img");
+                character.classList.add("vngine-character");
+                charactersDiv.append(character);
+                characterImgs.push(character);
+            }
+        }
+
+        characters.forEach((character, i) => {
+            let pictureIndex = character.picture == undefined ? 0 : character.picture;
+            let picURL = `game/res/img/characters/${game.characters[character.index].pictures[pictureIndex]}`;
+            
+            if (character.left != undefined) {
+                characterImgs[i].style.left = `${character.left}%`;
+            }
+            else if (character.right != undefined) {
+                characterImgs[i].style.right = `${character.right}%`;
+            }
+
+            characterImgs[i].setAttribute("data-character", character.index);
+            characterImgs[i].setAttribute("src", picURL);
+        });
+    }
+
+    //Display and sets up decision buttons for the given options
+    function renderDecisionOptions (options) {
+        //Remove old decision data
+        decisionButtonsDiv.innerHTML = "";
+        decisionButtons.splice(0, decisionButtons.length);
+        
+        //Set up new decision buttons
+        for (let i = 0; i < options.length; i++) {
+            decisionButtons.push(document.createElement("button"));
+            decisionButtons[i].classList.add("vngine-btn");
+            decisionButtons[i].innerText = options[i].text;
+            decisionButtons[i].setAttribute("id", `vngine-decision-btn-${i}`);
+            
+            decisionButtons[i].addEventListener("click", e => {
+                if (e.target && e.target.id == `vngine-decision-btn-${i}`) {
+                    //Hide decision buttons
+                    decisionButtonsDiv.style.display = "none";
+
+                    //Adds entry to the backlog
+                    Backlog.push({
+                        type: backlogEntryType.DECISION,
+                        nodeIndex: currentNodeIndex,
+                        decisionIndex: i
+                    });
+                    needToUpdateBacklogScreen = true;
+
+                    //Loads the target node of the decision
+                    loadNode(options[i].targetNode);
+                }
+            });
+
+            decisionButtonsDiv.appendChild(decisionButtons[i]);
         }
         
-        let backlogHeader = document.createElement("div");
-        backlogHeader.setAttribute("id", "vngine-savefiles-header");
-        backlogHeader.classList.add("vngine-header");
-
-        let backBtn = document.createElement("button");
-        backBtn.setAttribute("id", "vngine-savefiles-back");
-        backBtn.classList.add("vngine-btn", "vngine-back-btn");
-        backBtn.innerText = "Back";
-        backBtn.addEventListener("click", e => {
-            if (e.target && e.target.id == "vngine-savefiles-back") {
-                ScreenManager.switchToPreviousScreen();
-            }
-        });
-        
-        let backlogHeaderText = document.createElement("p");
-        backlogHeaderText.setAttribute("id", "vngine-savefiles-header-text");
-        backlogHeaderText.classList.add("vngine-header-text");
-        backlogHeaderText.innerText = "Backlog";
-
-        let backlogBody = document.createElement("div");
-        backlogBody.setAttribute("id", "vngine-backlog-body");
-        backlogBody.classList.add("vngine-backlog-body");
-
-        let backlogList = document.createElement("ol");
-        backlogList.setAttribute("id", "vngine-backlog-list");
-        backlogList.classList.add("vngine-backlog-list");
-
-        //Appending
-        backlogHeader.appendChild(backBtn);
-        backlogHeader.appendChild(backlogHeaderText);
-        backlogBody.append(backlogList);
-        backlogDiv.appendChild(backlogHeader);
-        backlogDiv.appendChild(backlogBody);
-        mainDiv.appendChild(backlogDiv);
-
-        return backlogDiv;
+        //Show decision buttons
+        decisionButtonsDiv.style.display = "block";
     }
 
     //Returns the background that should be displayed in a given node
@@ -1102,91 +1189,6 @@
                 console.warn(`VNGINE_WARNING: node with index ${index} doesn't have either dialog or decision`);
             }
         }
-    }
-
-    function renderBacklog () {
-        let backlogList = document.getElementById("vngine-backlog-list");
-
-        let backlog = Backlog.getAsTextArray();
-        let html = "";
-        backlog.forEach(str => {
-            html += `<li>${str}</li>`;
-        });
-
-        backlogList.innerHTML = html;
-    }
-
-    //Display the given characters on the game screen
-    function renderCharacters (characters) {
-        characterImgs.forEach(img => {
-            img.setAttribute("src", "");
-            img.setAttribute("data-character", "");
-            img.style.left = "";
-            img.style.right = "";
-        });
-
-        if (characters.length > characterImgs.length) {
-            let imgAmount = characters.length - characterImgs.length
-            for (let i = 0; i < imgAmount; i++) {
-                let character = document.createElement("img");
-                character.classList.add("vngine-character");
-                charactersDiv.append(character);
-                characterImgs.push(character);
-            }
-        }
-
-        characters.forEach((character, i) => {
-            let pictureIndex = character.picture == undefined ? 0 : character.picture;
-            let picURL = `game/res/img/characters/${game.characters[character.index].pictures[pictureIndex]}`;
-            
-            if (character.left != undefined) {
-                characterImgs[i].style.left = `${character.left}%`;
-            }
-            else if (character.right != undefined) {
-                characterImgs[i].style.right = `${character.right}%`;
-            }
-
-            characterImgs[i].setAttribute("data-character", character.index);
-            characterImgs[i].setAttribute("src", picURL);
-        });
-    }
-
-    //Display and sets up decision buttons for the given options
-    function renderDecisionOptions (options) {
-        //Remove old decision data
-        decisionButtonsDiv.innerHTML = "";
-        decisionButtons.splice(0, decisionButtons.length);
-        
-        //Set up new decision buttons
-        for (let i = 0; i < options.length; i++) {
-            decisionButtons.push(document.createElement("button"));
-            decisionButtons[i].classList.add("vngine-btn");
-            decisionButtons[i].innerText = options[i].text;
-            decisionButtons[i].setAttribute("id", `vngine-decision-btn-${i}`);
-            
-            decisionButtons[i].addEventListener("click", e => {
-                if (e.target && e.target.id == `vngine-decision-btn-${i}`) {
-                    //Hide decision buttons
-                    decisionButtonsDiv.style.display = "none";
-
-                    //Adds entry to the backlog
-                    Backlog.push({
-                        type: backlogEntryType.DECISION,
-                        nodeIndex: currentNodeIndex,
-                        decisionIndex: i
-                    });
-                    needToUpdateBacklogScreen = true;
-
-                    //Loads the target node of the decision
-                    loadNode(options[i].targetNode);
-                }
-            });
-
-            decisionButtonsDiv.appendChild(decisionButtons[i]);
-        }
-        
-        //Show decision buttons
-        decisionButtonsDiv.style.display = "block";
     }
 
     //Writes the dialog text
