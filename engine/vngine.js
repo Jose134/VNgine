@@ -8,7 +8,8 @@
         GAME:      "game",
         MENU:      "menu",
         SETTINGS:  "settings",
-        SAVEFILES: "savefiles"
+        SAVEFILES: "savefiles",
+        BACKLOG:   "backlog"
     }
 
     //Characters DOM
@@ -30,10 +31,6 @@
     const textMediumTime = 100;
     const textSlowTime = 200;  
     let textSpeed = textFastTime;
-    let writingText = false;
-
-    //Keyboard
-    let spaceHold = false;
 
     //Audio
     let audioUIClick = "game/res/audio/ui_click.wav";
@@ -96,12 +93,14 @@
         static menuDiv = null;
         static settingsDiv = null;
         static savefilesDiv = null;
+        static backlogDiv = null;
 
         static init = function () {
             this.gameDiv      = generateGameScreen();
             this.menuDiv      = generateMenuScreen();
             this.settingsDiv  = generateSettingsScreen();
             this.savefilesDiv = generateSavefilesScreen();
+            this.backlogDiv   = generateBacklogScreen();
         }
 
         static switchToScreen = function (screen) {
@@ -112,6 +111,7 @@
             this.gameDiv.style.display      = "none";
             this.settingsDiv.style.display  = "none";
             this.savefilesDiv.style.display = "none";
+            this.backlogDiv.style.display   = "none";
     
             switch (screen) {
                 case screens.MENU:
@@ -125,6 +125,10 @@
                     break;
                 case screens.SAVEFILES:
                     this.savefilesDiv.style.display = "block";
+                    break;
+                case screens.BACKLOG:
+                    renderBacklog();
+                    this.backlogDiv.style.display = "block";
                     break;
                 default:
                     this.currentScreen = null;
@@ -284,6 +288,39 @@
             this.load();
         }
     }
+
+    const backlogEntryType = {
+        DIALOG: 0,
+        DECISION: 1
+    }
+
+    const Backlog = class {
+        static stack = [];
+
+        static push = function (backlogEntry) {
+            this.stack.push(backlogEntry);
+        }
+
+        static pop = function () {
+            this.stack.pop();
+        }
+
+        static getAsTextArray = function () {
+            let output = [];
+            this.stack.forEach(entry => {
+                if (entry.type == backlogEntryType.DIALOG) {
+                    let dialogEntry = game.nodes[entry.nodeIndex].dialog[entry.dialogIndex];
+                    output.push(`${game.characters[dialogEntry.character].name}: ${dialogEntry.text}`)
+                }
+                else if (entry.type == backlogEntryType.DECISION) {
+                    let decisionTaken = game.nodes[entry.nodeIndex].decision[entry.decisionIndex];
+                    output.push(`*${decisionTaken.text}*`);
+                }
+            });
+
+            return output;
+        }
+    }
     
     //Initialization
     window.onload = function () {
@@ -377,6 +414,16 @@
             }
         });
 
+        let backlogText = document.createElement("a");
+        backlogText.innerText = "Backlog";
+        backlogText.classList.add("vngine-option-text");
+        backlogText.setAttribute("id", "backlogText");
+        document.addEventListener("click", e => {
+            if (e.target && e.target.id == "backlogText") {
+                ScreenManager.switchToScreen(screens.BACKLOG);
+            }
+        });
+
         let saveText = document.createElement("a");
         saveText.innerText = "Save";
         saveText.classList.add("vngine-option-text");
@@ -415,6 +462,7 @@
         });
 
         optionsContainer.appendChild(menuText);
+        optionsContainer.appendChild(backlogText);
         optionsContainer.appendChild(saveText);
         optionsContainer.appendChild(loadText);
         optionsContainer.appendChild(skipText);
@@ -520,7 +568,7 @@
         
         let settingsHeader = document.createElement("div");
         settingsHeader.setAttribute("id", "vngine-settings-header");
-        settingsHeader.classList.add("vngine-settings-header");
+        settingsHeader.classList.add("vngine-header");
 
         let backBtn = document.createElement("button");
         backBtn.setAttribute("id", "vngine-settings-back");
@@ -534,7 +582,7 @@
         
         let settingsHeaderText = document.createElement("p");
         settingsHeaderText.setAttribute("id", "vngine-settings-header-text");
-        settingsHeaderText.classList.add("vngine-settings-header-text");
+        settingsHeaderText.classList.add("vngine-header-text");
         settingsHeaderText.innerText = "Settings";
 
         let settingsBody = document.createElement("div");
@@ -747,7 +795,7 @@
         
         let savefilesHeader = document.createElement("div");
         savefilesHeader.setAttribute("id", "vngine-savefiles-header");
-        savefilesHeader.classList.add("vngine-savefiles-header");
+        savefilesHeader.classList.add("vngine-header");
 
         let backBtn = document.createElement("button");
         backBtn.setAttribute("id", "vngine-savefiles-back");
@@ -761,7 +809,7 @@
         
         let savefilesHeaderText = document.createElement("p");
         savefilesHeaderText.setAttribute("id", "vngine-savefiles-header-text");
-        savefilesHeaderText.classList.add("vngine-savefiles-header-text");
+        savefilesHeaderText.classList.add("vngine-header-text");
         savefilesHeaderText.innerText = "Load";
 
         savefileList = generateSavefileList();
@@ -854,6 +902,56 @@
         return savefileList;
     }
 
+    function generateBacklogScreen () {
+        /* HTML to generate
+        
+        */
+
+        let backlogDiv = document.createElement("div");
+        backlogDiv.setAttribute("id", "vngine-savefiles");
+        backlogDiv.classList.add("vngine-screen", "vngine-savefiles");
+        if (game.backlogBackground) {
+            backlogDiv.style.backgroundImage = `url(game/res/img/backgrounds/${game.backlogBackground})`;
+        }
+        
+        let backlogHeader = document.createElement("div");
+        backlogHeader.setAttribute("id", "vngine-savefiles-header");
+        backlogHeader.classList.add("vngine-header");
+
+        let backBtn = document.createElement("button");
+        backBtn.setAttribute("id", "vngine-savefiles-back");
+        backBtn.classList.add("vngine-btn", "vngine-back-btn");
+        backBtn.innerText = "Back";
+        backBtn.addEventListener("click", e => {
+            if (e.target && e.target.id == "vngine-savefiles-back") {
+                ScreenManager.switchToPreviousScreen();
+            }
+        });
+        
+        let backlogHeaderText = document.createElement("p");
+        backlogHeaderText.setAttribute("id", "vngine-savefiles-header-text");
+        backlogHeaderText.classList.add("vngine-header-text");
+        backlogHeaderText.innerText = "Backlog";
+
+        let backlogBody = document.createElement("div");
+        backlogBody.setAttribute("id", "vngine-backlog-body");
+        backlogBody.classList.add("vngine-backlog-body");
+
+        let backlogList = document.createElement("ol");
+        backlogList.setAttribute("id", "vngine-backlog-list");
+        backlogList.classList.add("vngine-backlog-list");
+
+        //Appending
+        backlogHeader.appendChild(backBtn);
+        backlogHeader.appendChild(backlogHeaderText);
+        backlogBody.append(backlogList);
+        backlogDiv.appendChild(backlogHeader);
+        backlogDiv.appendChild(backlogBody);
+        mainDiv.appendChild(backlogDiv);
+
+        return backlogDiv;
+    }
+
     //Returns the background that should be displayed in a given node
     function getNodeBackground (nodeIndex) {
         let index = nodeIndex;
@@ -925,7 +1023,7 @@
             }
             else if (!characterImgs.map(c => c.getAttribute("src") != "").includes(true)) {
                 let characters = getNodeCharacters(currentNodeIndex);
-                if (background) {
+                if (characters) {
                     renderCharacters(characters)
                 }
                 else {
@@ -948,6 +1046,18 @@
                 console.warn(`VNGINE_WARNING: node with index ${index} doesn't have either dialog or decision`);
             }
         }
+    }
+
+    function renderBacklog () {
+        let backlogList = document.getElementById("vngine-backlog-list");
+
+        let backlog = Backlog.getAsTextArray();
+        let html = "";
+        backlog.forEach(str => {
+            html += `<li>${str}</li>`;
+        });
+
+        backlogList.innerHTML = html;
     }
 
     //Display the given characters on the game screen
@@ -1003,6 +1113,13 @@
                     //Hide decision buttons
                     decisionButtonsDiv.style.display = "none";
 
+                    //Adds entry to the backlog
+                    Backlog.push({
+                        type: backlogEntryType.DECISION,
+                        nodeIndex: currentNodeIndex,
+                        decisionIndex: i
+                    });
+
                     //Loads the target node of the decision
                     loadNode(options[i].targetNode);
                 }
@@ -1017,6 +1134,13 @@
 
     //Writes the dialog text
     function updateDialog () {
+        //Adds an entry to the backlog
+        Backlog.push({
+            type: backlogEntryType.DIALOG,
+            nodeIndex: currentNodeIndex,
+            dialogIndex: currentDialogIndex
+        });
+
         let characterIndex = currentNode.dialog[currentDialogIndex].character;
 
         //Change character pictures if needed
@@ -1080,8 +1204,9 @@
     }
 
     function escapePressedEvent () {
-        if (ScreenManager.currentScreen == screens.SETTINGS ||
-            ScreenManager.currentScreen == screens.SAVEFILES) {
+        if (ScreenManager.currentScreen == screens.SETTINGS  ||
+            ScreenManager.currentScreen == screens.SAVEFILES ||
+            ScreenManager.currentScreen == screens.BACKLOG) {
             
             ScreenManager.switchToPreviousScreen();
         }
@@ -1120,17 +1245,6 @@
 
     function deleteSavefile (saveFile) {
         localStorage.removeItem(saveFile);
-    }
-
-    //---------------HELPERS---------------//
-
-    //Returns true if both arrays are equal (can be different references), false otherwise
-    function compareArrays (a, b) {
-        return Array.isArray(a) &&
-               Array.isArray(b) &&
-               a.length === b.length &&
-               a.every((val, index) => val === b[index])
-        ;
     }
       
 }())

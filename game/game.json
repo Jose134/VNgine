@@ -3,6 +3,7 @@ gameJSON = {
     "menuBackground": "background.jpg",
     "settingsBackground": "background.jpg",
     "savefilesBackground": "background.jpg",
+    "backlogBackground": "background2.jpg",
     "author": "DarkBird",
     "characters": [
         {

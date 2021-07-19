@@ -44,6 +44,8 @@
 .vngine-screen {
     width: 100%;
     background-color: var(--vngine-color-screen-background);
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .vngine-btn-group {
@@ -119,6 +121,28 @@
     margin-left: 10px;
 }
 
+/*-----------------------------------*/
+/*              HEADER               */
+/*-----------------------------------*/
+
+.vngine-header {
+    display: flex;
+    position: sticky;
+    margin: 0;
+    height: 10%;
+    align-items: center;
+    max-height: 100px;
+    background-color: var(--vngine-color-ui-main);
+}
+
+.vngine-header-text {
+    margin-left: auto;
+    margin-right: auto;
+    font-size: var(--vngine-text-medium);
+    font-weight: bold;
+    color: var(--vngine-color-ui-text);
+}
+
 /*---------------------------------*/
 /*              MENU               */
 /*---------------------------------*/
@@ -140,24 +164,6 @@
 
 .vngine-savefiles {
     color: white;
-}
-
-.vngine-savefiles-header {
-    display: flex;
-    position: sticky;
-    margin: 0;
-    height: 10%;
-    align-items: center;
-    max-height: 100px;
-    background-color: var(--vngine-color-ui-main);
-}
-
-.vngine-savefiles-header-text {
-    margin-left: auto;
-    margin-right: auto;
-    font-size: var(--vngine-text-medium);
-    font-weight: bold;
-    color: var(--vngine-color-ui-text);
 }
 
 .vngine-savefile-list {
@@ -217,24 +223,6 @@
 
 .vngine-settings {
     color: white;
-}
-
-.vngine-settings-header {
-    display: flex;
-    position: sticky;
-    margin: 0;
-    height: 10%;
-    align-items: center;
-    max-height: 100px;
-    background-color: var(--vngine-color-ui-main);
-}
-
-.vngine-settings-header-text {
-    margin-left: auto;
-    margin-right: auto;
-    font-size: var(--vngine-text-medium);
-    font-weight: bold;
-    color: var(--vngine-color-ui-text);
 }
 
 .vngine-settings-body {
@@ -361,3 +349,12 @@
 .vngine-option-text:hover {
     color: var(--vngine-color-ui-option-text-hover);
 }
+
+/*------------------------------------*/
+/*              BACKLOG               */
+/*------------------------------------*/
+
+.vngine-backlog {
+    color: white;
+}
+
