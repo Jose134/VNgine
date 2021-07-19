@@ -32,6 +32,9 @@
     const textSlowTime = 200;  
     let textSpeed = textFastTime;
 
+    let skip = false;
+    let skipInterval = null;
+
     //Update needed flags
     let needToUpdateSavefilesScreen= true;
     let needToUpdateBacklogScreen = true;
@@ -461,6 +464,20 @@
         let skipText = document.createElement("a");
         skipText.innerText = "Skip";
         skipText.classList.add("vngine-option-text");
+        skipText.setAttribute("id", "skipText");
+        document.addEventListener("click", e => {
+            if (e.target && e.target.id == "skipText") {
+                skip = !skip; //Invert the bool
+                if (skip) {
+                    e.target.classList.add("vngine-option-text-hold");
+                    skipInterval = setInterval(skipIntervalFunction, 50);
+                }
+                else {
+                    e.target.classList.remove("vngine-option-text-hold");
+                    clearInterval(skipInterval);
+                }
+            }
+        });
 
         let settingsText = document.createElement("a");
         settingsText.innerText = "Settings";
@@ -1217,6 +1234,17 @@
             else {
                 updateDialog();
             }
+        }
+    }
+
+    function skipIntervalFunction () {
+        if (game.nodes[currentNodeIndex].decision) {
+            clearInterval(skipInterval);
+            skip = false;
+            document.getElementById("skipText").classList.remove("vngine-option-text-hold");
+        }
+        else {
+            gameClickEvent();
         }
     }
 
