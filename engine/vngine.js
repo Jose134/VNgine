@@ -9,16 +9,13 @@
         MENU:      "menu",
         SETTINGS:  "settings",
         SAVEFILES: "savefiles",
-        BACKLOG:   "backlog"
-    }
+        BACKLOG:   "backlog",
+        GALLERY:   "gallery"
+    };
 
     //Characters DOM
     let characterImgs = [];
     let charactersDiv = null;
-    
-    //Decision making
-    let decisionButtonsDiv = null;
-    let decisionButtons = [];
 
     //Game status
     let currentNode = null;
@@ -32,6 +29,7 @@
     const textSlowTime = 200;  
     let textSpeed = textFastTime;
 
+    //Skip
     let skip = false;
     let skipInterval = null;
     let skipIntervalTime = 50;
@@ -429,7 +427,8 @@
             }
         });
 
-        decisionButtonsDiv = document.createElement("div");
+        let decisionButtonsDiv = document.createElement("div");
+        decisionButtonsDiv.setAttribute("id", "vngine-decision-buttons");
         decisionButtonsDiv.classList.add("vngine-btn-group");
 
         charactersDiv = document.createElement("div");
@@ -570,7 +569,9 @@
         newGameBtn.setAttribute("id", "vngine-menu-newgame-btn");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "vngine-menu-newgame-btn") {
-                menuNewGameClick();
+                loadNode(0);
+                DialogBox.setVisible(true);
+                ScreenManager.switchToScreen(screens.GAME);
             }
         });
         
@@ -580,7 +581,17 @@
         continueBtn.classList.add("vngine-btn");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "vngine-menu-continue-btn") {
-                menuContinueClick();
+                ScreenManager.switchToScreen(screens.SAVEFILES);
+            }
+        });
+        
+        let galleryBtn = document.createElement("button");
+        continueBtn.innerText = "CG Gallery";
+        continueBtn.setAttribute("id", "vngine-menu-gallery-btn");
+        continueBtn.classList.add("vngine-btn");
+        document.addEventListener("click", e => {
+            if (e.target && e.target.id == "vngine-menu-gallery-btn") {
+                console.warn("VNGINE_WARN: Unimplemented button callback");
             }
         });
         
@@ -590,7 +601,7 @@
         settingsBtn.classList.add("vngine-btn");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "vngine-menu-settings-btn") {
-                menuSettingsClick();
+                ScreenManager.switchToScreen(screens.SETTINGS);
             }
         });
         
@@ -604,6 +615,13 @@
         mainDiv.appendChild(menuDiv);
 
         return menuDiv;
+    }
+
+    //Creates all the DOM elements needed for the gallery screen
+    function generateGalleryScreen () {
+        /* HTML to generate
+
+        */
     }
     
     //Creates all the DOM elements needed for the settings screen
@@ -640,7 +658,6 @@
         let settingsBody = document.createElement("div");
         settingsBody.setAttribute("id", "vngine-settings-body");
         settingsBody.classList.add("vngine-settings-body");
-
 
         //Text speed panel
         let settingsTextSpeedDiv = document.createElement("div");
@@ -701,7 +718,6 @@
             textSpeed == textSlowTime     ? 3 :
             1
         ;
-        
 
         //Sound panel
         let settingsSoundDiv = document.createElement("div");
@@ -1060,17 +1076,17 @@
     //Display and sets up decision buttons for the given options
     function renderDecisionOptions (options) {
         //Remove old decision data
+        let decisionButtonsDiv = document.getElementById("vngine-decision-buttons");
         decisionButtonsDiv.innerHTML = "";
-        decisionButtons.splice(0, decisionButtons.length);
         
         //Set up new decision buttons
         for (let i = 0; i < options.length; i++) {
-            decisionButtons.push(document.createElement("button"));
-            decisionButtons[i].classList.add("vngine-btn");
-            decisionButtons[i].innerText = options[i].text;
-            decisionButtons[i].setAttribute("id", `vngine-decision-btn-${i}`);
+            let button = document.createElement("button");
+            button.classList.add("vngine-btn");
+            button.innerText = options[i].text;
+            button.setAttribute("id", `vngine-decision-btn-${i}`);
             
-            decisionButtons[i].addEventListener("click", e => {
+            button.addEventListener("click", e => {
                 if (e.target && e.target.id == `vngine-decision-btn-${i}`) {
                     //Hide decision buttons
                     decisionButtonsDiv.style.display = "none";
@@ -1088,7 +1104,7 @@
                 }
             });
 
-            decisionButtonsDiv.appendChild(decisionButtons[i]);
+            decisionButtonsDiv.appendChild(button);
         }
         
         //Show decision buttons
@@ -1123,20 +1139,6 @@
         return characters;
     }
 
-    function menuNewGameClick () {
-        loadNode(0);
-        DialogBox.setVisible(true);
-        ScreenManager.switchToScreen(screens.GAME);
-    }
-
-    function menuContinueClick () {
-        ScreenManager.switchToScreen(screens.SAVEFILES);
-    }
-
-    function menuSettingsClick () {
-        ScreenManager.switchToScreen(screens.SETTINGS);
-    }
-
     //Loads a node from the game given its index
     function loadNode (index) {
         currentNode = game.nodes[index];
@@ -1156,7 +1158,7 @@
                     ScreenManager.gameDiv.style.backgroundImage = `url("game/res/img/backgrounds/${background}")`;
                 }
                 else {
-                    console.error(`VNGINE_ERROR: Couldn't get background for node with index ${currentNodeIndex}`)
+                    console.error(`VNGINE_ERROR: Couldn't get background for node with index ${currentNodeIndex}`);
                 }
             }
 
@@ -1167,10 +1169,10 @@
             else if (!characterImgs.map(c => c.getAttribute("src") != "").includes(true)) {
                 let characters = getNodeCharacters(currentNodeIndex);
                 if (characters) {
-                    renderCharacters(characters)
+                    renderCharacters(characters);
                 }
                 else {
-                    console.error(`VNGINE_ERROR: Couldn't get character pictures for node with index ${currentNodeIndex}`)
+                    console.error(`VNGINE_ERROR: Couldn't get character pictures for node with index ${currentNodeIndex}`);
                 }
             }
                 
