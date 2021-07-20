@@ -222,6 +222,11 @@
         }
     }
 
+    const keyEvent = {
+        DOWN: 0,
+        UP: 1
+    };
+
     const KeyboardInput = class {
         static keyInfo = {};
 
@@ -233,27 +238,42 @@
                     this.keyInfo[e.code].held = true;
 
                     //Call all the callbacks
-                    if (this.keyInfo[e.code].callbacks) {
-                        this.keyInfo[e.code].callbacks.forEach(c => c());
+                    if (this.keyInfo[e.code].keyDownCallbacks) {
+                        this.keyInfo[e.code].keyDownCallbacks.forEach(c => c());
                     }
                 }
             });
         
             window.addEventListener("keyup", e => {
                 if (this.keyInfo[e.code]) {
+                    //Set key as not being held
                     this.keyInfo[e.code].held = false;
+
+                    //Call all the callbacks
+                    if (this.keyInfo[e.code].keyUpCallbacks) {
+                        this.keyInfo[e.code].keyUpCallbacks.forEach(c => c());
+                    }
                 }
             });
         }
 
-        static addKeyCallback = function (keycode, callback) {
+        static addKeyCallback = function (event, keycode, callback) {
             if (!this.keyInfo[keycode]) {
                 this.keyInfo[keycode] = {};
                 this.keyInfo[keycode].held = false;
-                this.keyInfo[keycode].callbacks = new Array();
+                this.keyInfo[keycode].keyDownCallbacks = [];
+                this.keyInfo[keycode].keyUpCallbacks = [];
             }
 
-            this.keyInfo[keycode].callbacks.push(callback);
+            if (event == keyEvent.DOWN) {
+                this.keyInfo[keycode].keyDownCallbacks.push(callback);
+            }
+            else if (event == keyEvent.UP) {
+                this.keyInfo[keycode].keyUpCallbacks.push(callback);
+            }
+            else {
+                console.error(`VNGINE_ERROR: Key event type ${event} not recognized`);
+            }
         }
     }
 
@@ -381,12 +401,13 @@
         DialogBox.init();
         
         //Sets up keyboard callbacks
-        KeyboardInput.addKeyCallback("Space",        () => gameClickEvent());
-        KeyboardInput.addKeyCallback("Enter",        () => gameClickEvent());
-        KeyboardInput.addKeyCallback("ControlLeft",  () => DialogBox.toggleVisibility());
-        KeyboardInput.addKeyCallback("ControlRight", () => DialogBox.toggleVisibility());
-        KeyboardInput.addKeyCallback("Escape",       () => escapePressedEvent());
-        KeyboardInput.addKeyCallback("KeyS",         () => toggleSkip());
+        KeyboardInput.addKeyCallback(keyEvent.DOWN, "Space",        () => gameClickEvent());
+        KeyboardInput.addKeyCallback(keyEvent.DOWN, "Enter",        () => gameClickEvent());
+        KeyboardInput.addKeyCallback(keyEvent.DOWN, "ControlLeft",  () => DialogBox.toggleVisibility());
+        KeyboardInput.addKeyCallback(keyEvent.DOWN, "ControlRight", () => DialogBox.toggleVisibility());
+        KeyboardInput.addKeyCallback(keyEvent.DOWN, "Escape",       () => escapePressedEvent());
+        KeyboardInput.addKeyCallback(keyEvent.DOWN, "KeyS",         () => toggleSkip());
+        KeyboardInput.addKeyCallback(keyEvent.UP, "KeyS",         () => toggleSkip());
 
         //Sets up mouse wheel callbacks
         MouseWheelInput.addWheelDownCallback(() => gameClickEvent());
@@ -586,9 +607,9 @@
         });
         
         let galleryBtn = document.createElement("button");
-        continueBtn.innerText = "CG Gallery";
-        continueBtn.setAttribute("id", "vngine-menu-gallery-btn");
-        continueBtn.classList.add("vngine-btn");
+        galleryBtn.innerText = "CG Gallery";
+        galleryBtn.setAttribute("id", "vngine-menu-gallery-btn");
+        galleryBtn.classList.add("vngine-btn");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "vngine-menu-gallery-btn") {
                 console.warn("VNGINE_WARN: Unimplemented button callback");
@@ -608,6 +629,7 @@
         //Append
         btnGroup.appendChild(newGameBtn);
         btnGroup.appendChild(continueBtn);
+        btnGroup.appendChild(galleryBtn);
         btnGroup.appendChild(settingsBtn);
         menuDiv.appendChild(titleText);
         menuDiv.appendChild(btnGroup);
