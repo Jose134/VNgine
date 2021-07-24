@@ -15,6 +15,10 @@
 
     --vngine-color-ui-text: white;
     --vngine-color-ui-text-hover: #f58295;
+    
+    --vngine-color-ui-page-text: #999999;
+    --vngine-color-ui-page-text-hover: #dddddd;
+    --vngine-color-ui-page-text-selected: white;
 
     --vngine-color-ui-option-text: rgb(202, 115, 129);
     --vngine-color-ui-option-text-hover: white;
@@ -358,3 +362,61 @@
     color: white;
 }
 
+/*------------------------------------*/
+/*              GALLERY               */
+/*------------------------------------*/
+
+.vngine-gallery {
+    color: white;
+}
+
+.vngine-gallery-body {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    padding: 20px;
+    padding-bottom: 0px;
+    grid-gap: 20px;
+    height: 70%;
+}
+
+.vngine-gallery-item {
+    display: flex;
+    align-self: center;
+    margin-right: auto;
+    margin-left: auto;
+    width: 95%;
+    transition: width 50ms;
+    transition-timing-function: ease-out;
+}
+
+.vngine-gallery-item:hover {
+    width: 100%;
+}
+
+.vngine-gallery-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 10%;
+    text-align: center;
+}
+
+.vngine-gallery-page-text {
+    font-size: var(--vngine-text-medium);
+    color: var(--vngine-color-ui-page-text);
+    margin-right: 3px;
+    margin-left: 3px;
+}
+
+.vngine-gallery-page-text:hover {
+    color: var(--vngine-color-ui-page-text-hover);
+}
+
+.vngine-gallery-page-text-selected {
+    color: var(--vngine-color-ui-page-text-selected);
+}
+
+.vngine-gallery-page-text-selected:hover {
+    color: var(--vngine-color-ui-page-text-selected);
+}

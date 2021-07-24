@@ -34,6 +34,10 @@
     let skipInterval = null;
     let skipIntervalTime = 50;
 
+    //Gallery
+    let unlockedCG = [];
+    let galleryPages = 0;
+
     //Update needed flags
     let needToUpdateSavefilesScreen = true;
     let needToUpdateBacklogScreen = true;
@@ -95,11 +99,13 @@
     const ScreenManager = class {
         static currentScreen = null;
         static previousScreen = null;
+
         static gameDiv = null;
         static menuDiv = null;
         static settingsDiv = null;
         static savefilesDiv = null;
         static backlogDiv = null;
+        static galleryDiv = null;
 
         static init = function () {
             this.gameDiv      = generateGameScreen();
@@ -107,6 +113,7 @@
             this.settingsDiv  = generateSettingsScreen();
             this.savefilesDiv = generateSavefilesScreen();
             this.backlogDiv   = generateBacklogScreen();
+            this.galleryDiv   = generateGalleryScreen();
         }
 
         static switchToScreen = function (screen) {
@@ -118,6 +125,7 @@
             this.settingsDiv.style.display  = "none";
             this.savefilesDiv.style.display = "none";
             this.backlogDiv.style.display   = "none";
+            this.galleryDiv.style.display   = "none";
     
             switch (screen) {
                 case screens.MENU:
@@ -142,6 +150,10 @@
                         needToUpdateBacklogScreen = false;
                     }
                     this.backlogDiv.style.display = "block";
+                    break;
+                case screens.GALLERY:
+                    renderGallery(0);
+                    this.galleryDiv.style.display = "block";
                     break;
                 default:
                     this.currentScreen = null;
@@ -429,6 +441,17 @@
         MouseWheelInput.addWheelDownCallback(() => gameClickEvent());
         MouseWheelInput.addWheelUpCallback(() => gameBack());
 
+        //Loads the unlocked CGs array
+        unlockedCG = localStorage.getItem("cg");
+        if (unlockedCG == null) {
+            //If there's no cg stored, make it an empty array
+            unlockedCG = [];
+        }
+        else {
+            //Convert string to array of ints (comma separated)
+            unlockedCG = unlockedCG.split(",").map(x => parseInt(x));
+        }
+
         //Goes to the main menu
         ScreenManager.switchToScreen(screens.MENU);
     }
@@ -644,7 +667,7 @@
         galleryBtn.classList.add("vngine-btn");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "vngine-menu-gallery-btn") {
-                console.warn("VNGINE_WARN: Unimplemented button callback");
+                ScreenManager.switchToScreen(screens.GALLERY);
             }
         });
         
@@ -676,6 +699,64 @@
         /* HTML to generate
 
         */
+        let galleryDiv = document.createElement("div");
+        galleryDiv.setAttribute("id", "vngine-gallery");
+        galleryDiv.classList.add("vngine-screen", "vngine-gallery");
+        if (game.galleryBackground) {
+            galleryDiv.style.backgroundImage = `url(game/res/img/backgrounds/${game.galleryBackground})`;
+        }
+        
+        let galleryHeader = document.createElement("div");
+        galleryHeader.setAttribute("id", "vngine-gallery-header");
+        galleryHeader.classList.add("vngine-header");
+
+        let backBtn = document.createElement("button");
+        backBtn.setAttribute("id", "vngine-gallery-back");
+        backBtn.classList.add("vngine-btn", "vngine-back-btn");
+        backBtn.innerText = "Back";
+        backBtn.addEventListener("click", e => {
+            if (e.target && e.target.id == "vngine-gallery-back") {
+                ScreenManager.switchToPreviousScreen();
+            }
+        });
+        
+        let galleryHeaderText = document.createElement("p");
+        galleryHeaderText.setAttribute("id", "vngine-gallery-header-text");
+        galleryHeaderText.classList.add("vngine-header-text");
+        galleryHeaderText.innerText = "Gallery";
+
+        let galleryBody = document.createElement("div");
+        galleryBody.setAttribute("id", "vngine-gallery-body");
+        galleryBody.classList.add("vngine-gallery-body");
+
+        let galleryFooter = document.createElement("div");
+        galleryFooter.setAttribute("id", "vngine-gallery-footer");
+        galleryFooter.classList.add("vngine-gallery-footer");
+
+        galleryPages = Math.ceil(game.gallery.length / 6);
+        for (let i = 0; i < galleryPages; i++) {
+            let pageText = document.createElement("a");
+            pageText.setAttribute("id", `vngine-gallery-page-text-${i}`);
+            pageText.classList.add("vngine-gallery-page-text");
+            pageText.innerText = `${i+1}`;
+            pageText.addEventListener("click", e => {
+                if (!e.target.classList.contains("vngine-gallery-page-selected")) {
+                    renderGallery(i);
+                }
+            });
+
+            galleryFooter.appendChild(pageText);
+        }
+
+        //Appending
+        galleryHeader.appendChild(backBtn);
+        galleryHeader.appendChild(galleryHeaderText);
+        galleryDiv.appendChild(galleryHeader);
+        galleryDiv.appendChild(galleryBody);
+        galleryDiv.appendChild(galleryFooter);
+        mainDiv.appendChild(galleryDiv);
+
+        return galleryDiv;
     }
     
     //Creates all the DOM elements needed for the settings screen
@@ -1092,6 +1173,46 @@
         backlogList.innerHTML = html;
     }
 
+    //Display unlocked CGs
+    function renderGallery (page) {
+        let maxPages = Math.ceil(game.gallery.length / 6);
+        if (page >= maxPages) {
+            page = 0;
+            console.error(`VNGINE_ERROR: can't render page ${page}, it's out of bounds`);
+        }
+
+        let pageTexts = Array.from(document.getElementsByClassName("vngine-gallery-page-text")).forEach(e => {
+            if (e.getAttribute("id") == `vngine-gallery-page-text-${page}`) {
+                e.classList.add("vngine-gallery-page-text-selected");
+            }
+            else {
+                e.classList.remove("vngine-gallery-page-text-selected");
+            }
+        });
+
+        let galleryBody = document.getElementById("vngine-gallery-body");
+        
+        galleryBody.innerHTML = "";
+        for (let i = 0; i < 6; i++) {
+            let cgIndex = page*6 + i;
+            let img = document.createElement("img");
+            img.setAttribute("id", `vngine-gallery-item-${cgIndex}`);
+            img.classList.add("vngine-gallery-item");
+
+            if (unlockedCG.includes(cgIndex)) {
+                img.src = `game/res/img/cg/${game.gallery[cgIndex]}`;
+                img.addEventListener("click", e => {
+                    
+                });
+            }
+            else {
+                img.src = "game/res/img/cg/cgLocked.png";
+            }
+
+            galleryBody.appendChild(img);
+        }
+    }
+
     //Display the given characters on the game screen
     function renderCharacters (characters) {
         characterImgs.forEach(img => {
@@ -1203,6 +1324,11 @@
             console.error(`VNGINE_ERROR: Couldn't load game node with index ${index}`);
         }
         else {
+            //Checks for CG unlocks
+            if (currentNode.unlockCG != undefined) {
+                unlockCG(currentNode.unlockCG);
+            }
+            
             //Set Background
             if (currentNode.setBackground) {
                 ScreenManager.gameDiv.style.backgroundImage = `url("game/res/img/backgrounds/${currentNode.setBackground}")`;
@@ -1299,6 +1425,14 @@
         return null;
     }
 
+    //Unlocks the cg with given index, saves the information on localStorage
+    function unlockCG (index) {
+        if (!unlockedCG.includes(index)) {
+            unlockedCG.push(index);
+            localStorage.setItem("cg", unlockedCG.toString());
+        }
+    }
+
     //Event handler
     function gameClickEvent () {
         if(ScreenManager.currentScreen != screens.GAME || !DialogBox.visible || !currentNode.dialog) return;
@@ -1332,7 +1466,6 @@
         Backlog.pop();
         if (entry) {
             if (entry.type == backlogEntryType.DECISION) {
-                console.log("hey");
                 loadNode(entry.nodeIndex);
             }
             else if (entry.type == backlogEntryType.DIALOG) {
@@ -1372,7 +1505,8 @@
     function escapePressedEvent () {
         if (ScreenManager.currentScreen == screens.SETTINGS  ||
             ScreenManager.currentScreen == screens.SAVEFILES ||
-            ScreenManager.currentScreen == screens.BACKLOG) {
+            ScreenManager.currentScreen == screens.BACKLOG   ||
+            ScreenManager.currentScreen == screens.GALLERY) {
             
             ScreenManager.switchToPreviousScreen();
         }

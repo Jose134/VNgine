@@ -4,6 +4,21 @@ gameJSON = {
     "settingsBackground": "background.jpg",
     "savefilesBackground": "background.jpg",
     "backlogBackground": "background2.jpg",
+    "galleryBackground": "background2.jpg",
+    "gallery": [
+        "cg1.png",
+        "cg2.png",
+        "cg3.png",
+        "cg4.png",
+        "cg1.png",
+        "cg2.png",
+        "cg3.png",
+        "cg4.png",
+        "cg1.png",
+        "cg2.png",
+        "cg3.png",
+        "cg4.png"
+    ],
     "author": "DarkBird",
     "characters": [
         {
@@ -23,6 +38,7 @@ gameJSON = {
     ],
     "nodes": [
         {
+            "unlockCG": 0,
             "setBackground": "background.jpg",
             "setCharacters": [
                 { "index": 0, "right": 5, "picture": 1 }
@@ -78,6 +94,7 @@ gameJSON = {
             ]
         },
         {
+            "unlockCG": 1,
             "setCharacters": [
                 { "index": 0, "right": 0 }
             ],
@@ -91,6 +108,7 @@ gameJSON = {
             "nextNode": null
         },
         {
+            "unlockCG": 2,
             "dialog": [
                 {
                     "playMusic": "",
@@ -101,6 +119,7 @@ gameJSON = {
             "nextNode": null
         },
         {
+            "unlockCG": 3,
             "dialog": [
                 {
                     "character": 1,
