@@ -158,6 +158,7 @@
 
     const DialogBox = class {
         static dialogBoxDiv;
+        static optionsDiv;
         static visible = true;
 
         static writingInterval;
@@ -170,6 +171,7 @@
 
         static init = function () {
             this.dialogBoxDiv = document.getElementById("vngine-dialog-box");
+            this.optionsDiv = document.getElementById("vngine-option-text-container");
             this.dialogBoxText = document.getElementById("vngine-dialog-text");
             this.dialogBoxCharacter = document.getElementById("vngine-dialog-character");
         }
@@ -214,11 +216,13 @@
         static toggleVisibility = function () {
             this.visible = !this.visible;
             this.dialogBoxDiv.style.display = this.visible ? "block" : "none";
+            this.optionsDiv.style.display = this.visible ? "block" : "none";
         }
 
         static setVisible = function (visible) {
             this.visible = visible;
             this.dialogBoxDiv.style.display = this.visible ? "block" : "none";
+            this.optionsDiv.style.display = this.visible ? "block" : "none";
         }
     }
 
@@ -363,6 +367,18 @@
             this.stack.pop();
         }
 
+        static top = function () {
+            if (this.stack.length > 0) {
+                return this.stack[this.stack.length-1];
+            }
+
+            return null;
+        }
+
+        static length = function () {
+            return this.stack.length
+        }
+
         static getAsTextArray = function () {
             let output = [];
             this.stack.forEach(entry => {
@@ -411,6 +427,7 @@
 
         //Sets up mouse wheel callbacks
         MouseWheelInput.addWheelDownCallback(() => gameClickEvent());
+        MouseWheelInput.addWheelUpCallback(() => gameBack());
 
         //Goes to the main menu
         ScreenManager.switchToScreen(screens.MENU);
@@ -468,6 +485,7 @@
         dialogBoxText.classList.add("vngine-dialog-text");
 
         let optionsContainer = document.createElement("div");
+        optionsContainer.setAttribute("id", "vngine-option-text-container");
         optionsContainer.classList.add("vngine-option-text-container");
 
         let menuText = document.createElement("a");
@@ -477,6 +495,16 @@
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "menuText") {
                 ScreenManager.switchToScreen(screens.MENU);
+            }
+        });
+
+        let backText = document.createElement("a");
+        backText.innerText = "Back";
+        backText.classList.add("vngine-option-text");
+        backText.setAttribute("id", "backText");
+        document.addEventListener("click", e => {
+            if (e.target && e.target.id == "backText") {
+                gameBack();
             }
         });
 
@@ -534,6 +562,7 @@
         });
 
         optionsContainer.appendChild(menuText);
+        optionsContainer.appendChild(backText);
         optionsContainer.appendChild(backlogText);
         optionsContainer.appendChild(saveText);
         optionsContainer.appendChild(loadText);
@@ -591,8 +620,11 @@
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "vngine-menu-newgame-btn") {
                 loadNode(0);
-                DialogBox.setVisible(true);
+                if (currentNode.dialog) {
+                    updateDialog();
+                }
                 ScreenManager.switchToScreen(screens.GAME);
+                DialogBox.setVisible(true);
             }
         });
         
@@ -1123,6 +1155,7 @@
 
                     //Loads the target node of the decision
                     loadNode(options[i].targetNode);
+                    updateDialog();
                 }
             });
 
@@ -1206,8 +1239,8 @@
             else if (currentNode.dialog) {
                 //Starts dialog
                 DialogBox.setVisible(true);
+                document.getElementById("vngine-decision-buttons").style.display = "none";
                 currentDialogIndex = 0;
-                updateDialog();
             }
             else {
                 console.warn(`VNGINE_WARNING: node with index ${index} doesn't have either dialog or decision`);
@@ -1280,9 +1313,35 @@
                 }
     
                 loadNode(currentNode.nextNode);
+
+                if (currentNode.dialog) {
+                    updateDialog();
+                }
             }
             else {
                 updateDialog();
+            }
+        }
+    }
+
+    function gameBack () {
+        if(ScreenManager.currentScreen != screens.GAME || Backlog.length() <= 1) return;
+
+        Backlog.pop();
+        let entry = Backlog.top();
+        Backlog.pop();
+        if (entry) {
+            if (entry.type == backlogEntryType.DECISION) {
+                console.log("hey");
+                loadNode(entry.nodeIndex);
+            }
+            else if (entry.type == backlogEntryType.DIALOG) {
+                loadNode(entry.nodeIndex);
+                currentDialogIndex = entry.dialogIndex;
+                updateDialog();
+            }
+            else {
+                console.error(`VNGINE_ERROR: Entry type ${entry.type} not recognized`);
             }
         }
     }
