@@ -1099,7 +1099,7 @@
         let keys = Object.keys(localStorage);
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i];
-            if (key == "userSettings") continue;
+            if (key == "userSettings" || key == "cg") continue;
 
             let data = JSON.parse(localStorage.getItem(key));
 
