@@ -391,6 +391,10 @@
             return this.stack.length
         }
 
+        static getAsArray = function () {
+            return this.stack;
+        }
+
         static getAsTextArray = function () {
             let output = [];
             this.stack.forEach(entry => {
@@ -1109,7 +1113,7 @@
             
             let savefileImg = document.createElement("div");
             savefileImg.classList.add("vngine-savefile-picture");
-            background = getNodeBackground(data.nodeIndex);
+            background = getLatestBackground(data.backlog);
             if (background) {
                 savefileImg.style.backgroundImage = `url(game/res/img/backgrounds/${background})`;
             }
@@ -1287,12 +1291,12 @@
         decisionButtonsDiv.style.display = "block";
     }
 
-    //Returns the background that should be displayed in a given node
-    function getNodeBackground (nodeIndex) {
-        let index = nodeIndex;
+    //Returns the background that should be displayed given the current backlog
+    function getLatestBackground (backlogArray) {
+        let index = backlogArray.length-1;
         let background = undefined;
         while (index >= 0 && !background) {
-            background = game.nodes[index].setBackground;
+            background = game.nodes[backlogArray[index].nodeIndex].setBackground;
             index--;
 
             if (background) break;
@@ -1301,12 +1305,12 @@
         return background;
     }
 
-    //Returns the characters that should be displayed in a given node
-    function getNodeCharacters (nodeIndex) {
-        let index = nodeIndex;
+    //Returns the characters that should be displayed given the current backlog
+    function getLatestCharacters (backlogArray) {
+        let index = backlogArray.length-1;
         let characters = undefined;
-        while (index >= 0 && !background) {
-            characters = game.nodes[index].setCharacters;
+        while (index >= 0 && !characters) {
+            characters = game.nodes[backlogArray[index].nodeIndex].setCharacters;
             index--;
 
             if (characters) break;
@@ -1334,7 +1338,7 @@
                 ScreenManager.gameDiv.style.backgroundImage = `url("game/res/img/backgrounds/${currentNode.setBackground}")`;
             }
             else if (!ScreenManager.gameDiv.style.backgroundImage) {
-                let background = getNodeBackground(currentNodeIndex);
+                let background = getLatestBackground(Backlog.getAsArray());
                 if (background) {
                     ScreenManager.gameDiv.style.backgroundImage = `url("game/res/img/backgrounds/${background}")`;
                 }
@@ -1348,7 +1352,7 @@
                 renderCharacters(currentNode.setCharacters);
             }
             else if (!characterImgs.map(c => c.getAttribute("src") != "").includes(true)) {
-                let characters = getNodeCharacters(currentNodeIndex);
+                let characters = getLatestCharacters(Backlog.getAsArray());
                 if (characters) {
                     renderCharacters(characters);
                 }
@@ -1520,7 +1524,8 @@
 
         let saveData = {
             "nodeIndex": currentNodeIndex,
-            "dialogIndex": currentDialogIndex-1
+            "dialogIndex": currentDialogIndex-1,
+            "backlog": Backlog.getAsArray()
         };
 
         localStorage.setItem(saveFile, JSON.stringify(saveData));
@@ -1533,11 +1538,14 @@
         if (loadedData) {
             loadedData = JSON.parse(loadedData);
             
+            Backlog.stack = loadedData.backlog;
             loadNode(loadedData.nodeIndex);
             if (game.nodes[loadedData.nodeIndex].dialog) {
                 currentDialogIndex = loadedData.dialogIndex;
                 updateDialog();
             }
+            Backlog.pop();
+            
         }
 
         ScreenManager.switchToScreen(screens.GAME);
