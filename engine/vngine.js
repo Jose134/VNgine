@@ -439,7 +439,8 @@
         KeyboardInput.addKeyCallback(keyEvent.DOWN, "ControlRight", () => DialogBox.toggleVisibility());
         KeyboardInput.addKeyCallback(keyEvent.DOWN, "Escape",       () => escapePressedEvent());
         KeyboardInput.addKeyCallback(keyEvent.DOWN, "KeyS",         () => toggleSkip());
-        KeyboardInput.addKeyCallback(keyEvent.UP, "KeyS",         () => toggleSkip());
+        KeyboardInput.addKeyCallback(keyEvent.UP,   "KeyS",         () => toggleSkip());
+        KeyboardInput.addKeyCallback(keyEvent.DOWN, "KeyF",         () => toggleFullscreen());
 
         //Sets up mouse wheel callbacks
         MouseWheelInput.addWheelDownCallback(() => gameClickEvent());
@@ -1451,7 +1452,8 @@
         }
         else {
             if (currentDialogIndex >= currentNode.dialog.length) {
-                if (!currentNode.nextNode) {
+                if (currentNode.nextNode == null || currentNode.nextNode == undefined) {
+                    ScreenManager.switchToScreen(screens.MENU);
                     return;
                 }
     
@@ -1485,6 +1487,16 @@
             else {
                 console.error(`VNGINE_ERROR: Entry type ${entry.type} not recognized`);
             }
+        }
+    }
+
+    function toggleFullscreen () {
+        console.log("hi");
+        if (mainDiv.classList.contains("fullscreen")) {
+            mainDiv.classList.remove("fullscreen");
+        }
+        else {
+            mainDiv.classList.add("fullscreen");
         }
     }
 

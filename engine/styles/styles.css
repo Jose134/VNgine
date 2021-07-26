@@ -46,6 +46,16 @@
     user-select: none;
 }
 
+.fullscreen {
+    position: absolute!important;
+    width: 100%!important;
+    height: 100%!important;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
 .vngine-screen {
     width: 100%;
     background-color: var(--vngine-color-screen-background);
