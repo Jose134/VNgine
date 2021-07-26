@@ -1206,7 +1206,12 @@
             if (unlockedCG.includes(cgIndex)) {
                 img.src = `game/res/img/cg/${game.gallery[cgIndex]}`;
                 img.addEventListener("click", e => {
-                    
+                    if (e.target.classList.contains("vngine-gallery-item-fullscreen")) {
+                        e.target.classList.remove("vngine-gallery-item-fullscreen");
+                    }
+                    else {
+                        e.target.classList.add("vngine-gallery-item-fullscreen");
+                    }
                 });
             }
             else {
