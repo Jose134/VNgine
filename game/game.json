@@ -1,5 +1,6 @@
 gameJSON = {
     "title": "Test Game",
+    "author": "DarkBird",
     "menuBackground": "background.jpg",
     "settingsBackground": "background.jpg",
     "savefilesBackground": "background.jpg",
@@ -19,7 +20,6 @@ gameJSON = {
         "cg3.png",
         "cg4.png"
     ],
-    "author": "DarkBird",
     "characters": [
         {
             "name": "DarkBird",
@@ -66,13 +66,19 @@ gameJSON = {
                 {
                     "character": 0,
                     "changeCharacterPicture": [ { "character": 0, "picture": 1 } ],
-                    "text": "Because my waifu is here!"
+                    "text": "Because my waifu is here!",
+                    "changeCharacterPosition": [
+                        { "character": 0, "right": 25, "time": 300, "type": "ease-in-out" }
+                    ] 
                 },
                 {
                     "character": 1,
                     "changeCharacterPicture": [ { "character": 0, "picture": 0 },
                                                 { "character": 1, "picture": 1 } ],
-                    "text": "The fuck is this guy doing?"
+                    "text": "The fuck is this guy doing?",
+                    "changeCharacterPosition": [
+                        { "character": 0, "right": 5 }
+                    ] 
                 }
             ],
             "nextNode": 2

@@ -15,7 +15,6 @@
 
     //Characters DOM
     let characterImgs = [];
-    let charactersDiv = null;
 
     //Game status
     let currentNode = null;
@@ -465,6 +464,7 @@
     function generateGameScreen () {
         /* HTML to generate
         <div id="vngine-game" class="vngine-screen vngine-game">
+            <div id="vngine-game-background" class="vngine-game-background"></div>
             <div class="vngine-option-text-container">
                 <a class="vngine-option-text" id="menuText">Menu</a>
                 <a class="vngine-option-text" id="saveText">Save</a>
@@ -484,6 +484,11 @@
         gameDiv.setAttribute("id", "vngine-game");
         gameDiv.classList.add("vngine-screen", "vngine-game");
 
+        let gameBackground = document.createElement("div");
+        gameBackground.setAttribute("id", "vngine-game-background");
+        gameBackground.classList.add("vngine-game-background");
+        //gameBackground.addEventListener("animationend", backgroundTransitionEndHandler);
+
         let clickDetector = document.createElement("div");
         clickDetector.setAttribute("id", "vngine-game-click-detector");
         clickDetector.classList.add("vngine-game-click-detector");
@@ -497,12 +502,15 @@
         decisionButtonsDiv.setAttribute("id", "vngine-decision-buttons");
         decisionButtonsDiv.classList.add("vngine-btn-group");
 
-        charactersDiv = document.createElement("div");
+        let charactersDiv = document.createElement("div");
+        charactersDiv.setAttribute("id", "vngine-characters-div");
         charactersDiv.classList.add("vngine-characters-div");
+        //charactersDiv.addEventListener("animationend", charactersTransitionEndHandler);
 
         let vngineDialogBox = document.createElement("div");
         vngineDialogBox.setAttribute("id", "vngine-dialog-box");
         vngineDialogBox.classList.add("vngine-dialog-box");
+        //vngineDialogBox.addEventListener("animationend", dialogBoxTransitionEndHandler);
 
         dialogBoxCharacter = document.createElement("p");
         dialogBoxCharacter.setAttribute("id", "vngine-dialog-character");
@@ -598,6 +606,7 @@
         optionsContainer.appendChild(settingsText);
         vngineDialogBox.appendChild(dialogBoxCharacter);
         vngineDialogBox.appendChild(dialogBoxText);
+        gameDiv.appendChild(gameBackground);
         gameDiv.appendChild(optionsContainer);
         gameDiv.appendChild(clickDetector);
         gameDiv.appendChild(decisionButtonsDiv);
@@ -647,6 +656,7 @@
         newGameBtn.setAttribute("id", "vngine-menu-newgame-btn");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "vngine-menu-newgame-btn") {
+                Backlog.stack = [];
                 loadNode(0);
                 if (currentNode.dialog) {
                     updateDialog();
@@ -1232,6 +1242,7 @@
             img.style.right = "";
         });
 
+        let charactersDiv = document.getElementById("vngine-characters-div");
         if (characters.length > characterImgs.length) {
             let imgAmount = characters.length - characterImgs.length
             for (let i = 0; i < imgAmount; i++) {
@@ -1341,12 +1352,12 @@
             
             //Set Background
             if (currentNode.setBackground) {
-                ScreenManager.gameDiv.style.backgroundImage = `url("game/res/img/backgrounds/${currentNode.setBackground}")`;
+                document.getElementById("vngine-game-background").style.backgroundImage = `url("game/res/img/backgrounds/${currentNode.setBackground}")`;
             }
-            else if (!ScreenManager.gameDiv.style.backgroundImage) {
+            else if (!document.getElementById("vngine-game-background").style.backgroundImage) {
                 let background = getLatestBackground(Backlog.getAsArray());
                 if (background) {
-                    ScreenManager.gameDiv.style.backgroundImage = `url("game/res/img/backgrounds/${background}")`;
+                    document.getElementById("vngine-game-background").style.backgroundImage = `url("game/res/img/backgrounds/${background}")`;
                 }
                 else {
                     console.error(`VNGINE_ERROR: Couldn't get background for node with index ${currentNodeIndex}`);
@@ -1404,6 +1415,26 @@
                 if (e != null) {
                     let picURL = `game/res/img/characters/${game.characters[data.character].pictures[data.picture]}`;
                     e.setAttribute("src", picURL);
+                }
+            });
+        }
+        
+        //Change character position if needed
+        let updatePosition = currentNode.dialog[currentDialogIndex].changeCharacterPosition;
+        if (updatePosition) {
+            updatePosition.forEach(data => {
+                let e = getCharacterDOMimg(data.character);
+                if (e != null) {
+                    if (data.left) {
+                        e.style.transition = `left ${data.time ? data.time : 0}ms ${data.type ? data.type : "linear"}`;
+                        e.style.right = "";
+                        e.style.left = `${data.left}%`;
+                    }
+                    else if (data.right) {
+                        e.style.transition = `right ${data.time ? data.time : 0}ms ${data.type ? data.type : "linear"}`;
+                        e.style.left = "";
+                        e.style.right = `${data.right}%`;
+                    }
                 }
             });
         }
