@@ -225,6 +225,8 @@
         }
 
         static toggleVisibility = function () {
+            if (currentNode.decision) return;
+
             this.visible = !this.visible;
             this.dialogBoxDiv.style.display = this.visible ? "block" : "none";
             this.optionsDiv.style.display = this.visible ? "block" : "none";

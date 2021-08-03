@@ -61,6 +61,76 @@
     background-size: cover;
 }
 
+/*-----------------------------------*/
+/*              INPUTS               */
+/*-----------------------------------*/
+
+/* range */
+#vngine-div input[type=range] {
+    width: 50%;
+    height: 5px;
+    background-color: #dedede;
+    border-radius: 2.5px;
+    transition: background-color 200ms;
+}
+#vngine-div input[type=range]:hover {
+    background-color: white;
+}
+
+#vngine-div input[type=range]::-webkit-slider-thumb {
+    width: 20px;
+    height: 20px;
+    background-color: var(--vngine-color-ui-main);
+    border: var(--vngine-border-thickness) solid var(--vngine-color-ui-border);
+    border-radius: 50%;
+    cursor: pointer;
+}
+#vngine-div input[type=range]:hover::-webkit-slider-thumb {
+    background-color: var(--vngine-color-ui-main-hover);
+    border: var(--vngine-border-thickness) solid var(--vngine-color-ui-border-hover);
+}
+#vngine-div input[type=range]:active::-webkit-slider-thumb {
+    background-color: white;
+}
+
+#vngine-div input[type=range]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background-color: var(--vngine-color-ui-main);
+    border: var(--vngine-border-thickness) solid var(--vngine-color-ui-border);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 200ms, border 200ms;
+}
+#vngine-div input[type=range]:hover::-moz-range-thumb {
+    background-color: var(--vngine-color-ui-main-hover);
+    border: var(--vngine-border-thickness) solid var(--vngine-color-ui-border-hover);
+}
+#vngine-div input[type=range]:active::-moz-range-thumb {
+    background-color: white;
+}
+
+/* select */
+#vngine-div select {
+    width: 50%;
+    height: 35px;
+    border: var(--vngine-border-thickness-small) solid var(--vngine-color-ui-border);
+    background-color: var(--vngine-color-ui-main);
+    cursor: pointer;
+    font-size: var(--vngine-text-small-buffed);
+
+    transition: background-color 200ms, border-color 200ms;
+}
+#vngine-div select:hover {
+    background-color: var(--vngine-color-ui-main-hover);
+    border-color: var(--vngine-color-ui-border-hover);
+}
+#vngine-div select:active {
+    background-color: var(--vngine-color-ui-main-hover);
+    border-color: var(--vngine-color-ui-border-hover);
+}
+
+/* buttons */
 .vngine-btn-group {
     z-index: 2;
     position: absolute;
@@ -87,6 +157,8 @@
     color: var(--vngine-color-ui-text);
     border: var(--vngine-border-thickness) solid var(--vngine-color-ui-border);
     border-radius: 10px;
+
+    transition: background-color 200ms, border-color 200ms, color 200ms;
 }
 
 .vngine-btn:hover {
@@ -395,15 +467,17 @@
 
 .vngine-backlog-list li {
     background-color: rgba(0,0,0,0.4);
-    transition: background-color 100ms;
+    transition: background-color 100ms, transform 100ms;
     margin-bottom: 3px;
     border-radius: 5px;
     font-size: var(--vngine-text-small-buffed);
     padding:2px;
+    align-self: center;
 }
 
 .vngine-backlog-list li:hover {
     background-color: rgba(0,0,0,0.6);
+    transform: scale(102%);
 }
 
 /*------------------------------------*/
