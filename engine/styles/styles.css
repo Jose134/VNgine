@@ -1,4 +1,5 @@
 :root {
+    /* THESE COLORS ARE USED AS DEFAULT AND CAN BE OVERRIDEN BY THE GAME FILE */
     --vngine-color-ui-main: pink;
     --vngine-color-ui-main-darkened: rgb(228, 171, 180);
     --vngine-color-ui-main-hover: #fad3da;
@@ -19,6 +20,7 @@
 
     --vngine-color-ui-option-text: rgb(202, 115, 129);
     --vngine-color-ui-option-text-hover: white;
+    /**************************************************************************/
 
     --vngine-border-thickness: 4px;
     --vngine-border-thickness-small: 2px;

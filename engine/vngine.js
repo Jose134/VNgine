@@ -458,6 +458,10 @@
             unlockedCG = unlockedCG.split(",").map(x => parseInt(x));
         }
 
+        if (game.uiColors) {
+            readColorPalette();
+        }
+
         //Goes to the main menu
         ScreenManager.switchToScreen(screens.MENU);
     }
@@ -1604,6 +1608,20 @@
     function deleteSavefile (saveFile) {
         localStorage.removeItem(saveFile);
         needToUpdateSavefilesScreen = true;
+    }
+
+    function readColorPalette () {
+        let docStyle = getComputedStyle(document.documentElement);
+        let keys = Object.keys(game.uiColors);
+        keys.forEach(key => {
+            cssKey = `--vngine-color-ui-${key}`;
+            if (docStyle.getPropertyValue(cssKey)) {
+                document.documentElement.style.setProperty(cssKey, game.uiColors[key]);
+            }
+            else {
+                console.warn(`VNGINE_WARNING: root doesn't contain property ${cssKey}`);
+            }
+        });
     }
       
 }())
