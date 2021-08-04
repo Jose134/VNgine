@@ -1,6 +1,6 @@
 > :warning: **This page is still under construction**
 
-[Logo Banner](/img/Banner.png)
+![Logo Banner](/img/Banner.png)
 
 ## A Javascript engine for web visual novels
 
