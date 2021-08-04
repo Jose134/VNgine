@@ -25,6 +25,9 @@ gameJSON = {
         "option-text": "rgb(202, 115, 129)",
         "option-text-hover": "white"
     },
+    "uiAudio": {
+        "tap": "ui_click.wav"
+    },
     "gallery": [
         "cg1.png",
         "cg2.png",
@@ -64,7 +67,6 @@ gameJSON = {
             ],
             "dialog": [
                 {
-                    "playEffect": "ui_click.wav",
                     "character": 0,
                     "text": "This is so dope"
                 }

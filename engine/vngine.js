@@ -42,7 +42,7 @@
     let needToUpdateBacklogScreen = true;
 
     //Audio
-    let audioUIClick = "game/res/audio/ui_click.wav";
+    let audioUITap = "engine/res/audio/tap.mp3";
 
     const Audio = class {
         static sfxAudioElement = null;
@@ -501,6 +501,10 @@
             readColorPalette();
         }
 
+        if (game.uiAudio) {
+            readAudio();
+        }
+
         //Goes to the main menu
         ScreenManager.switchToScreen(screens.MENU);
     }
@@ -602,6 +606,7 @@
         menuText.setAttribute("id", "menuText");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "menuText") {
+                Audio.playEffect(audioUITap);
                 ScreenManager.switchToScreen(screens.MENU);
             }
         });
@@ -612,6 +617,7 @@
         backText.setAttribute("id", "backText");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "backText") {
+                Audio.playEffect(audioUITap);
                 gameBack();
             }
         });
@@ -622,6 +628,7 @@
         backlogText.setAttribute("id", "backlogText");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "backlogText") {
+                Audio.playEffect(audioUITap);
                 ScreenManager.switchToScreen(screens.BACKLOG);
             }
         });
@@ -632,6 +639,7 @@
         saveText.setAttribute("id", "saveText");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "saveText") {
+                Audio.playEffect(audioUITap);
                 let now = new Date();
                 let key = now.getUTCFullYear() + "-" + (now.getMonth()+1) + "-" + (now.getDay()+1) + "   "
                         + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
@@ -645,6 +653,7 @@
         loadText.setAttribute("id", "loadText");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "loadText") {
+                Audio.playEffect(audioUITap);
                 ScreenManager.switchToScreen(screens.SAVEFILES);
             }
         });
@@ -655,6 +664,7 @@
         skipText.setAttribute("id", "skipText");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "skipText") {
+                Audio.playEffect(audioUITap);
                 toggleSkip();
             }
         });
@@ -665,6 +675,7 @@
         settingsText.setAttribute("id", "settingsText");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "settingsText") {
+                Audio.playEffect(audioUITap);
                 ScreenManager.switchToScreen(screens.SETTINGS);
             }
         });
@@ -745,6 +756,7 @@
         newGameBtn.setAttribute("id", "vngine-menu-newgame-btn");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "vngine-menu-newgame-btn") {
+                Audio.playEffect(audioUITap);
                 Backlog.stack = [];
                 if (skip) toggleSkip();
                 loadNode(0);
@@ -762,6 +774,7 @@
         continueBtn.classList.add("vngine-btn");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "vngine-menu-continue-btn") {
+                Audio.playEffect(audioUITap);
                 ScreenManager.switchToScreen(screens.SAVEFILES);
             }
         });
@@ -772,6 +785,7 @@
         galleryBtn.classList.add("vngine-btn");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "vngine-menu-gallery-btn") {
+                Audio.playEffect(audioUITap);
                 ScreenManager.switchToScreen(screens.GALLERY);
             }
         });
@@ -782,6 +796,7 @@
         settingsBtn.classList.add("vngine-btn");
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "vngine-menu-settings-btn") {
+                Audio.playEffect(audioUITap);
                 ScreenManager.switchToScreen(screens.SETTINGS);
             }
         });
@@ -822,6 +837,7 @@
         backBtn.innerText = "Back";
         backBtn.addEventListener("click", e => {
             if (e.target && e.target.id == "vngine-gallery-back") {
+                Audio.playEffect(audioUITap);
                 ScreenManager.switchToPreviousScreen();
             }
         });
@@ -846,6 +862,7 @@
             pageText.classList.add("vngine-gallery-page-text");
             pageText.innerText = `${i+1}`;
             pageText.addEventListener("click", e => {
+                Audio.playEffect(audioUITap);
                 if (!e.target.classList.contains("vngine-gallery-page-selected")) {
                     renderGallery(i);
                 }
@@ -887,6 +904,7 @@
         backBtn.innerText = "Back";
         backBtn.addEventListener("click", e => {
             if (e.target && e.target.id == "vngine-settings-back") {
+                Audio.playEffect(audioUITap);
                 ScreenManager.switchToPreviousScreen();
             }
         });
@@ -1033,6 +1051,7 @@
         setToDefaultBtn.classList.add("vngine-btn");
         setToDefaultBtn.innerText = "Set to default";
         setToDefaultBtn.addEventListener("click", e => {
+            Audio.playEffect(audioUITap);
             Settings.clear();
             textSpeedSelect.selectedIndex = 
                 textSpeed == textVeryFastTime ? 0 :
@@ -1113,6 +1132,7 @@
         backBtn.innerText = "Back";
         backBtn.addEventListener("click", e => {
             if (e.target && e.target.id == "vngine-savefiles-back") {
+                Audio.playEffect(audioUITap);
                 ScreenManager.switchToPreviousScreen();
             }
         });
@@ -1141,28 +1161,29 @@
         */
 
         let backlogDiv = document.createElement("div");
-        backlogDiv.setAttribute("id", "vngine-savefiles");
-        backlogDiv.classList.add("vngine-screen", "vngine-savefiles");
+        backlogDiv.setAttribute("id", "vngine-backlog");
+        backlogDiv.classList.add("vngine-screen", "vngine-backlog");
         if (game.backlogBackground) {
             backlogDiv.style.backgroundImage = `url(game/res/img/backgrounds/${game.backlogBackground})`;
         }
         
         let backlogHeader = document.createElement("div");
-        backlogHeader.setAttribute("id", "vngine-savefiles-header");
+        backlogHeader.setAttribute("id", "vngine-backlog-header");
         backlogHeader.classList.add("vngine-header");
 
         let backBtn = document.createElement("button");
-        backBtn.setAttribute("id", "vngine-savefiles-back");
+        backBtn.setAttribute("id", "vngine-backlog-back");
         backBtn.classList.add("vngine-btn", "vngine-back-btn");
         backBtn.innerText = "Back";
         backBtn.addEventListener("click", e => {
-            if (e.target && e.target.id == "vngine-savefiles-back") {
+            if (e.target && e.target.id == "vngine-backlog-back") {
+                Audio.playEffect(audioUITap);
                 ScreenManager.switchToPreviousScreen();
             }
         });
         
         let backlogHeaderText = document.createElement("p");
-        backlogHeaderText.setAttribute("id", "vngine-savefiles-header-text");
+        backlogHeaderText.setAttribute("id", "vngine-backlog-header-text");
         backlogHeaderText.classList.add("vngine-header-text");
         backlogHeaderText.innerText = "Backlog";
 
@@ -1201,6 +1222,7 @@
         yesBtn.innerText = "Yes";
         yesBtn.classList.add("vngine-btn", "vngine-btn-inline");
         yesBtn.addEventListener("click", e => {
+            Audio.playEffect(audioUITap);
             callback("yes");
             document.getElementById("vngine-dialog-modal").style.display = "none";
         });
@@ -1209,6 +1231,7 @@
         noBtn.innerText = "No";
         noBtn.classList.add("vngine-btn", "vngine-btn-inline");
         noBtn.addEventListener("click", e => {
+            Audio.playEffect(audioUITap);
             callback("no");
             document.getElementById("vngine-dialog-modal").style.display = "none";
         });
@@ -1339,6 +1362,7 @@
             loadButton.classList.add("vngine-btn", "vngine-btn-small");
             loadButton.addEventListener("click", e => {
                 if (e.target && e.target.id == `load-${key}`) {
+                    Audio.playEffect(audioUITap);
                     load(key);
                 }
             });
@@ -1351,6 +1375,7 @@
                 deleteButton.classList.add("vngine-btn", "vngine-btn-small");
                 deleteButton.addEventListener("click", e => {
                     if (e.target && e.target.id == `delete-${key}`) {
+                        Audio.playEffect(audioUITap);
                         deleteSavefile(key);
                         renderSavefileList();
                     }
@@ -1412,6 +1437,7 @@
             if (unlockedCG.includes(cgIndex)) {
                 img.src = `game/res/img/cg/${game.gallery[cgIndex]}`;
                 img.addEventListener("click", e => {
+                    Audio.playEffect(audioUITap);
                     if (e.target.classList.contains("vngine-gallery-item-fullscreen")) {
                         e.target.classList.remove("vngine-gallery-item-fullscreen");
                     }
@@ -1479,6 +1505,7 @@
             
             button.addEventListener("click", e => {
                 if (e.target && e.target.id == `vngine-decision-btn-${i}`) {
+                    Audio.playEffect(audioUITap);
                     //Hide decision buttons
                     decisionButtonsDiv.style.display = "none";
 
@@ -1815,6 +1842,21 @@
             }
             else {
                 console.warn(`VNGINE_WARNING: root doesn't contain property ${cssKey}`);
+            }
+        });
+    }
+
+    //Sets the audio variables with the values in the game file
+    function readAudio () {
+        let keys = Object.keys(game.uiAudio);
+        keys.forEach(key => {
+            switch (key) {
+                case "tap":
+                    audioUITap = `game/res/audio/${game.uiAudio[key]}`;
+                    break;
+                default:
+                    console.warn(`VNGINE_WARNING: ${key} not recognized as a valid audio property`);
+                    break;
             }
         });
     }
