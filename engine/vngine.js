@@ -731,8 +731,8 @@
             logo.setAttribute("id", "vngine-menu-logo");
             logo.classList.add("vngine-menu-logo");
             logo.src = (game.VNgineLogoVersion && game.VNgineLogoVersion == "dark")
-                ? "engine/res/poweredbydark.png"
-                : "engine/res/poweredbylight.png"
+                ? "engine/res/img/poweredbydark.png"
+                : "engine/res/img/poweredbylight.png"
             ;
             logo.addEventListener("click", e => {
                 window.open("https://github.com/Jose134/vngine", "_a")
