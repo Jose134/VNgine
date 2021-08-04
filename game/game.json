@@ -93,6 +93,7 @@ gameJSON = {
                     "character": 1,
                     "changeCharacterPicture": [ { "character": 0, "picture": 0 },
                                                 { "character": 1, "picture": 1 } ],
+                    "autosave": true,
                     "text": "The fuck is this guy doing?",
                     "changeCharacterPosition": [
                         { "character": 0, "right": 5 }

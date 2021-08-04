@@ -725,6 +725,7 @@
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "vngine-menu-newgame-btn") {
                 Backlog.stack = [];
+                if (skip) toggleSkip();
                 loadNode(0);
                 if (currentNode.dialog) {
                     updateDialog();
@@ -1585,6 +1586,11 @@
         DialogBox.writeText(currentNode.dialog[currentDialogIndex].text);
 
         currentDialogIndex++;
+
+        let autosave = currentNode.dialog[currentDialogIndex-1].autosave;
+        if(autosave && autosave == true) {
+            save("Autosave");
+        }
     }
 
     //Returns the DOM img element displaying the given character
