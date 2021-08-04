@@ -4,6 +4,11 @@
     --vngine-color-ui-main-darkened: rgb(228, 171, 180);
     --vngine-color-ui-main-hover: #fad3da;
 
+    --vngine-color-ui-input-text: white;
+    --vngine-color-ui-input-text-focus: black;
+    --vngine-color-ui-input-background: rgb(253, 189, 199);
+    --vngine-color-ui-input-background-focus: #fad3da;
+
     --vngine-color-ui-btn-main: pink;
     --vngine-color-ui-btn-main-darkened: rgb(228, 171, 180);
     --vngine-color-ui-btn-main-hover: #fad3da;
@@ -132,6 +137,24 @@
     border-color: var(--vngine-color-ui-border-hover);
 }
 
+/* text */
+#vngine-div input[type=text] {
+    outline: none;
+    width: 75%;
+    height: 30px;
+    font-size: var(--vngine-text-small-buffed);
+    color: var(--vngine-color-ui-input-text);
+    background-color: var(--vngine-color-ui-input-background);
+    border: var(--vngine-border-thickness-small) solid var(--vngine-color-ui-border);
+
+    transition: background-color 200ms, color 200ms;
+}
+
+#vngine-div input[type=text]:focus {
+    color: var(--vngine-color-ui-input-text-focus);
+    background-color: var(--vngine-color-ui-input-background-focus);
+}
+
 /* buttons */
 .vngine-btn-group {
     z-index: 2;
@@ -153,6 +176,7 @@
 
     /* text */
     font-size: var(--vngine-text-medium);
+    text-align: center;
 
     /* colors and border */
     background-color: var(--vngine-color-ui-btn-main);
@@ -196,16 +220,44 @@
 
 .vngine-btn-inline {
     display: inline-block;
-}
-
-.vngine-btn-right {
-    float: right;
+    margin-left: 10px;
     margin-right: 10px;
 }
 
-.vngine-btn-left {
-    float: left;
-    margin-left: 10px;
+/*-----------------------------------*/
+/*              MODAL                */
+/*-----------------------------------*/
+
+.vngine-dialog-modal {
+    display: none;
+    position: absolute;
+    z-index: 5;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.vngine-dialog-modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 35%;
+    background-color: var(--vngine-color-ui-main);
+    padding: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: var(--vngine-border-thickness) solid var(--vngine-color-ui-border);
+    border-radius: 15px;
+    text-align: center;
+}
+
+.vngine-dialog-modal-msg {
+    font-size: var(--vngine-text-small-buffed);
 }
 
 /*-----------------------------------*/

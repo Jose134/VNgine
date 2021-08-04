@@ -95,6 +95,34 @@
         }
     }
 
+    const UIDialogType = {
+        CONFIRM: "confirm",
+        INPUT: "input"
+    }
+
+    const UIDialog = class {
+
+        static init = function () {
+            generateDialogModal();
+        }
+
+        static show = function (type, callback, customMsg) {
+            switch (type) {
+                case UIDialogType.CONFIRM:
+                    renderConfirmationDialog(callback, customMsg);
+                    document.getElementById("vngine-dialog-modal").style.display = "block";
+                    break;
+                case UIDialogType.INPUT:
+                    renderInputDialog(callback, customMsg);
+                    document.getElementById("vngine-dialog-modal").style.display = "block";
+                    break;    
+                default:
+                    console.error(`VNGINE_ERROR: ${type} not recognized as a UIDialogType`)
+                    break;
+            }
+        }
+    }
+
     const ScreenManager = class {
         static currentScreen = null;
         static previousScreen = null;
@@ -225,7 +253,7 @@
         }
 
         static toggleVisibility = function () {
-            if (currentNode.decision) return;
+            if (currentNode && currentNode.decision) return;
 
             this.visible = !this.visible;
             this.dialogBoxDiv.style.display = this.visible ? "block" : "none";
@@ -254,9 +282,13 @@
                     //Set key as held
                     this.keyInfo[e.code].held = true;
 
-                    //Call all the callbacks
-                    if (this.keyInfo[e.code].keyDownCallbacks) {
-                        this.keyInfo[e.code].keyDownCallbacks.forEach(c => c());
+                    //Call all the callbacks if the dialog modal is not displaying
+                    //We need to check for the modal to prevent the user from triggering game functions
+                    //while typing in the form
+                    if (document.getElementById("vngine-dialog-modal").style.display == "none") {
+                        if (this.keyInfo[e.code].keyDownCallbacks) {
+                            this.keyInfo[e.code].keyDownCallbacks.forEach(c => c());
+                        }
                     }
                 }
             });
@@ -432,6 +464,7 @@
         Audio.init();
         ScreenManager.init();
         DialogBox.init();
+        UIDialog.init();
         
         //Sets up keyboard callbacks
         KeyboardInput.addKeyCallback(keyEvent.DOWN, "Space",        () => gameClickEvent());
@@ -466,6 +499,35 @@
         ScreenManager.switchToScreen(screens.MENU);
     }
 
+    function generateDialogModal () {
+        /* HTML to generate
+        <div id="vngine-dialog-modal" class="vngine-dialog-modal">
+            <div id="vngine-dialog-modal-content" class="vngine-dialog-modal-content">
+                <div id="vngine-dialog-modal-body" class="vngine-dialog-modal-body"></div>
+            </div>
+        </div>
+        */
+        let modalDiv = document.createElement("div");
+        modalDiv.setAttribute("id", "vngine-dialog-modal");
+        modalDiv.classList.add("vngine-dialog-modal");
+        
+        let modalContentDiv = document.createElement("div");
+        modalContentDiv.setAttribute("id", "vngine-dialog-modal-content");
+        modalContentDiv.classList.add("vngine-dialog-modal-content");
+
+        let modalBodyDiv = document.createElement("div");
+        modalBodyDiv.setAttribute("id", "vngine-dialog-modal-body");
+        modalBodyDiv.classList.add("vngine-dialog-modal-body");
+
+        //Appending
+        modalContentDiv.appendChild(modalBodyDiv);
+        modalDiv.appendChild(modalContentDiv);
+
+        mainDiv.appendChild(modalDiv);
+
+        return modalDiv;
+    }
+
     //Creates all the DOM elements needed for the game screen
     function generateGameScreen () {
         /* HTML to generate
@@ -486,6 +548,7 @@
             </div>
         </div>
         */
+
         let gameDiv = document.createElement("div");
         gameDiv.setAttribute("id", "vngine-game");
         gameDiv.classList.add("vngine-screen", "vngine-game");
@@ -493,7 +556,6 @@
         let gameBackground = document.createElement("div");
         gameBackground.setAttribute("id", "vngine-game-background");
         gameBackground.classList.add("vngine-game-background");
-        //gameBackground.addEventListener("animationend", backgroundTransitionEndHandler);
 
         let clickDetector = document.createElement("div");
         clickDetector.setAttribute("id", "vngine-game-click-detector");
@@ -511,12 +573,10 @@
         let charactersDiv = document.createElement("div");
         charactersDiv.setAttribute("id", "vngine-characters-div");
         charactersDiv.classList.add("vngine-characters-div");
-        //charactersDiv.addEventListener("animationend", charactersTransitionEndHandler);
 
         let vngineDialogBox = document.createElement("div");
         vngineDialogBox.setAttribute("id", "vngine-dialog-box");
         vngineDialogBox.classList.add("vngine-dialog-box");
-        //vngineDialogBox.addEventListener("animationend", dialogBoxTransitionEndHandler);
 
         dialogBoxCharacter = document.createElement("p");
         dialogBoxCharacter.setAttribute("id", "vngine-dialog-character");
@@ -603,6 +663,7 @@
             }
         });
 
+        //Appending
         optionsContainer.appendChild(menuText);
         optionsContainer.appendChild(backText);
         optionsContainer.appendChild(backlogText);
@@ -636,6 +697,7 @@
             </div>
         </div>
         */
+
         //Menu Screen
         let menuDiv = document.createElement("div");
         menuDiv.setAttribute("id", "vngine-menu");
@@ -702,7 +764,7 @@
             }
         });
         
-        //Append
+        //Appending
         btnGroup.appendChild(newGameBtn);
         btnGroup.appendChild(continueBtn);
         btnGroup.appendChild(galleryBtn);
@@ -1010,6 +1072,7 @@
             </div>
         </div>
         */
+
         let savefilesDiv = document.createElement("div");
         savefilesDiv.setAttribute("id", "vngine-savefiles");
         savefilesDiv.classList.add("vngine-screen", "vngine-savefiles");
@@ -1097,6 +1160,68 @@
         mainDiv.appendChild(backlogDiv);
 
         return backlogDiv;
+    }
+
+    //Displays a confirmation dialog in the dialog modal
+    function renderConfirmationDialog (callback, customMsg) {
+        let modalBody = document.getElementById("vngine-dialog-modal-body");
+        //Clear modal's body
+        modalBody.innerHTML = "";
+
+        let msg = document.createElement("p");
+        msg.classList.add("vngine-dialog-modal-msg")
+        msg.innerText = customMsg ? customMsg : "Are you sure?";
+
+        let btnDiv = document.createElement("div");
+
+        let yesBtn = document.createElement("btn");
+        yesBtn.innerText = "Yes";
+        yesBtn.classList.add("vngine-btn", "vngine-btn-inline");
+        yesBtn.addEventListener("click", e => {
+            callback("yes");
+            document.getElementById("vngine-dialog-modal").style.display = "none";
+        });
+        
+        let noBtn = document.createElement("div");
+        noBtn.innerText = "No";
+        noBtn.classList.add("vngine-btn", "vngine-btn-inline");
+        noBtn.addEventListener("click", e => {
+            callback("no");
+            document.getElementById("vngine-dialog-modal").style.display = "none";
+        });
+
+        //Appending
+        btnDiv.appendChild(yesBtn);
+        btnDiv.appendChild(noBtn);
+        modalBody.appendChild(msg);
+        modalBody.appendChild(btnDiv);
+    }
+    
+    //Displays an input dialog in the dialog modal
+    function renderInputDialog (callback, customMsg) {
+        let modalBody = document.getElementById("vngine-dialog-modal-body");
+        modalBody.innerHTML = "";
+
+        let msg = document.createElement("p");
+        msg.classList.add("vngine-dialog-modal-msg")
+        msg.innerText = customMsg ? customMsg : "";
+
+        let input = document.createElement("input");
+        input.setAttribute("type", "text");
+        
+
+        let okayBtn = document.createElement("div");
+        okayBtn.innerText = "Ok";
+        okayBtn.classList.add("vngine-btn");
+        okayBtn.addEventListener("click", e => {
+            callback(input.value);
+            document.getElementById("vngine-dialog-modal").style.display = "none";
+        });
+
+        //Appending
+        modalBody.appendChild(msg);
+        modalBody.appendChild(input);
+        modalBody.appendChild(okayBtn);
     }
     
     //Displays the savefiles
@@ -1610,6 +1735,7 @@
         needToUpdateSavefilesScreen = true;
     }
 
+    //Sets the root css variables with the values in the game file
     function readColorPalette () {
         let docStyle = getComputedStyle(document.documentElement);
         let keys = Object.keys(game.uiColors);
