@@ -1,6 +1,8 @@
 gameJSON = {
     "title": "Test Game",
     "author": "DarkBird",
+    "enableVNgineLogo": true,
+    "VNgineLogoVersion": "dark",
     "menuBackground": "background.jpg",
     "settingsBackground": "background.jpg",
     "savefilesBackground": "background.jpg",

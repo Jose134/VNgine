@@ -285,7 +285,8 @@
                     //Call all the callbacks if the dialog modal is not displaying
                     //We need to check for the modal to prevent the user from triggering game functions
                     //while typing in the form
-                    if (document.getElementById("vngine-dialog-modal").style.display == "none") {
+                    let modalDisplay = document.getElementById("vngine-dialog-modal").style.display;
+                    if (!modalDisplay || modalDisplay == "none") {
                         if (this.keyInfo[e.code].keyDownCallbacks) {
                             this.keyInfo[e.code].keyDownCallbacks.forEach(c => c());
                         }
@@ -298,9 +299,14 @@
                     //Set key as not being held
                     this.keyInfo[e.code].held = false;
 
-                    //Call all the callbacks
-                    if (this.keyInfo[e.code].keyUpCallbacks) {
-                        this.keyInfo[e.code].keyUpCallbacks.forEach(c => c());
+                    //Call all the callbacks if the dialog modal is not displaying
+                    //We need to check for the modal to prevent the user from triggering game functions
+                    //while typing in the form
+                    let modalDisplay = document.getElementById("vngine-dialog-modal").style.display;
+                    if (!modalDisplay || modalDisplay == "none") {
+                        if (this.keyInfo[e.code].keyUpCallbacks) {
+                            this.keyInfo[e.code].keyUpCallbacks.forEach(c => c());
+                        }
                     }
                 }
             });
@@ -706,6 +712,21 @@
         if (game.menuBackground) {
             menuDiv.style.backgroundImage = `url(game/res/img/backgrounds/${game.menuBackground})`;
         }
+
+        //Logo
+        let logo = null;
+        if (game.enableVNgineLogo) {
+            logo = document.createElement("img");
+            logo.setAttribute("id", "vngine-menu-logo");
+            logo.classList.add("vngine-menu-logo");
+            logo.src = (game.VNgineLogoVersion && game.VNgineLogoVersion == "dark")
+                ? "engine/res/poweredbydark.png"
+                : "engine/res/poweredbylight.png"
+            ;
+            logo.addEventListener("click", e => {
+                window.open("https://github.com/Jose134/vngine", "_a")
+            })
+        }
         
         //Title text
         let titleText = document.createElement("h1");
@@ -771,6 +792,7 @@
         btnGroup.appendChild(galleryBtn);
         btnGroup.appendChild(settingsBtn);
         menuDiv.appendChild(titleText);
+        if(logo) menuDiv.appendChild(logo);
         menuDiv.appendChild(btnGroup);
 
         mainDiv.appendChild(menuDiv);
@@ -1701,7 +1723,6 @@
     }
 
     function toggleFullscreen () {
-        console.log("hi");
         if (mainDiv.classList.contains("fullscreen")) {
             mainDiv.classList.remove("fullscreen");
         }
