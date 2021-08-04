@@ -21,8 +21,7 @@ gameJSON = {
         "page-text-hover": "#dddddd",
         "page-text-selected": "white",
         "option-text": "rgb(202, 115, 129)",
-        "option-text-hover": "white",
-        "random-test": "uwu"
+        "option-text-hover": "white"
     },
     "gallery": [
         "cg1.png",

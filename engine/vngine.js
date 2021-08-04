@@ -627,7 +627,7 @@
         document.addEventListener("click", e => {
             if (e.target && e.target.id == "saveText") {
                 let now = new Date();
-                let key = now.getUTCFullYear() + "-" + now.getMonth() + "-" + now.getDay() + "   "
+                let key = now.getUTCFullYear() + "-" + (now.getMonth()+1) + "-" + (now.getDay()+1) + "   "
                         + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
                 save(key);
             }
@@ -1244,9 +1244,46 @@
         savefileList.classList.add("vngine-savefile-list");
 
         let keys = Object.keys(localStorage);
+
+        let autosave = keys.find(val => val == "Autosave");
+        if (autosave) keys.splice(keys.indexOf("Autosave"), 1);
+
+        let userSettings = keys.find(val => val == "userSettings");
+        if (userSettings) keys.splice(keys.indexOf("userSettings"), 1);
+        
+        let cg = keys.find(val => val == "cg");
+        if (cg) keys.splice(keys.indexOf(cg), 1);
+
+        keys.sort((a, b) => {
+            console.log(a);
+            let aDate = a.split('   ')[0];
+            let aTime = a.split('   ')[1];
+
+            let bDate = b.split('   ')[0];
+            let bTime = b.split('   ')[1];
+
+            if (aDate > bDate) {
+                return -1;
+            }
+            else if (aDate < bDate) {
+                return 1;
+            }
+            else {
+                if (aTime > bTime) {
+                    return -1;
+                }
+                else {
+                    return 1;
+                }
+            }
+        });
+
+        if (autosave) {
+            keys.unshift(autosave);
+        }
+
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i];
-            if (key == "userSettings" || key == "cg") continue;
 
             let data = JSON.parse(localStorage.getItem(key));
 
@@ -1284,22 +1321,26 @@
                 }
             });
             
-            let deleteButton = document.createElement("button");
-            deleteButton.innerText = "Delete";
-            deleteButton.setAttribute("id", `delete-${key}`);
-            deleteButton.classList.add("vngine-btn", "vngine-btn-small");
-            deleteButton.addEventListener("click", e => {
-                if (e.target && e.target.id == `delete-${key}`) {
-                    deleteSavefile(key);
-                }
-            });
+            let deleteButton = null;
+            if (key != "Autosave") {
+                deleteButton = document.createElement("button");
+                deleteButton.innerText = "Delete";
+                deleteButton.setAttribute("id", `delete-${key}`);
+                deleteButton.classList.add("vngine-btn", "vngine-btn-small");
+                deleteButton.addEventListener("click", e => {
+                    if (e.target && e.target.id == `delete-${key}`) {
+                        deleteSavefile(key);
+                        renderSavefileList();
+                    }
+                });
+            }
 
             //Appending
             savefileDiv.appendChild(savefileImg);
             savefileDiv.appendChild(savefileName);
             savefileDiv.appendChild(savefileText);
             savefileDiv.appendChild(loadButton);
-            savefileDiv.appendChild(deleteButton);
+            if (deleteButton) savefileDiv.appendChild(deleteButton);
             savefileList.appendChild(savefileDiv);
 
         }
@@ -1587,6 +1628,7 @@
 
         currentDialogIndex++;
 
+        //We check for autosaving after increasing the index so that it saves on the correct part of the dialog
         let autosave = currentNode.dialog[currentDialogIndex-1].autosave;
         if(autosave && autosave == true) {
             save("Autosave");
