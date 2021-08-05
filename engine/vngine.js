@@ -47,6 +47,115 @@
     //Game variables
     let customVariableKeys = [];
 
+    const MathParser = class {
+        //Math expression evaluation by @Aaron R.
+        //https://stackoverflow.com/questions/11422513/evaluate-an-equation-in-javascript-without-eval
+        static parens = /\(([0-9+\-*/\^ .]+)\)/             // Regex for identifying parenthetical expressions
+        static exp = /(\d+(?:\.\d+)?) ?\^ ?(\d+(?:\.\d+)?)/ // Regex for identifying exponentials (x ^ y)
+        static mul = /(\d+(?:\.\d+)?) ?\* ?(\d+(?:\.\d+)?)/ // Regex for identifying multiplication (x * y)
+        static div = /(\d+(?:\.\d+)?) ?\/ ?(\d+(?:\.\d+)?)/ // Regex for identifying division (x / y)
+        static add = /(\d+(?:\.\d+)?) ?\+ ?(\d+(?:\.\d+)?)/ // Regex for identifying addition (x + y)
+        static sub = /(\d+(?:\.\d+)?) ?- ?(\d+(?:\.\d+)?)/  // Regex for identifying subtraction (x - y)static
+        static gt  = /(\d+(?:\.\d+)?) ?> ?(\d+(?:\.\d+)?)/   // Regex for identifying greater than comparison (x > y)
+        static gte = /(\d+(?:\.\d+)?) ?>= ?(\d+(?:\.\d+)?)/  // Regex for identifying greate or equal comparison (x >= y)
+        static lt  = /(\d+(?:\.\d+)?) ?< ?(\d+(?:\.\d+)?)/   // Regex for identifying less than comparison (x < y)
+        static lte = /(\d+(?:\.\d+)?) ?<= ?(\d+(?:\.\d+)?)/  // Regex for identifying less or equal comparison (x <= y)
+        static eq  = /(\d+(?:\.\d+)?) ?== ?(\d+(?:\.\d+)?)/  // Regex for identifying equal comparison (x == y)
+
+        /**
+         * Evaluates a numerical expression as a string and returns a Number
+         * Follows standard PEMDAS operation ordering
+         * @param {String} expr Numerical expression input
+         * @returns {Number} Result of expression
+         */
+        static evaluate = function (expr) {
+            if(isNaN(Number(expr)))
+            {
+                if (this.parens.test(expr))
+                {
+                    let newExpr = expr.replace(this.parens, function(match, subExpr) {
+                        return this.evaluate(subExpr);
+                    });
+                    return this.evaluate(newExpr);
+                }
+                else if (this.exp.test(expr))
+                {
+                    let newExpr = expr.replace(this.exp, function(match, base, pow) {
+                        return Math.pow(Number(base), Number(pow));
+                    });
+                    return this.evaluate(newExpr);
+                }
+                else if (this.mul.test(expr))
+                {
+                    let newExpr = expr.replace(this.mul, function(match, a, b) {
+                        return Number(a) * Number(b);
+                    });
+                    return this.evaluate(newExpr);
+                }
+                else if (this.div.test(expr))
+                {
+                    let newExpr = expr.replace(this.div, function(match, a, b) {
+                        if (b != 0)
+                            return Number(a) / Number(b);
+                        else
+                            throw new Error('Division by zero');
+                    });
+                    return this.evaluate(newExpr);
+                }
+                else if (this.add.test(expr))
+                {
+                    let newExpr = expr.replace(this.add, function(match, a, b) {
+                        return Number(a) + Number(b);
+                    });
+                    return this.evaluate(newExpr);
+                }
+                else if (this.sub.test(expr))
+                {
+                    let newExpr = expr.replace(this.sub, function(match, a, b) {
+                        return Number(a) - Number(b);
+                    });
+                    return this.evaluate(newExpr);
+                }
+                else if (this.gt.test(expr)) {
+                    let newExpr = expr.replace(this.gt, function(match, a, b) {
+                        return Number(a) > Number(b);
+                    });
+                    return this.evaluate(newExpr);
+                }
+                else if (this.gte.test(expr)) {
+                    let newExpr = expr.replace(this.gte, function(match, a, b) {
+                        return Number(a) >= Number(b);
+                    });
+                    return this.evaluate(newExpr);
+                }
+                else if (this.lt.test(expr)) {
+                    let newExpr = expr.replace(this.lt, function(match, a, b) {
+                        return Number(a) < Number(b);
+                    });
+                    return this.evaluate(newExpr);
+                }
+                else if (this.lte.test(expr)) {
+                    let newExpr = expr.replace(this.lte, function(match, a, b) {
+                        return Number(a) <= Number(b);
+                    });
+                    return this.evaluate(newExpr);
+                }
+                else if (this.eq.test(expr)) {
+                    let newExpr = expr.replace(this.eq, function(match, a, b) {
+                        return Number(a) == Number(b);
+                    });
+                    return this.evaluate(newExpr);
+                }
+                else
+                {
+                    return expr;
+                }
+            }
+            
+            return Number(expr);
+        }
+    }
+
     const Audio = class {
         static sfxAudioElement = null;
         static bgmAudioElement = null;
@@ -1557,7 +1666,7 @@
                             console.error(`VNGINE_ERROR: ${variable} is not a custom game variable`);
                         }
                         else {
-                            game.customVariables[variable] = evaluate(processString(expression));
+                            game.customVariables[variable] = MathParser.evaluate(processString(expression));
                         }
                     }
 
@@ -1774,7 +1883,7 @@
         if (logicBranch.length > 0) {
             for (let i = 0; i < logicBranch.length; i++) {
                 let expr = processString(logicBranch[i].expression);
-                if (evaluate(expr) == "true" ) {
+                if (MathParser.evaluate(expr) == "true" ) {
                     loadNode(logicBranch[i].targetNode);
                     updateDialog();
                     return;
@@ -2020,115 +2129,6 @@
         }
 
         return result;
-    }
-
-    //Math expression evaluation by @Aaron R.
-    //https://stackoverflow.com/questions/11422513/evaluate-an-equation-in-javascript-without-eval
-    let parens = /\(([0-9+\-*/\^ .]+)\)/             // Regex for identifying parenthetical expressions
-    let exp = /(\d+(?:\.\d+)?) ?\^ ?(\d+(?:\.\d+)?)/ // Regex for identifying exponentials (x ^ y)
-    let mul = /(\d+(?:\.\d+)?) ?\* ?(\d+(?:\.\d+)?)/ // Regex for identifying multiplication (x * y)
-    let div = /(\d+(?:\.\d+)?) ?\/ ?(\d+(?:\.\d+)?)/ // Regex for identifying division (x / y)
-    let add = /(\d+(?:\.\d+)?) ?\+ ?(\d+(?:\.\d+)?)/ // Regex for identifying addition (x + y)
-    let sub = /(\d+(?:\.\d+)?) ?- ?(\d+(?:\.\d+)?)/  // Regex for identifying subtraction (x - y)
-    
-    let gt  = /(\d+(?:\.\d+)?) ?> ?(\d+(?:\.\d+)?)/   // Regex for identifying greater than comparison (x > y)
-    let gte = /(\d+(?:\.\d+)?) ?>= ?(\d+(?:\.\d+)?)/  // Regex for identifying greate or equal comparison (x >= y)
-    let lt  = /(\d+(?:\.\d+)?) ?< ?(\d+(?:\.\d+)?)/   // Regex for identifying less than comparison (x < y)
-    let lte = /(\d+(?:\.\d+)?) ?<= ?(\d+(?:\.\d+)?)/  // Regex for identifying less or equal comparison (x <= y)
-    let eq  = /(\d+(?:\.\d+)?) ?== ?(\d+(?:\.\d+)?)/  // Regex for identifying equal comparison (x == y)
-
-    /**
-     * Evaluates a numerical expression as a string and returns a Number
-     * Follows standard PEMDAS operation ordering
-     * @param {String} expr Numerical expression input
-     * @returns {Number} Result of expression
-     */
-    function evaluate(expr)
-    {
-        if(isNaN(Number(expr)))
-        {
-            if (parens.test(expr))
-            {
-                let newExpr = expr.replace(parens, function(match, subExpr) {
-                    return evaluate(subExpr);
-                });
-                return evaluate(newExpr);
-            }
-            else if (exp.test(expr))
-            {
-                let newExpr = expr.replace(exp, function(match, base, pow) {
-                    return Math.pow(Number(base), Number(pow));
-                });
-                return evaluate(newExpr);
-            }
-            else if (mul.test(expr))
-            {
-                let newExpr = expr.replace(mul, function(match, a, b) {
-                    return Number(a) * Number(b);
-                });
-                return evaluate(newExpr);
-            }
-            else if (div.test(expr))
-            {
-                let newExpr = expr.replace(div, function(match, a, b) {
-                    if (b != 0)
-                        return Number(a) / Number(b);
-                    else
-                        throw new Error('Division by zero');
-                });
-                return evaluate(newExpr);
-            }
-            else if (add.test(expr))
-            {
-                let newExpr = expr.replace(add, function(match, a, b) {
-                    return Number(a) + Number(b);
-                });
-                return evaluate(newExpr);
-            }
-            else if (sub.test(expr))
-            {
-                let newExpr = expr.replace(sub, function(match, a, b) {
-                    return Number(a) - Number(b);
-                });
-                return evaluate(newExpr);
-            }
-            else if (gt.test(expr)) {
-                let newExpr = expr.replace(gt, function(match, a, b) {
-                    return Number(a) > Number(b);
-                });
-                return evaluate(newExpr);
-            }
-            else if (gte.test(expr)) {
-                let newExpr = expr.replace(gte, function(match, a, b) {
-                    return Number(a) >= Number(b);
-                });
-                return evaluate(newExpr);
-            }
-            else if (lt.test(expr)) {
-                let newExpr = expr.replace(lt, function(match, a, b) {
-                    return Number(a) < Number(b);
-                });
-                return evaluate(newExpr);
-            }
-            else if (lte.test(expr)) {
-                let newExpr = expr.replace(lte, function(match, a, b) {
-                    return Number(a) <= Number(b);
-                });
-                return evaluate(newExpr);
-            }
-            else if (eq.test(expr)) {
-                let newExpr = expr.replace(eq, function(match, a, b) {
-                    return Number(a) == Number(b);
-                });
-                return evaluate(newExpr);
-            }
-            else
-            {
-                return expr;
-            }
-        }
-        
-        return Number(expr);
     }
       
 }())
