@@ -29,7 +29,8 @@ gameJSON = {
         "tap": "ui_click.wav"
     },
     "customVariables": {
-        "mcname": "UwU"
+        "mcname": "UwU",
+        "nameattempts": 0
     },
     "gallery": [
         "cg1.png",
@@ -67,27 +68,59 @@ gameJSON = {
     ],
     "nodes": [
         {
+            "logicBranch": [
+                {
+                    "expression": "{nameattempts} >= 1",
+                    "targetNode": 1
+                }
+            ],
+            "defaultNode": 2             
+        },
+        {
+            "dialog": [
+                {
+                    "character": 2,
+                    "text": "Did you really mess up your own name?"
+                }
+            ],
+            "nextNode": 2
+        },
+        {
             "setBackground": null,
             "setCharacters": null,
             "input": {
                 "message": "What's your name?",
                 "variable": "mcname"
             },
-            "nextNode": 1
+            "nextNode": 3
         },
         {
             "dialog": [
                 {
                     "character": 2,
+                    "text": "Attempts: {nameattempts}"
+                },
+                {
+                    "character": 2,
                     "text": "Is {mcname} your name?"
                 }
             ],
-            "nextNode": 2
+            "nextNode": 4
         },
         {
             "decision": [
-                { "text": "Yes", "targetNode": 3 },
-                { "text": "No", "targetNode": 0 }
+                {
+                    "text": "Yes",
+                    "targetNode": 5
+                },
+                {
+                    "text": "No",
+                    "setVariable": {
+                        "variable": "nameattempts",
+                        "expression": "{nameattempts} + 1"
+                    },
+                    "targetNode": 0
+                }
             ]
         },
         {
@@ -102,7 +135,7 @@ gameJSON = {
                     "text": "This is so dope"
                 }
             ],
-            "nextNode": 4
+            "nextNode": 6
         },
         {
             "setBackground": "background2.jpg",
@@ -134,21 +167,21 @@ gameJSON = {
                     ] 
                 }
             ],
-            "nextNode": 5
+            "nextNode": 7
         },
         {
             "decision": [
                 {
                     "text": "Run away",
-                    "targetNode": 6
+                    "targetNode": 8
                 },
                 {
                     "text": "Stay silent",
-                    "targetNode": 7
+                    "targetNode": 9
                 },
                 {
                     "text": "Talk to {mcname}",
-                    "targetNode": 8
+                    "targetNode": 10
                 }
             ]
         },

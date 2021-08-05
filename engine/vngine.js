@@ -1543,6 +1543,24 @@
                     });
                     needToUpdateBacklogScreen = true;
 
+                    //Checks for custom variable setting
+                    if (options[i].setVariable) {
+                        let variable = options[i].setVariable.variable;
+                        let expression = options[i].setVariable.expression;
+                        if (variable === undefined) {
+                            console.error(`VNGINE_ERROR: variable property not found in setVariable of option ${i} in node ${currentScreen}`);
+                        }
+                        else if (expression === undefined) {
+                            console.error(`VNGINE_ERROR: expression property not found in setVariable of option ${i} in node ${currentScreen}`);
+                        }
+                        else if (!customVariableKeys.includes(variable)) {
+                            console.error(`VNGINE_ERROR: ${variable} is not a custom game variable`);
+                        }
+                        else {
+                            game.customVariables[variable] = evaluate(processString(expression));
+                        }
+                    }
+
                     //Loads the target node of the decision
                     loadNode(options[i].targetNode);
                     updateDialog();
@@ -1600,7 +1618,6 @@
             
             //Set Background
             if (currentNode.setBackground !== undefined) {
-                console.log("changing background");
                 document.getElementById("vngine-game-background").style.backgroundImage = `url("game/res/img/backgrounds/${currentNode.setBackground}")`;
             }
             else if (!document.getElementById("vngine-game-background").style.backgroundImage) {
@@ -1636,6 +1653,9 @@
                 DialogBox.setVisible(false);
                 readInput(currentNode.input);
             }
+            else if (currentNode.logicBranch) {
+                evaluateLogicBranch(currentNode.logicBranch);
+            }
             else if (currentNode.dialog) {
                 //Starts dialog
                 DialogBox.setVisible(true);
@@ -1643,7 +1663,7 @@
                 currentDialogIndex = 0;
             }
             else {
-                console.warn(`VNGINE_WARNING: node with index ${index} doesn't have either dialog or decision`);
+                console.warn(`VNGINE_WARNING: node with index ${index} doesn't have a defined type`);
             }
         }
     }
@@ -1746,6 +1766,30 @@
         }
         else {
             console.error(`VNGINE_ERROR: ${data.variable} is not a variable`);
+        }
+    }
+
+    //Executes a logic branching node
+    function evaluateLogicBranch (logicBranch) {
+        if (logicBranch.length > 0) {
+            for (let i = 0; i < logicBranch.length; i++) {
+                let expr = processString(logicBranch[i].expression);
+                if (evaluate(expr) == "true" ) {
+                    loadNode(logicBranch[i].targetNode);
+                    updateDialog();
+                    return;
+                }
+            }
+        }
+        else {
+            console.warn(`VNGINE_WARNING: No branches to evaluate on node with index ${currentNodeIndex}`);
+        }
+
+        if (currentNode.defaultNode) {
+            loadNode(currentNode.defaultNode);
+        }
+        else {
+            console.error(`VNGINE_ERROR: No default node found on node with index ${currentNodeIndex}`);
         }
     }
 
@@ -1976,6 +2020,115 @@
         }
 
         return result;
+    }
+
+    //Math expression evaluation by @Aaron R.
+    //https://stackoverflow.com/questions/11422513/evaluate-an-equation-in-javascript-without-eval
+    let parens = /\(([0-9+\-*/\^ .]+)\)/             // Regex for identifying parenthetical expressions
+    let exp = /(\d+(?:\.\d+)?) ?\^ ?(\d+(?:\.\d+)?)/ // Regex for identifying exponentials (x ^ y)
+    let mul = /(\d+(?:\.\d+)?) ?\* ?(\d+(?:\.\d+)?)/ // Regex for identifying multiplication (x * y)
+    let div = /(\d+(?:\.\d+)?) ?\/ ?(\d+(?:\.\d+)?)/ // Regex for identifying division (x / y)
+    let add = /(\d+(?:\.\d+)?) ?\+ ?(\d+(?:\.\d+)?)/ // Regex for identifying addition (x + y)
+    let sub = /(\d+(?:\.\d+)?) ?- ?(\d+(?:\.\d+)?)/  // Regex for identifying subtraction (x - y)
+    
+    let gt  = /(\d+(?:\.\d+)?) ?> ?(\d+(?:\.\d+)?)/   // Regex for identifying greater than comparison (x > y)
+    let gte = /(\d+(?:\.\d+)?) ?>= ?(\d+(?:\.\d+)?)/  // Regex for identifying greate or equal comparison (x >= y)
+    let lt  = /(\d+(?:\.\d+)?) ?< ?(\d+(?:\.\d+)?)/   // Regex for identifying less than comparison (x < y)
+    let lte = /(\d+(?:\.\d+)?) ?<= ?(\d+(?:\.\d+)?)/  // Regex for identifying less or equal comparison (x <= y)
+    let eq  = /(\d+(?:\.\d+)?) ?== ?(\d+(?:\.\d+)?)/  // Regex for identifying equal comparison (x == y)
+
+    /**
+     * Evaluates a numerical expression as a string and returns a Number
+     * Follows standard PEMDAS operation ordering
+     * @param {String} expr Numerical expression input
+     * @returns {Number} Result of expression
+     */
+    function evaluate(expr)
+    {
+        if(isNaN(Number(expr)))
+        {
+            if (parens.test(expr))
+            {
+                let newExpr = expr.replace(parens, function(match, subExpr) {
+                    return evaluate(subExpr);
+                });
+                return evaluate(newExpr);
+            }
+            else if (exp.test(expr))
+            {
+                let newExpr = expr.replace(exp, function(match, base, pow) {
+                    return Math.pow(Number(base), Number(pow));
+                });
+                return evaluate(newExpr);
+            }
+            else if (mul.test(expr))
+            {
+                let newExpr = expr.replace(mul, function(match, a, b) {
+                    return Number(a) * Number(b);
+                });
+                return evaluate(newExpr);
+            }
+            else if (div.test(expr))
+            {
+                let newExpr = expr.replace(div, function(match, a, b) {
+                    if (b != 0)
+                        return Number(a) / Number(b);
+                    else
+                        throw new Error('Division by zero');
+                });
+                return evaluate(newExpr);
+            }
+            else if (add.test(expr))
+            {
+                let newExpr = expr.replace(add, function(match, a, b) {
+                    return Number(a) + Number(b);
+                });
+                return evaluate(newExpr);
+            }
+            else if (sub.test(expr))
+            {
+                let newExpr = expr.replace(sub, function(match, a, b) {
+                    return Number(a) - Number(b);
+                });
+                return evaluate(newExpr);
+            }
+            else if (gt.test(expr)) {
+                let newExpr = expr.replace(gt, function(match, a, b) {
+                    return Number(a) > Number(b);
+                });
+                return evaluate(newExpr);
+            }
+            else if (gte.test(expr)) {
+                let newExpr = expr.replace(gte, function(match, a, b) {
+                    return Number(a) >= Number(b);
+                });
+                return evaluate(newExpr);
+            }
+            else if (lt.test(expr)) {
+                let newExpr = expr.replace(lt, function(match, a, b) {
+                    return Number(a) < Number(b);
+                });
+                return evaluate(newExpr);
+            }
+            else if (lte.test(expr)) {
+                let newExpr = expr.replace(lte, function(match, a, b) {
+                    return Number(a) <= Number(b);
+                });
+                return evaluate(newExpr);
+            }
+            else if (eq.test(expr)) {
+                let newExpr = expr.replace(eq, function(match, a, b) {
+                    return Number(a) == Number(b);
+                });
+                return evaluate(newExpr);
+            }
+            else
+            {
+                return expr;
+            }
+        }
+        
+        return Number(expr);
     }
       
 }())
