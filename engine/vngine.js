@@ -1272,6 +1272,7 @@
         okayBtn.innerText = "Ok";
         okayBtn.classList.add("vngine-btn");
         okayBtn.addEventListener("click", e => {
+            Audio.playEffect(audioUITap);
             callback(input.value);
             document.getElementById("vngine-dialog-modal").style.display = "none";
         });
