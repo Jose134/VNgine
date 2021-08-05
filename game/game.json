@@ -28,6 +28,9 @@ gameJSON = {
     "uiAudio": {
         "tap": "ui_click.wav"
     },
+    "customVariables": {
+        "mcname": "UwU"
+    },
     "gallery": [
         "cg1.png",
         "cg2.png",
@@ -44,7 +47,7 @@ gameJSON = {
     ],
     "characters": [
         {
-            "name": "DarkBird",
+            "name": "{mcname}",
             "pictures": [
                 "character0-0.png",
                 "character0-1.png"
@@ -97,7 +100,7 @@ gameJSON = {
                     "changeCharacterPicture": [ { "character": 0, "picture": 0 },
                                                 { "character": 1, "picture": 1 } ],
                     "autosave": true,
-                    "text": "The fuck is this guy doing?",
+                    "text": "The fuck is {character0.name} doing?",
                     "changeCharacterPosition": [
                         { "character": 0, "right": 5 }
                     ] 

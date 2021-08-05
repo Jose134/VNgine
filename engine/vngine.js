@@ -44,6 +44,9 @@
     //Audio
     let audioUITap = "engine/res/audio/tap.mp3";
 
+    //Game variables
+    let customVariableKeys = [];
+
     const Audio = class {
         static sfxAudioElement = null;
         static bgmAudioElement = null;
@@ -503,6 +506,10 @@
 
         if (game.uiAudio) {
             readAudio();
+        }
+
+        if (game.customVariables) {
+            customVariableKeys = Object.keys(game.customVariables);
         }
 
         //Goes to the main menu
@@ -1300,7 +1307,6 @@
         if (cg) keys.splice(keys.indexOf(cg), 1);
 
         keys.sort((a, b) => {
-            console.log(a);
             let aDate = a.split('   ')[0];
             let aTime = a.split('   ')[1];
 
@@ -1672,8 +1678,8 @@
         }
 
         //Updates dialog text
-        DialogBox.setCharacter(game.characters[characterIndex].name);
-        DialogBox.writeText(currentNode.dialog[currentDialogIndex].text);
+        DialogBox.setCharacter(processString(game.characters[characterIndex].name));
+        DialogBox.writeText(processString(currentNode.dialog[currentDialogIndex].text));
 
         currentDialogIndex++;
 
@@ -1859,6 +1865,72 @@
                     break;
             }
         });
+    }
+
+    //Replaces game variables with their values in a string
+    function processString (str) {
+        let result = str;
+        let regex = new RegExp(/{[^{}]+}/g);
+        
+        let finished = false;
+        while (!finished) {
+            let matches = [];
+            let regexSearch = null;
+            while((regexSearch = regex.exec(result)) != null) {
+                matches.push(regexSearch[0]);
+            }
+
+            if (matches.length > 0) {
+                for (let i = 0; i < matches.length; i++) {
+                    let m = matches[i].substr(1, matches[i].length-2); //Remove brackets {}
+
+                    if (m.includes(".")) { //We expect to be accessing a property of a character
+                        let split = m.split(".");
+                        if (split[0].startsWith("character")) {
+                            let indexStr = split[0].slice(9); //Remove "character" to leave the index only
+                            let index = parseInt(indexStr); //Tries to parse the index to int
+                            if (index != NaN) {
+                                if (game.characters[index]) {
+                                    if (split[1] == "name") {
+                                        result = result.replace(matches[i], game.characters[index].name);
+                                    }
+                                    else {
+                                        console.error(`VNGINE_ERROR: property ${split[1]} of character not-recognized`);
+                                        return result; //We return to avoid an infinite loop
+                                    }
+                                }
+                                else {
+                                    console.error(`VNGINE_ERROR: ${index} is not a valid character index`);
+                                    return result; //We return to avoid an infinite loop
+                                }
+                            }
+                            else {
+                                console.error(`VNGINE_ERROR: ${indexStr} is not a number`);
+                                return result; //We return to avoid an infinite loop
+                            }
+                        }
+                        else {
+                            console.error(`VNGINE_ERROR: variable ${m} contains a non-valid character`);
+                            return result; //We return to avoid an infinite loop
+                        }
+                    }
+                    else { //We expect a game custom variable
+                        if (customVariableKeys.includes(m)) {
+                            result = result.replace(matches[i], game.customVariables[m]);
+                        }
+                        else {
+                            console.error(`VNGINE_ERROR: ${m} is not a game custom variable`);
+                            return result; //We return to avoid an infinite loop
+                        }
+                    }
+                }
+            }
+            else {
+                finished = true;
+            }
+        }
+
+        return result;
     }
       
 }())
