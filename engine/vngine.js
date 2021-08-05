@@ -1362,7 +1362,10 @@
             let savefileText = document.createElement("p");
             savefileText.classList.add("vngine-savefile-sentence");
             if(game.nodes[data.nodeIndex].dialog) {
-                savefileText.innerText = game.nodes[data.nodeIndex].dialog[data.dialogIndex].text;
+                let backup = game.customVariables;
+                game.customVariables = data.customVariables;
+                savefileText.innerText = processString(game.nodes[data.nodeIndex].dialog[data.dialogIndex].text);
+                game.customVariables = backup;
             }
             else {
                 savefileText.innerHTML = "<i>Decision</i>";
@@ -1418,7 +1421,7 @@
         let backlog = Backlog.getAsTextArray();
         let html = "";
         backlog.forEach(str => {
-            html += `<li>${str}</li>`;
+            html += `<li>${processString(str)}</li>`;
         });
 
         backlogList.innerHTML = html;
@@ -1472,7 +1475,12 @@
 
     //Display the given characters on the game screen
     function renderCharacters (characters) {
-        if (characters === null) return;5
+        if (characters === null) {
+            let charactersDiv = document.getElementById("vngine-characters-div");
+            characterImgs = [];
+            charactersDiv.innerHTML = "";
+            return;
+        }
 
         characterImgs.forEach(img => {
             img.setAttribute("src", "");
@@ -1592,6 +1600,7 @@
             
             //Set Background
             if (currentNode.setBackground !== undefined) {
+                console.log("changing background");
                 document.getElementById("vngine-game-background").style.backgroundImage = `url("game/res/img/backgrounds/${currentNode.setBackground}")`;
             }
             else if (!document.getElementById("vngine-game-background").style.backgroundImage) {
@@ -1838,7 +1847,8 @@
         let saveData = {
             "nodeIndex": currentNodeIndex,
             "dialogIndex": currentDialogIndex-1,
-            "backlog": Backlog.getAsArray()
+            "backlog": Backlog.getAsArray(),
+            "customVariables": game.customVariables
         };
 
         localStorage.setItem(saveFile, JSON.stringify(saveData));
@@ -1850,6 +1860,10 @@
         let loadedData = localStorage.getItem(saveFile);
         if (loadedData) {
             loadedData = JSON.parse(loadedData);
+            document.getElementById("vngine-game-background").style.backgroundImage = "";
+            renderCharacters(null);
+
+            game.customVariables = loadedData.customVariables;
             
             Backlog.stack = loadedData.backlog;
             loadNode(loadedData.nodeIndex);
@@ -1858,7 +1872,6 @@
                 updateDialog();
             }
             Backlog.pop();
-            
         }
 
         ScreenManager.switchToScreen(screens.GAME);
