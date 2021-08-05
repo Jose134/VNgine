@@ -59,9 +59,37 @@ gameJSON = {
                 "character1-0.png",
                 "character1-1.png"
             ]
+        },
+        {
+            "name": "",
+            "pictures": []
         }
     ],
     "nodes": [
+        {
+            "setBackground": null,
+            "setCharacters": null,
+            "input": {
+                "message": "What's your name?",
+                "variable": "mcname"
+            },
+            "nextNode": 1
+        },
+        {
+            "dialog": [
+                {
+                    "character": 2,
+                    "text": "Is {mcname} your name?"
+                }
+            ],
+            "nextNode": 2
+        },
+        {
+            "decision": [
+                { "text": "Yes", "targetNode": 3 },
+                { "text": "No", "targetNode": 0 }
+            ]
+        },
         {
             "unlockCG": 0,
             "setBackground": "background.jpg",
@@ -74,7 +102,7 @@ gameJSON = {
                     "text": "This is so dope"
                 }
             ],
-            "nextNode": 1
+            "nextNode": 4
         },
         {
             "setBackground": "background2.jpg",
@@ -106,21 +134,21 @@ gameJSON = {
                     ] 
                 }
             ],
-            "nextNode": 2
+            "nextNode": 5
         },
         {
             "decision": [
                 {
                     "text": "Run away",
-                    "targetNode": 3
+                    "targetNode": 6
                 },
                 {
                     "text": "Stay silent",
-                    "targetNode": 4
+                    "targetNode": 7
                 },
                 {
-                    "text": "Talk to DarkBird",
-                    "targetNode": 5
+                    "text": "Talk to {mcname}",
+                    "targetNode": 8
                 }
             ]
         },

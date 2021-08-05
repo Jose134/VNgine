@@ -256,7 +256,10 @@
         }
 
         static toggleVisibility = function () {
-            if (currentNode && currentNode.decision) return;
+            if (currentNode &&
+                currentNode.decision ||
+                currentNode.input
+            ) return;
 
             this.visible = !this.visible;
             this.dialogBoxDiv.style.display = this.visible ? "block" : "none";
@@ -766,12 +769,14 @@
                 Audio.playEffect(audioUITap);
                 Backlog.stack = [];
                 if (skip) toggleSkip();
+                
+                ScreenManager.switchToScreen(screens.GAME);
+                DialogBox.setVisible(true);
+                
                 loadNode(0);
                 if (currentNode.dialog) {
                     updateDialog();
                 }
-                ScreenManager.switchToScreen(screens.GAME);
-                DialogBox.setVisible(true);
             }
         });
         
@@ -1466,6 +1471,8 @@
 
     //Display the given characters on the game screen
     function renderCharacters (characters) {
+        if (characters === null) return;5
+
         characterImgs.forEach(img => {
             img.setAttribute("src", "");
             img.setAttribute("data-character", "");
@@ -1510,7 +1517,7 @@
         for (let i = 0; i < options.length; i++) {
             let button = document.createElement("button");
             button.classList.add("vngine-btn");
-            button.innerText = options[i].text;
+            button.innerText = processString(options[i].text);
             button.setAttribute("id", `vngine-decision-btn-${i}`);
             
             button.addEventListener("click", e => {
@@ -1544,11 +1551,11 @@
     function getLatestBackground (backlogArray) {
         let index = backlogArray.length-1;
         let background = undefined;
-        while (index >= 0 && !background) {
+        while (index >= 0 && background === undefined) {
             background = game.nodes[backlogArray[index].nodeIndex].setBackground;
             index--;
 
-            if (background) break;
+            if (background !== undefined) break;
         }
 
         return background;
@@ -1558,11 +1565,11 @@
     function getLatestCharacters (backlogArray) {
         let index = backlogArray.length-1;
         let characters = undefined;
-        while (index >= 0 && !characters) {
+        while (index >= 0 && characters === undefined) {
             characters = game.nodes[backlogArray[index].nodeIndex].setCharacters;
             index--;
 
-            if (characters) break;
+            if (characters !== undefined) break;
         }
 
         return characters;
@@ -1583,30 +1590,30 @@
             }
             
             //Set Background
-            if (currentNode.setBackground) {
+            if (currentNode.setBackground !== undefined) {
                 document.getElementById("vngine-game-background").style.backgroundImage = `url("game/res/img/backgrounds/${currentNode.setBackground}")`;
             }
             else if (!document.getElementById("vngine-game-background").style.backgroundImage) {
                 let background = getLatestBackground(Backlog.getAsArray());
-                if (background) {
+                if (background !== undefined) {
                     document.getElementById("vngine-game-background").style.backgroundImage = `url("game/res/img/backgrounds/${background}")`;
                 }
                 else {
-                    console.error(`VNGINE_ERROR: Couldn't get background for node with index ${currentNodeIndex}`);
+                    console.warn(`VNGINE_WARNING: Couldn't get background for node with index ${currentNodeIndex}`);
                 }
             }
 
             //Set characters
-            if (currentNode.setCharacters) {
+            if (currentNode.setCharacters !== undefined) {
                 renderCharacters(currentNode.setCharacters);
             }
             else if (!characterImgs.map(c => c.getAttribute("src") != "").includes(true)) {
                 let characters = getLatestCharacters(Backlog.getAsArray());
-                if (characters) {
+                if (characters !== undefined) {
                     renderCharacters(characters);
                 }
                 else {
-                    console.error(`VNGINE_ERROR: Couldn't get character pictures for node with index ${currentNodeIndex}`);
+                    console.warn(`VNGINE_WARNING: Couldn't get character pictures for node with index ${currentNodeIndex}`);
                 }
             }
                 
@@ -1614,6 +1621,10 @@
             if (currentNode.decision) {
                 DialogBox.setVisible(false);
                 renderDecisionOptions(currentNode.decision);
+            }
+            else if (currentNode.input) {
+                DialogBox.setVisible(false);
+                readInput(currentNode.input);
             }
             else if (currentNode.dialog) {
                 //Starts dialog
@@ -1629,6 +1640,8 @@
 
     //Writes the dialog text
     function updateDialog () {
+        if (!currentNode.dialog) return; //Security always first
+
         //Adds an entry to the backlog
         Backlog.push({
             type: backlogEntryType.DIALOG,
@@ -1709,6 +1722,20 @@
         if (!unlockedCG.includes(index)) {
             unlockedCG.push(index);
             localStorage.setItem("cg", unlockedCG.toString());
+        }
+    }
+
+    //Executes an input node
+    function readInput (data) {
+        if (customVariableKeys.includes(data.variable)) {
+            UIDialog.show(UIDialogType.INPUT, res => {
+                game.customVariables[data.variable] = res;
+                loadNode(currentNode.nextNode);
+                updateDialog();
+            }, data.message ? processString(data.message) : "");
+        }
+        else {
+            console.error(`VNGINE_ERROR: ${data.variable} is not a variable`);
         }
     }
 
