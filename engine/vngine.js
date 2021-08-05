@@ -1382,8 +1382,12 @@
                 deleteButton.addEventListener("click", e => {
                     if (e.target && e.target.id == `delete-${key}`) {
                         Audio.playEffect(audioUITap);
-                        deleteSavefile(key);
-                        renderSavefileList();
+                        UIDialog.show(UIDialogType.CONFIRM, res => {
+                            if (res === "yes") {
+                                deleteSavefile(key);
+                                renderSavefileList();
+                            }
+                        });
                     }
                 });
             }
