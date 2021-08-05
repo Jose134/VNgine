@@ -1900,22 +1900,22 @@
                                     }
                                     else {
                                         console.error(`VNGINE_ERROR: property ${split[1]} of character not-recognized`);
-                                        return result; //We return to avoid an infinite loop
+                                        finished = true; //We return to avoid an infinite loop
                                     }
                                 }
                                 else {
                                     console.error(`VNGINE_ERROR: ${index} is not a valid character index`);
-                                    return result; //We return to avoid an infinite loop
+                                    finished = true; //We return to avoid an infinite loop
                                 }
                             }
                             else {
                                 console.error(`VNGINE_ERROR: ${indexStr} is not a number`);
-                                return result; //We return to avoid an infinite loop
+                                finished = true; //We return to avoid an infinite loop
                             }
                         }
                         else {
                             console.error(`VNGINE_ERROR: variable ${m} contains a non-valid character`);
-                            return result; //We return to avoid an infinite loop
+                            finished = true; //We return to avoid an infinite loop
                         }
                     }
                     else { //We expect a game custom variable
@@ -1924,7 +1924,7 @@
                         }
                         else {
                             console.error(`VNGINE_ERROR: ${m} is not a game custom variable`);
-                            return result; //We return to avoid an infinite loop
+                            finished = true; //We return to avoid an infinite loop
                         }
                     }
                 }
