@@ -628,6 +628,7 @@
         ScreenManager.switchToScreen(screens.MENU);
     }
 
+    //Creates all the DOM elements needed for the dialog modal
     function generateDialogModal () {
         /* HTML to generate
         <div id="vngine-dialog-modal" class="vngine-dialog-modal">
@@ -826,9 +827,11 @@
         /* HTML to generate
         <div id="vngine-menu" class="vngine-screen vngine-menu" style="display: block;">
             <h1 id="vngine-menu-title" class="vngine-menu-title">Test Game</h1>
+            <img id="vngine-menu-logo" class="vngine-menu-logo" src="engine/res/poweredbylight.png"></img>
             <div class="vngine-btn-group">
                 <button class="vngine-btn" id="vngine-menu-newgame-btn">New Game</button>
                 <button id="vngine-menu-continue-btn" class="vngine-btn">Continue</button>
+                <button id="vngine-menu-gallery-btn" class="vngine-btn">CG Gallery</button>
                 <button id="vngine-menu-settings-btn" class="vngine-btn">Settings</button>
             </div>
         </div>
@@ -942,8 +945,24 @@
     //Creates all the DOM elements needed for the gallery screen
     function generateGalleryScreen () {
         /* HTML to generate
-
+            <div id="vngine-gallery" class="vngine-screen vngine-gallery">
+                <div id="vngine-gallery-header" class="vngine-header">
+                    <button id="vngine-gallery-back" class="vngine-btn vngine-back-btn">Back</button>
+                    <p id="vngine-gallery-header-text" class="vngine-header-text">Gallery</p>
+                </div><div id="vngine-gallery-body" class="vngine-gallery-body">
+                    <img id="vngine-gallery-item-0" class="vngine-gallery-item" src="game/res/img/cg/cg1.png">
+                    <img id="vngine-gallery-item-1" class="vngine-gallery-item" src="game/res/img/cg/cgLocked.png">
+                    <img id="vngine-gallery-item-2" class="vngine-gallery-item" src="game/res/img/cg/cgLocked.png">
+                    ...
+                </div>
+                <div id="vngine-gallery-footer" class="vngine-gallery-footer">
+                    <a id="vngine-gallery-page-text-0" class="vngine-gallery-page-text vngine-gallery-page-text-selected">1</a>
+                    <a id="vngine-gallery-page-text-1" class="vngine-gallery-page-text">2</a>
+                    ...
+                </div>
+            </div>
         */
+
         let galleryDiv = document.createElement("div");
         galleryDiv.setAttribute("id", "vngine-gallery");
         galleryDiv.classList.add("vngine-screen", "vngine-gallery");
@@ -1009,8 +1028,41 @@
     //Creates all the DOM elements needed for the settings screen
     function generateSettingsScreen () {
         /* HTML to generate
+            <div id="vngine-settings" class="vngine-screen vngine-settings">
+                <div id="vngine-settings-header" class="vngine-header">
+                    <button id="vngine-settings-back" class="vngine-btn vngine-back-btn">Back</button>
+                    <p id="vngine-settings-header-text" class="vngine-header-text">Settings</p>
+                </div>
+                <div id="vngine-settings-body" class="vngine-settings-body">
+                    <div id="vngine-settings-text-speed" class="vngine-settings-text-speed">
+                        <label for="vngine-text-speed-range">Text Speed: </label><br>
+                        <select id="vngine-text-speed-select" name="vngine-text-speed-select">
+                            <option value="veryfast">Very Fast</option>
+                            <option value="fast">Fast</option>
+                            <option value="medium">Medium</option>
+                            <option value="slow">Slow</option>
+                        </select>
+                    </div>
+                    <div id="vngine-settings-sound" class="vngine-settings-sound">
+                        <label for="vngine-settings-master-volume-range">Master</label><br>
+                        <input type="range" id="vngine-settings-master-volume-range" name="vngine-settings-master-volume-range">
+                        <a id="vngine-settings-master-volume-text">100%</a><br>
 
+                        <label for="vngine-settings-bgm-volume-range">Music</label><br>
+                        <input type="range" id="vngine-settings-bgm-volume-range" name="vngine-settings-bgm-volume-range">
+                        <a id="vngine-settings-bgm-volume-text">100%</a><br>
+
+                        <label for="vngine-settings-sfx-volume-range">Effects</label><br>
+                        <input type="range" id="vngine-settings-sfx-volume-range" name="vngine-settings-sfx-volume-range">
+                        <a id="vngine-settings-sfx-volume-text">100%</a>
+                    </div>
+                    <div id="vngine-settings-footer" class="vngine-settings-footer">
+                        <button id="vngine-settings-clear-data" class="vngine-btn">Set to default</button>
+                    </div>
+                </div>
+            </div>
         */
+
         let settingsDiv = document.createElement("div");
         settingsDiv.setAttribute("id", "vngine-settings");
         settingsDiv.classList.add("vngine-screen", "vngine-settings");
@@ -1234,7 +1286,7 @@
                 <p id="vngine-savefiles-text" class="vngine-savefiles-header-text">Load</p>
             </div>
             <div id="vngine-savefile-list" class="vngine-savefile-list">
-                
+                <!-- Actually empty, renderSavefileList function will fill this -->
             </div>
         </div>
         */
@@ -1279,9 +1331,20 @@
         return savefilesDiv;
     }
 
+    //Creates all the DOM elements needed for the backlog screen
     function generateBacklogScreen () {
         /* HTML to generate
-        
+            <div id="vngine-backlog" class="vngine-screen vngine-backlog">
+                <div id="vngine-backlog-header" class="vngine-header">
+                    <button id="vngine-backlog-back" class="vngine-btn vngine-back-btn">Back</button>
+                    <p id="vngine-backlog-header-text" class="vngine-header-text">Backlog</p>
+                </div>
+                <div id="vngine-backlog-body" class="vngine-backlog-body">
+                    <ol id="vngine-backlog-list" class="vngine-backlog-list">
+                        <!-- Actually empty, renderBacklog function will fill this -->
+                    </ol>
+                </div>
+            </div>
         */
 
         let backlogDiv = document.createElement("div");
@@ -1528,6 +1591,7 @@
 
     //Displays the backlog messages
     function renderBacklog () {
+        // HTML to generate: <li>*backlog text*</li>
         let backlogList = document.getElementById("vngine-backlog-list");
 
         let backlog = Backlog.getAsTextArray();
@@ -1995,8 +2059,6 @@
         }
     }
 
-    //---------------SAVE-LOAD---------------//
-
     //Saves game information on localStorage
     function save (saveFile) {
         if (!saveFile) return;
@@ -2034,6 +2096,7 @@
         ScreenManager.switchToScreen(screens.GAME);
     }
 
+    //Deletes a savefile from localStorage given its key
     function deleteSavefile (saveFile) {
         localStorage.removeItem(saveFile);
         needToUpdateSavefilesScreen = true;
