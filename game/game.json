@@ -1,5 +1,6 @@
 gameJSON = {
     "title": "Test Game",
+    "displayTitle": true,
     "author": "DarkBird",
     "enableVNgineLogo": true,
     "VNgineLogoVersion": "dark",
@@ -8,7 +9,7 @@ gameJSON = {
     "savefilesBackground": "background.jpg",
     "backlogBackground": "background2.jpg",
     "galleryBackground": "background2.jpg",
-    "uiColors": {
+    /*"uiColors": {
         "main": "pink",
         "main-darkened": "rgb(228, 171, 180)",
         "main-hover": "#fad3da",
@@ -24,7 +25,7 @@ gameJSON = {
         "page-text-selected": "white",
         "option-text": "rgb(202, 115, 129)",
         "option-text-hover": "white"
-    },
+    },*/
     "uiAudio": {
         "tap": "ui_click.wav"
     },

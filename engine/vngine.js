@@ -50,12 +50,12 @@
     const MathParser = class {
         //Math expression evaluation by @Aaron R.
         //https://stackoverflow.com/questions/11422513/evaluate-an-equation-in-javascript-without-eval
-        static parens = /\(([0-9+\-*/\^ .]+)\)/             // Regex for identifying parenthetical expressions
-        static exp = /(\d+(?:\.\d+)?) ?\^ ?(\d+(?:\.\d+)?)/ // Regex for identifying exponentials (x ^ y)
-        static mul = /(\d+(?:\.\d+)?) ?\* ?(\d+(?:\.\d+)?)/ // Regex for identifying multiplication (x * y)
-        static div = /(\d+(?:\.\d+)?) ?\/ ?(\d+(?:\.\d+)?)/ // Regex for identifying division (x / y)
-        static add = /(\d+(?:\.\d+)?) ?\+ ?(\d+(?:\.\d+)?)/ // Regex for identifying addition (x + y)
-        static sub = /(\d+(?:\.\d+)?) ?- ?(\d+(?:\.\d+)?)/  // Regex for identifying subtraction (x - y)static
+        static parens = /\(([0-9+\-*/\^ .]+)\)/              // Regex for identifying parenthetical expressions
+        static exp = /(\d+(?:\.\d+)?) ?\^ ?(\d+(?:\.\d+)?)/  // Regex for identifying exponentials (x ^ y)
+        static mul = /(\d+(?:\.\d+)?) ?\* ?(\d+(?:\.\d+)?)/  // Regex for identifying multiplication (x * y)
+        static div = /(\d+(?:\.\d+)?) ?\/ ?(\d+(?:\.\d+)?)/  // Regex for identifying division (x / y)
+        static add = /(\d+(?:\.\d+)?) ?\+ ?(\d+(?:\.\d+)?)/  // Regex for identifying addition (x + y)
+        static sub = /(\d+(?:\.\d+)?) ?- ?(\d+(?:\.\d+)?)/   // Regex for identifying subtraction (x - y)static
         static gt  = /(\d+(?:\.\d+)?) ?> ?(\d+(?:\.\d+)?)/   // Regex for identifying greater than comparison (x > y)
         static gte = /(\d+(?:\.\d+)?) ?>= ?(\d+(?:\.\d+)?)/  // Regex for identifying greate or equal comparison (x >= y)
         static lt  = /(\d+(?:\.\d+)?) ?< ?(\d+(?:\.\d+)?)/   // Regex for identifying less than comparison (x < y)
@@ -859,10 +859,13 @@
         }
         
         //Title text
-        let titleText = document.createElement("h1");
-        titleText.setAttribute("id", "vngine-menu-title");
-        titleText.classList.add("vngine-menu-title");
-        titleText.innerText = game.title;
+        let titleText = null;
+        if (game.displayTitle) {
+            titleText = document.createElement("h1");
+            titleText.setAttribute("id", "vngine-menu-title");
+            titleText.classList.add("vngine-menu-title");
+            titleText.innerText = game.title;
+        }
 
         //Buttons div
         let btnGroup = document.createElement("div");
@@ -927,7 +930,7 @@
         btnGroup.appendChild(continueBtn);
         btnGroup.appendChild(galleryBtn);
         btnGroup.appendChild(settingsBtn);
-        menuDiv.appendChild(titleText);
+        if(titleText) menuDiv.appendChild(titleText);
         if(logo) menuDiv.appendChild(logo);
         menuDiv.appendChild(btnGroup);
 
@@ -1752,8 +1755,8 @@
                     console.warn(`VNGINE_WARNING: Couldn't get character pictures for node with index ${currentNodeIndex}`);
                 }
             }
-                
-            //Checks for decision/dialog
+
+            //Checks for node type
             if (currentNode.decision) {
                 DialogBox.setVisible(false);
                 renderDecisionOptions(currentNode.decision);
@@ -1789,6 +1792,8 @@
         });
         needToUpdateBacklogScreen = true;
 
+        console.log(currentNode);
+        console.log(currentDialogIndex);
         let characterIndex = currentNode.dialog[currentDialogIndex].character;
 
         //Change character pictures if needed
@@ -1885,7 +1890,6 @@
                 let expr = processString(logicBranch[i].expression);
                 if (MathParser.evaluate(expr) == "true" ) {
                     loadNode(logicBranch[i].targetNode);
-                    updateDialog();
                     return;
                 }
             }
@@ -2040,7 +2044,7 @@
         let docStyle = getComputedStyle(document.documentElement);
         let keys = Object.keys(game.uiColors);
         keys.forEach(key => {
-            cssKey = `--vngine-color-ui-${key}`;
+            cssKey = `--vngine-color-${key}`;
             if (docStyle.getPropertyValue(cssKey)) {
                 document.documentElement.style.setProperty(cssKey, game.uiColors[key]);
             }
