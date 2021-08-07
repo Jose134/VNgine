@@ -1,0 +1,260 @@
+gameJSON = {
+    "title": "Test Game",
+    "displayTitle": true,
+    "author": "DarkBird",
+    "enableVNgineLogo": true,
+    "VNgineLogoVersion": "light",
+    /*"menuBackground": "background.jpg",
+    "settingsBackground": "background.jpg",
+    "savefilesBackground": "background.jpg",
+    "backlogBackground": "background2.jpg",
+    "galleryBackground": "background2.jpg",
+    */
+    "uiAudio": {
+        "tap": "ui_click.wav"
+    },
+    "customVariables": {
+        "mcname": "MC",
+        "mcnamekun": "{mcname}-kun",
+        "guidechanname": "Guide-chan"
+    },
+    "characters": [
+        {
+            "name": "",
+            "pictures": []
+        },
+        {
+            "name": "{mcname}",
+            "pictures": [
+                "character0-0.png",
+                "character0-1.png"
+            ]
+        },
+        {
+            "name": "{guidechanname}",
+            "pictures": [
+                "guide-chan-normal.png",
+                "guide-chan-blush.png",
+                "guide-chan-pout.png",
+                "guide-chan-sad.png",
+                "guide-chan-smile.png",
+                "guide-chan-smug.png",
+                "guide-chan-worried.png"
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "setBackground": "black.png",
+            "setCharacters": null,
+            "dialog": [
+                {
+                    "character": 1,
+                    "text": "What's this? Where am I?"
+                }
+            ],
+            "nextNode": 1
+        },
+        {
+            "setBackground": "living-room.png",
+            "setCharacters": [
+                { "index": 2, "left": 0 }
+            ],
+            "dialog": [
+                {
+                    "character": 2,
+                    "text": "Hey, you're finally awake"
+                },
+                {
+                    "character": 1,
+                    "text": "Is this some sort of skirim reference?"
+                },
+                {
+                    "character": 2,
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 6 }
+                    ],
+                    "text": "What the hell is a skirim? Did you really hit your head that hard?"
+                },
+                {
+                    "character": 2,
+                    "text": "Do you even remember your name?"
+                }
+            ],
+            "nextNode": 2
+        },
+        {
+            "input": {
+                "message": "What's your name?",
+                "variable": "mcname"
+            },
+            "nextNode": 3
+        },
+        {
+            "dialog": [
+                {
+                    "character": 0,
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 0 }
+                    ],
+                    "text": "So your name is {mcname}?"
+                }
+            ],
+            "nextNode": 4
+        },
+        {
+            "decision": [
+                {
+                    "text": "Yes",
+                    "targetNode": 6
+                },
+                {
+                    "text": "No",
+                    "targetNode": 5
+                }
+            ]
+        },
+        {
+            "dialog": [
+                {
+                    "character": 2,
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 2 }
+                    ],
+                    "text": "Did you really mess up your own name?!"
+                }
+            ],
+            "nextNode": 2
+        },
+        {
+            "dialog": [
+                {
+                    "character": 2,
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 0 }
+                    ],
+                    "text": "Okay, cool {mcnamekun}"
+                }
+            ]
+        },
+        {
+            "decision": [
+                {
+                    "text": "Yes",
+                    "targetNode": 5
+                },
+                {
+                    "text": "No",
+                    "setVariable": {
+                        "variable": "nameattempts",
+                        "expression": "{nameattempts} + 1"
+                    },
+                    "targetNode": 0
+                }
+            ]
+        },
+        {
+            "unlockCG": 0,
+            "setBackground": "background.jpg",
+            "setCharacters": [
+                { "index": 0, "right": 5, "picture": 1 }
+            ],
+            "dialog": [
+                {
+                    "character": 0,
+                    "text": "This is so dope"
+                }
+            ],
+            "nextNode": 6
+        },
+        {
+            "setBackground": "background2.jpg",
+            "setCharacters": [
+                { "index": 0, "right": 5 },
+                { "index": 1, "left": 5 }
+            ],
+            "dialog": [
+                {
+                    "character": 0,
+                    "text": "But this is even doper"
+                },
+                {
+                    "character": 0,
+                    "changeCharacterPicture": [ { "character": 0, "picture": 1 } ],
+                    "text": "Because my waifu is here!",
+                    "changeCharacterPosition": [
+                        { "character": 0, "right": 25, "time": 300, "type": "ease-in-out" }
+                    ] 
+                },
+                {
+                    "character": 1,
+                    "changeCharacterPicture": [ { "character": 0, "picture": 0 },
+                                                { "character": 1, "picture": 1 } ],
+                    "autosave": true,
+                    "text": "The fuck is {character0.name} doing?",
+                    "changeCharacterPosition": [
+                        { "character": 0, "right": 5 }
+                    ] 
+                }
+            ],
+            "nextNode": 7
+        },
+        {
+            "decision": [
+                {
+                    "text": "Run away",
+                    "targetNode": 8
+                },
+                {
+                    "text": "Stay silent",
+                    "targetNode": 9
+                },
+                {
+                    "text": "Talk to {mcname}",
+                    "targetNode": 10
+                }
+            ]
+        },
+        {
+            "unlockCG": 1,
+            "setCharacters": [
+                { "index": 0, "right": 0 }
+            ],
+            "dialog": [
+                {
+                    "playMusic": "",
+                    "character": 0,
+                    "text": "She ran away tho :C"
+                }
+            ],
+            "nextNode": null
+        },
+        {
+            "unlockCG": 2,
+            "dialog": [
+                {
+                    "playMusic": "",
+                    "character": 0,
+                    "text": "She isn't talking to me tho :C"
+                }
+            ],
+            "nextNode": null
+        },
+        {
+            "unlockCG": 3,
+            "dialog": [
+                {
+                    "character": 1,
+                    "changeCharacterPicture": [ { "character": 1, "picture": 0 } ],
+                    "text": "Hello"
+                },
+                {
+                    "character": 0,
+                    "text": "YAY :D"
+                }
+            ],
+            "nextNode": null
+        }
+
+    ]
+}

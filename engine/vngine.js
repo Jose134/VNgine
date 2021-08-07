@@ -920,16 +920,19 @@
             }
         });
         
-        let galleryBtn = document.createElement("button");
-        galleryBtn.innerText = "CG Gallery";
-        galleryBtn.setAttribute("id", "vngine-menu-gallery-btn");
-        galleryBtn.classList.add("vngine-btn");
-        document.addEventListener("click", e => {
-            if (e.target && e.target.id == "vngine-menu-gallery-btn") {
-                Audio.playEffect(audioUITap);
-                ScreenManager.switchToScreen(screens.GALLERY);
-            }
-        });
+        let galleryBtn = null;
+        if (game.gallery && game.gallery.length > 0) {
+            document.createElement("button");
+            galleryBtn.innerText = "CG Gallery";
+            galleryBtn.setAttribute("id", "vngine-menu-gallery-btn");
+            galleryBtn.classList.add("vngine-btn");
+            document.addEventListener("click", e => {
+                if (e.target && e.target.id == "vngine-menu-gallery-btn") {
+                    Audio.playEffect(audioUITap);
+                    ScreenManager.switchToScreen(screens.GALLERY);
+                }
+            });
+        }
         
         let settingsBtn = document.createElement("button");
         settingsBtn.innerText = "Settings";
@@ -945,7 +948,7 @@
         //Appending
         btnGroup.appendChild(newGameBtn);
         btnGroup.appendChild(continueBtn);
-        btnGroup.appendChild(galleryBtn);
+        if (galleryBtn) btnGroup.appendChild(galleryBtn);
         btnGroup.appendChild(settingsBtn);
         if(titleText) menuDiv.appendChild(titleText);
         if(logo) menuDiv.appendChild(logo);
@@ -958,6 +961,7 @@
 
     //Creates all the DOM elements needed for the gallery screen
     function generateGalleryScreen () {
+        if (!game.gallery || game.gallery.length <= 0) return document.createElement("div");
         /* HTML to generate
             <div id="vngine-gallery" class="vngine-screen vngine-gallery">
                 <div id="vngine-gallery-header" class="vngine-header">
