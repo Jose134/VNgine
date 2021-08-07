@@ -46,7 +46,7 @@
     let needToUpdateBacklogScreen = true;
 
     //Audio
-    let audioUITap = engineResDir + "/audio/tap.mp3";
+    let audioUITap = `${engineResDir}/audio/tap.mp3`;
 
     //Game variables
     let customVariableKeys = [];
@@ -588,6 +588,7 @@
         let dataEngineResDir = engineScript.getAttribute("data-engine-res-dir");
         if (dataEngineResDir) {
             engineResDir = dataEngineResDir;
+            audioUITap = `${engineResDir}/audio/tap.mp3`;
         }
         
         //Loads user settings
@@ -1978,11 +1979,11 @@
             console.warn(`VNGINE_WARNING: No branches to evaluate on node with index ${currentNodeIndex}`);
         }
 
-        if (currentNode.defaultNode) {
-            loadNode(currentNode.defaultNode);
+        if (currentNode.nextNode) {
+            loadNode(currentNode.nextNode);
         }
         else {
-            console.error(`VNGINE_ERROR: No default node found on node with index ${currentNodeIndex}`);
+            console.error(`VNGINE_ERROR: Property nextNode not found on node with index ${currentNodeIndex}`);
         }
     }
 

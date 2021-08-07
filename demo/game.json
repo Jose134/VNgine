@@ -4,17 +4,9 @@ gameJSON = {
     "author": "DarkBird",
     "enableVNgineLogo": true,
     "VNgineLogoVersion": "light",
-    /*"menuBackground": "background.jpg",
-    "settingsBackground": "background.jpg",
-    "savefilesBackground": "background.jpg",
-    "backlogBackground": "background2.jpg",
-    "galleryBackground": "background2.jpg",
-    */
-    "uiAudio": {
-        "tap": "ui_click.wav"
-    },
     "customVariables": {
         "mcname": "MC",
+        "mcnameattempts": 0,
         "mcnamekun": "{mcname}-kun",
         "guidechanname": "Guide-chan"
     },
@@ -25,16 +17,13 @@ gameJSON = {
         },
         {
             "name": "{mcname}",
-            "pictures": [
-                "character0-0.png",
-                "character0-1.png"
-            ]
+            "pictures": []
         },
         {
             "name": "{guidechanname}",
             "pictures": [
                 "guide-chan-normal.png",
-                "guide-chan-blush.png",
+                "guide-chan-normal-blush.png",
                 "guide-chan-pout.png",
                 "guide-chan-sad.png",
                 "guide-chan-smile.png",
@@ -63,7 +52,7 @@ gameJSON = {
             "dialog": [
                 {
                     "character": 2,
-                    "text": "Hey, you're finally awake"
+                    "text": "Hey, you're finally awake."
                 },
                 {
                     "character": 1,
@@ -78,7 +67,10 @@ gameJSON = {
                 },
                 {
                     "character": 2,
-                    "text": "Do you even remember your name?"
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 0 }
+                    ],
+                    "text": "Whatever, can you tell me your name?"
                 }
             ],
             "nextNode": 2
@@ -93,7 +85,7 @@ gameJSON = {
         {
             "dialog": [
                 {
-                    "character": 0,
+                    "character": 2,
                     "changeCharacterPicture": [
                         { "character": 2, "picture": 0 }
                     ],
@@ -110,6 +102,10 @@ gameJSON = {
                 },
                 {
                     "text": "No",
+                    "setVariable": {
+                        "variable": "mcnameattempts",
+                        "expression": "{mcnameattempts} + 1"
+                    },
                     "targetNode": 5
                 }
             ]
@@ -131,129 +127,114 @@ gameJSON = {
                 {
                     "character": 2,
                     "changeCharacterPicture": [
-                        { "character": 2, "picture": 0 }
+                        { "character": 2, "picture": 4 }
                     ],
-                    "text": "Okay, cool {mcnamekun}"
-                }
-            ]
-        },
-        {
-            "decision": [
-                {
-                    "text": "Yes",
-                    "targetNode": 5
-                },
-                {
-                    "text": "No",
-                    "setVariable": {
-                        "variable": "nameattempts",
-                        "expression": "{nameattempts} + 1"
-                    },
-                    "targetNode": 0
-                }
-            ]
-        },
-        {
-            "unlockCG": 0,
-            "setBackground": "background.jpg",
-            "setCharacters": [
-                { "index": 0, "right": 5, "picture": 1 }
-            ],
-            "dialog": [
-                {
-                    "character": 0,
-                    "text": "This is so dope"
-                }
-            ],
-            "nextNode": 6
-        },
-        {
-            "setBackground": "background2.jpg",
-            "setCharacters": [
-                { "index": 0, "right": 5 },
-                { "index": 1, "left": 5 }
-            ],
-            "dialog": [
-                {
-                    "character": 0,
-                    "text": "But this is even doper"
-                },
-                {
-                    "character": 0,
-                    "changeCharacterPicture": [ { "character": 0, "picture": 1 } ],
-                    "text": "Because my waifu is here!",
-                    "changeCharacterPosition": [
-                        { "character": 0, "right": 25, "time": 300, "type": "ease-in-out" }
-                    ] 
+                    "text": "Okay, cool, {mcnamekun}."
                 },
                 {
                     "character": 1,
-                    "changeCharacterPicture": [ { "character": 0, "picture": 0 },
-                                                { "character": 1, "picture": 1 } ],
-                    "autosave": true,
-                    "text": "The fuck is {character0.name} doing?",
-                    "changeCharacterPosition": [
-                        { "character": 0, "right": 5 }
-                    ] 
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 0 }
+                    ],
+                    "text": "Who are you anyways?"
+                },
+                {
+                    "character": 2,
+                    "text": "I'm {guidechanname}! I'm supposed to help you with your journey of creating a visual novel."
+                },
+                {
+                    "character": 1,
+                    "text": "{guidechanname}? What kind of name is that?"
+                },
+                {
+                    "character": 2,
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 2 }
+                    ],
+                    "text": "My stupid creator couldn't think of anything better, okay? Call me however you want."
                 }
             ],
             "nextNode": 7
         },
         {
-            "decision": [
-                {
-                    "text": "Run away",
-                    "targetNode": 8
-                },
-                {
-                    "text": "Stay silent",
-                    "targetNode": 9
-                },
-                {
-                    "text": "Talk to {mcname}",
-                    "targetNode": 10
-                }
-            ]
+            "input": {
+                "message": "How do you want to call {guidechanname}?",
+                "variable": "guidechanname"
+            },
+            "nextNode": 8
         },
         {
-            "unlockCG": 1,
-            "setCharacters": [
-                { "index": 0, "right": 0 }
-            ],
-            "dialog": [
-                {
-                    "playMusic": "",
-                    "character": 0,
-                    "text": "She ran away tho :C"
-                }
-            ],
-            "nextNode": null
-        },
-        {
-            "unlockCG": 2,
-            "dialog": [
-                {
-                    "playMusic": "",
-                    "character": 0,
-                    "text": "She isn't talking to me tho :C"
-                }
-            ],
-            "nextNode": null
-        },
-        {
-            "unlockCG": 3,
             "dialog": [
                 {
                     "character": 1,
-                    "changeCharacterPicture": [ { "character": 1, "picture": 0 } ],
-                    "text": "Hello"
-                },
-                {
-                    "character": 0,
-                    "text": "YAY :D"
+                    "text": "I'll call you {guidechanname} then."
                 }
             ],
-            "nextNode": null
+            "nextNode": 9
+        },
+        {
+            "logicBranch": [
+                {
+                    "expression": "{mcnameattempts} >= 1",
+                    "targetNode": 10
+                }
+            ],
+            "nextNode": 11
+        },
+        {
+            "dialog": [
+                {
+                    "character": 2,
+                    "changeCharacterPicture":[
+                        { "character": 2, "picture": 5 }
+                    ],
+                    "text": "Oh, that's not too bad coming from someone who couldn't decide his own name."
+                }
+            ],
+            "nextNode": 11
+        },
+        {
+            "dialog": [
+                {
+                    "character": 2,
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 1 }
+                    ],
+                    "text": "{guidechanname}... I actually kind of like it."
+                },
+                {
+                    "character": 1,
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 0 }
+                    ],
+                    "text": "You mentioned you were here to help me create a visual novel. But how do you even knew that's what I want to do?"
+                },
+                {
+                    "character": 2,
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 5 }
+                    ],
+                    "text": "Because I'm a super smart person, obviously."
+                },
+                {
+                    "character": 2,
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 0 }
+                    ],
+                    "text": "Actually, I don't know why but that's what everybody who comes here wants."
+                },
+                {
+                    "character": 2,
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 4 }
+                    ],
+                    "text": "So, what can I help you with?"
+                }
+            ],
+            "nextNode": 12
+        },
+        {
+            
         }
 
     ]
