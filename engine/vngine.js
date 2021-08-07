@@ -1,4 +1,8 @@
 (function () {
+    let engineScript = document.currentScript;
+    let gameResDir = "game/res";
+    let engineResDir ="engine/res";
+
     let game = null; //Game data object
 
     let mainDiv = document.getElementById("vngine-div");
@@ -42,7 +46,7 @@
     let needToUpdateBacklogScreen = true;
 
     //Audio
-    let audioUITap = "engine/res/audio/tap.mp3";
+    let audioUITap = engineResDir + "/audio/tap.mp3";
 
     //Game variables
     let customVariableKeys = [];
@@ -575,6 +579,16 @@
 
         //Loads the game JSON file into the "game" variable
         game = gameJSON;
+
+        let dataGameResDir = engineScript.getAttribute("data-game-res-dir");
+        if (dataGameResDir) {
+            gameResDir = dataGameResDir;
+        }
+
+        let dataEngineResDir = engineScript.getAttribute("data-engine-res-dir");
+        if (dataEngineResDir) {
+            engineResDir = dataEngineResDir;
+        }
         
         //Loads user settings
         Settings.load();
@@ -843,7 +857,7 @@
         menuDiv.classList.add("vngine-screen", "vngine-menu");
         menuDiv.style.display = "none";
         if (game.menuBackground) {
-            menuDiv.style.backgroundImage = `url(game/res/img/backgrounds/${game.menuBackground})`;
+            menuDiv.style.backgroundImage = `url(${gameResDir}/img/backgrounds/${game.menuBackground})`;
         }
 
         //Logo
@@ -853,8 +867,8 @@
             logo.setAttribute("id", "vngine-menu-logo");
             logo.classList.add("vngine-menu-logo");
             logo.src = (game.VNgineLogoVersion && game.VNgineLogoVersion == "dark")
-                ? "engine/res/img/poweredbydark.png"
-                : "engine/res/img/poweredbylight.png"
+                ? engineResDir + "/img/poweredbydark.png"
+                : engineResDir + "/img/poweredbylight.png"
             ;
             logo.addEventListener("click", e => {
                 window.open("https://github.com/Jose134/vngine", "_a")
@@ -967,7 +981,7 @@
         galleryDiv.setAttribute("id", "vngine-gallery");
         galleryDiv.classList.add("vngine-screen", "vngine-gallery");
         if (game.galleryBackground) {
-            galleryDiv.style.backgroundImage = `url(game/res/img/backgrounds/${game.galleryBackground})`;
+            galleryDiv.style.backgroundImage = `url(${gameResDir}/img/backgrounds/${game.galleryBackground})`;
         }
         
         let galleryHeader = document.createElement("div");
@@ -1067,7 +1081,7 @@
         settingsDiv.setAttribute("id", "vngine-settings");
         settingsDiv.classList.add("vngine-screen", "vngine-settings");
         if (game.settingsBackground) {
-            settingsDiv.style.backgroundImage = `url(game/res/img/backgrounds/${game.settingsBackground})`;
+            settingsDiv.style.backgroundImage = `url(${gameResDir}/img/backgrounds/${game.settingsBackground})`;
         }
         
         let settingsHeader = document.createElement("div");
@@ -1295,7 +1309,7 @@
         savefilesDiv.setAttribute("id", "vngine-savefiles");
         savefilesDiv.classList.add("vngine-screen", "vngine-savefiles");
         if (game.savefilesBackground) {
-            savefilesDiv.style.backgroundImage = `url(game/res/img/backgrounds/${game.savefilesBackground})`;
+            savefilesDiv.style.backgroundImage = `url(${gameResDir}/img/backgrounds/${game.savefilesBackground})`;
         }
         
         let savefilesHeader = document.createElement("div");
@@ -1351,7 +1365,7 @@
         backlogDiv.setAttribute("id", "vngine-backlog");
         backlogDiv.classList.add("vngine-screen", "vngine-backlog");
         if (game.backlogBackground) {
-            backlogDiv.style.backgroundImage = `url(game/res/img/backgrounds/${game.backlogBackground})`;
+            backlogDiv.style.backgroundImage = `url(${gameResDir}/img/backgrounds/${game.backlogBackground})`;
         }
         
         let backlogHeader = document.createElement("div");
@@ -1527,7 +1541,7 @@
             savefileImg.classList.add("vngine-savefile-picture");
             background = getLatestBackground(data.backlog);
             if (background) {
-                savefileImg.style.backgroundImage = `url(game/res/img/backgrounds/${background})`;
+                savefileImg.style.backgroundImage = `url(${gameResDir}/img/backgrounds/${background})`;
             }
 
             let savefileName = document.createElement("h1");
@@ -1630,7 +1644,7 @@
             img.classList.add("vngine-gallery-item");
 
             if (unlockedCG.includes(cgIndex)) {
-                img.src = `game/res/img/cg/${game.gallery[cgIndex]}`;
+                img.src = `${gameResDir}/img/cg/${game.gallery[cgIndex]}`;
                 img.addEventListener("click", e => {
                     Audio.playEffect(audioUITap);
                     if (e.target.classList.contains("vngine-gallery-item-fullscreen")) {
@@ -1642,7 +1656,7 @@
                 });
             }
             else {
-                img.src = "game/res/img/cg/cgLocked.png";
+                img.src = `${gameResDir}/img/cg/cgLocked.png`;
             }
 
             galleryBody.appendChild(img);
@@ -1678,7 +1692,7 @@
 
         characters.forEach((character, i) => {
             let pictureIndex = character.picture == undefined ? 0 : character.picture;
-            let picURL = `game/res/img/characters/${game.characters[character.index].pictures[pictureIndex]}`;
+            let picURL = `${gameResDir}/img/characters/${game.characters[character.index].pictures[pictureIndex]}`;
             
             if (character.left != undefined) {
                 characterImgs[i].style.left = `${character.left}%`;
@@ -1794,12 +1808,12 @@
             
             //Set Background
             if (currentNode.setBackground !== undefined) {
-                document.getElementById("vngine-game-background").style.backgroundImage = `url("game/res/img/backgrounds/${currentNode.setBackground}")`;
+                document.getElementById("vngine-game-background").style.backgroundImage = `url("${gameResDir}/img/backgrounds/${currentNode.setBackground}")`;
             }
             else if (!document.getElementById("vngine-game-background").style.backgroundImage) {
                 let background = getLatestBackground(Backlog.getAsArray());
                 if (background !== undefined) {
-                    document.getElementById("vngine-game-background").style.backgroundImage = `url("game/res/img/backgrounds/${background}")`;
+                    document.getElementById("vngine-game-background").style.backgroundImage = `url("${gameResDir}/img/backgrounds/${background}")`;
                 }
                 else {
                     console.warn(`VNGINE_WARNING: Couldn't get background for node with index ${currentNodeIndex}`);
@@ -1856,8 +1870,6 @@
         });
         needToUpdateBacklogScreen = true;
 
-        console.log(currentNode);
-        console.log(currentDialogIndex);
         let characterIndex = currentNode.dialog[currentDialogIndex].character;
 
         //Change character pictures if needed
@@ -1866,7 +1878,7 @@
             updatePicture.forEach(data => {
                 let e = getCharacterDOMimg(data.character);
                 if (e != null) {
-                    let picURL = `game/res/img/characters/${game.characters[data.character].pictures[data.picture]}`;
+                    let picURL = `${gameResDir}/img/characters/${game.characters[data.character].pictures[data.picture]}`;
                     e.setAttribute("src", picURL);
                 }
             });
@@ -1894,12 +1906,12 @@
 
         let music = currentNode.dialog[currentDialogIndex].playMusic;
         if(music) {
-            Audio.playMusic(`game/res/audio/${music}`);
+            Audio.playMusic(`${gameResDir}/audio/${music}`);
         }
 
         let effect = currentNode.dialog[currentDialogIndex].playEffect;
         if (effect) {
-            Audio.playEffect(`game/res/audio/${effect}`)
+            Audio.playEffect(`${gameResDir}/audio/${effect}`)
         }
 
         //Updates dialog text
@@ -2123,7 +2135,7 @@
         keys.forEach(key => {
             switch (key) {
                 case "tap":
-                    audioUITap = `game/res/audio/${game.uiAudio[key]}`;
+                    audioUITap = `${gameResDir}/audio/${game.uiAudio[key]}`;
                     break;
                 default:
                     console.warn(`VNGINE_WARNING: ${key} not recognized as a valid audio property`);
