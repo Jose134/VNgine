@@ -207,7 +207,6 @@
                 this.bgmAudioElement.loop = true;
                 this.bgmAudioElement.play();
             }
-            
         }
     }
 
@@ -272,6 +271,9 @@
     
             switch (screen) {
                 case screens.MENU:
+                    if (game.menuMusic) {
+                        Audio.playMusic(`${gameResDir}/audio/${game.menuMusic}`);
+                    }
                     this.menuDiv.style.display = "block";
                     break;
                 case screens.GAME:
@@ -1686,7 +1688,7 @@
 
         let charactersDiv = document.getElementById("vngine-characters-div");
         if (characters.length > characterImgs.length) {
-            let imgAmount = characters.length - characterImgs.length
+            let imgAmount = characters.length - characterImgs.length;
             for (let i = 0; i < imgAmount; i++) {
                 let character = document.createElement("img");
                 character.classList.add("vngine-character");
@@ -1699,6 +1701,7 @@
             let pictureIndex = character.picture == undefined ? 0 : character.picture;
             let picURL = `${gameResDir}/img/characters/${game.characters[character.index].pictures[pictureIndex]}`;
             
+            characterImgs[i].style.transition = "";
             if (character.left != undefined) {
                 characterImgs[i].style.left = `${character.left}%`;
             }
@@ -1895,12 +1898,12 @@
             updatePosition.forEach(data => {
                 let e = getCharacterDOMimg(data.character);
                 if (e != null) {
-                    if (data.left) {
+                    if (data.left != undefined) {
                         e.style.transition = `left ${data.time ? data.time : 0}ms ${data.type ? data.type : "linear"}`;
                         e.style.right = "";
                         e.style.left = `${data.left}%`;
                     }
-                    else if (data.right) {
+                    else if (data.right != undefined) {
                         e.style.transition = `right ${data.time ? data.time : 0}ms ${data.type ? data.type : "linear"}`;
                         e.style.left = "";
                         e.style.right = `${data.right}%`;

@@ -4,6 +4,7 @@ gameJSON = {
     "author": "DarkBird",
     "enableVNgineLogo": true,
     "VNgineLogoVersion": "light",
+    "menuMusic": "music/menu.mp3",
     "customVariables": {
         "mcname": "MC",
         "mcnameattempts": 0,
@@ -30,6 +31,20 @@ gameJSON = {
                 "guide-chan-smug.png",
                 "guide-chan-worried.png"
             ]
+        },
+        {
+            "name": "Audio-chan",
+            "pictures": [
+                "audio-chan-normal.png",
+                "audio-chan-normal-blushed.png",
+                "audio-chan-cry.png",
+                "audio-chan-happy.png",
+                "audio-chan-angry.png",
+                "audio-chan-sad.png",
+                "audio-chan-sleepy.png",
+                "audio-chan-smile.png",
+                "audio-chan-smug.png"
+            ]
         }
     ],
     "nodes": [
@@ -38,6 +53,7 @@ gameJSON = {
             "setCharacters": null,
             "dialog": [
                 {
+                    "playMusic": "main_loop.mp3",
                     "character": 1,
                     "text": "What's this? Where am I?"
                 }
@@ -228,13 +244,136 @@ gameJSON = {
                     "changeCharacterPicture": [
                         { "character": 2, "picture": 4 }
                     ],
-                    "text": "So, what can I help you with?"
+                    "text": "So, what can I help you with?",
+                    "autosave": true
                 }
             ],
             "nextNode": 12
         },
         {
-            
+            "setBackground": "living-room.png",
+            "setCharacters": [
+                { "index": 2, "left": 0, "picture": 0 }
+            ],
+            "decision": [
+                {
+                    "text": "I actually have no idea of what I'm doing, please help",
+                    "targetNode": 13,
+                },
+                {
+                    "text": "I was trying to add audio effects and music to my VN.",
+                    "targetNode": 14,
+                }
+            ]
+        },
+        {
+            "dialog": [
+                {
+                    "character": 2,
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 6 }
+                    ],
+                    "text": "{mcname}... That's not a great start..."
+                },
+                {
+                    "character": 1,
+                    "text": "I realized that myself, no need to tell me."
+                },
+                {
+                    "character": 2,
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 2 }
+                    ],
+                    "text": "You shouldn't be that honest either!"
+                },
+                {
+                    "character": 2,
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 0 }
+                    ],
+                    "text": "Anyways, it's not that bad to be honest, everybody has to start somewhere. I'd recommend you read through wiki, it has all the infomation you could need and there's a quick start section that can get you set up and running."
+                },
+                {
+                    "character": 2,
+                    "text": "Is there anything else you need help with?"
+                }
+            ],
+            "nextNode": 12
+        },
+        {
+            "dialog": [
+                {
+                    "character": 2,
+                    "text": "In that case we should move to the studio, we'll meet {character3.name} there."
+                },
+                {
+                    "character": 2,
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 4 }
+                    ],
+                    "changeCharacterPosition": [
+                        { "character": 2, "left": 40, "time": 300, "type": "ease-in" }
+                    ],
+                    "text": "Let's go!"
+                }
+            ],
+            "nextNode": 15
+        },
+        {
+            "setBackground": "studio.png",
+            "setCharacters": [
+                { "index": 2, "left": 0, "picture": 0 },
+                { "index": 3, "right": 0, "picture": 6 }
+            ],
+            "dialog": [
+                {
+                    "character": 3,
+                    "text": "Guide-chan... I was taking a nap... What do you want?"
+                },
+                {
+                    "character": 2,
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 6 }
+                    ],
+                    "text": "{character3.name} you're always sleeping... Why don't you fix your schedules already?"
+                },
+                {
+                    "character": 3,
+                    "changeCharacterPicture": [
+                        { "character": 3, "picture": 5 }
+                    ],
+                    "text": "It's not that easy, you know? Videogames tempt me late in the night..."
+                },
+                {
+                    "character": 2,
+                    "text": "..."
+                },
+                {
+                    "character": 2,
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 0 },
+                        { "character": 3, "picture": 0 }
+                    ],
+                    "text": "Anyways, I've brought this guy with me, he's {mcnamekun} and is interested in learning about audio."
+                },
+                {
+                    "character": 2,
+                    "text": "{mcnamekun}, this is {character3.name}, she's the one who knows everything about audio here."
+                },
+                {
+                    "character": 3,
+                    "text": "..."
+                },
+                {
+                    "character": 3,
+                    "text": "Actually, I have no idea of how this works. All I know is that I can say \"playEffect\" or \"playMusic\" and the sound will come out."
+                },
+                {
+                    "character": 3,
+                    "text": ""
+                }
+            ],
+            "nextNode": 16
         }
 
     ]

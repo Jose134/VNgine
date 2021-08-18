@@ -1,0 +1,630 @@
+:root {
+    /* THESE COLORS ARE USED AS DEFAULT AND CAN BE OVERRIDEN BY THE GAME FILE */
+    --vngine-color-main: #7091FF;
+    --vngine-color-main-darkened: #577EFF;
+    --vngine-color-main-hover: #8AA5FF;
+
+    --vngine-color-default-background: #00061A;
+
+    --vngine-color-input-text: #E5EBFF;
+    --vngine-color-input-text-focus: #FFFFFF;
+    --vngine-color-input-background: #00061A;
+    --vngine-color-input-background-focus: #000C33;
+
+    --vngine-color-input-range-slider: #E5EBFF;
+    --vngine-color-input-range-slider-hover: #FFFFFF;
+    --vngine-color-input-range-thumb-focus: #E5EBFF;
+
+    --vngine-color-btn-main: #8AA5FF;
+    --vngine-color-btn-main-darkened: #7091FF;
+    --vngine-color-btn-main-hover: #A3B8FF;
+
+    --vngine-color-border: #3356CC;
+    --vngine-color-border-hover: #4767D1;
+
+    --vngine-color-text: #E5EBFF;
+    --vngine-color-text-hover: #FFFFFF;
+
+    --vngine-color-dialog-box-text: #FFFFFF;
+    --vngine-color-dialog-box-character: #00061A;
+
+    --vngine-color-modal-background: #00061A66; /* 40% opacity */
+
+    --vngine-color-dialog-box-background: #7091FFD9; /* ~85% opacity */
+    
+    --vngine-color-backlog-list-item-background: #00061A66; /* 40% opacity */
+    --vngine-color-backlog-list-item-background-hover: #00061A99; /* 60% opacity */
+    --vngine-color-backlog-list-item-text: #E5EBFF;
+
+    --vngine-color-page-text: #CCD8FF;
+    --vngine-color-page-text-hover: #E5EBFF;
+    --vngine-color-page-text-selected: #FFFFFF;
+
+    --vngine-color-option-text: #A3B8FF;
+    --vngine-color-option-text-hover: #BDCCFF;
+    /**************************************************************************/
+
+    --vngine-border-thickness: 4px;
+    --vngine-border-thickness-small: 2px;
+    --vngine-dialog-box-opacity: 1;
+
+    --vngine-text-large: 80px;
+    --vngine-text-medium: 35px;
+    --vngine-text-medium-nerfed: 25px;
+    --vngine-text-small-buffed: 20px;
+    --vngine-text-small: 15px;
+    --vngine-dialog-box-text-size: 20px;
+    --vngine-dialog-box-character-text-size: 23px;
+}
+
+#vngine-div {
+    background-color: var(--vngine-color-default-background);
+    display: flex;
+    position: relative;
+    margin: auto;
+    padding: 0;
+    width: 1280px;
+    height: 720px;
+    font-family: 'Poppins', sans-serif;
+
+    user-select: none;
+}
+
+.fullscreen {
+    position: absolute!important;
+    width: 100%!important;
+    height: 100%!important;
+    top: 0!important;
+    bottom: 0!important;
+    left: 0!important;
+    right: 0!important;
+}
+
+.vngine-screen {
+    width: 100%;
+    color: var(--vngine-color-text);
+    background-color: var(--vngine-color-default-background);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/*-----------------------------------*/
+/*              INPUTS               */
+/*-----------------------------------*/
+
+/* range */
+#vngine-div input[type=range] {
+    width: 50%;
+    height: 5px;
+    background-color: var(--vngine-color-input-range-slider);
+    border-radius: 2.5px;
+    transition: background-color 200ms;
+}
+#vngine-div input[type=range]:hover {
+    background-color: var(--vngine-color-input-range-slider-hover);
+}
+
+#vngine-div input[type=range]::-webkit-slider-thumb {
+    width: 20px;
+    height: 20px;
+    background-color: var(--vngine-color-main);
+    border: var(--vngine-border-thickness) solid var(--vngine-color-border);
+    border-radius: 50%;
+    cursor: pointer;
+}
+#vngine-div input[type=range]:hover::-webkit-slider-thumb {
+    background-color: var(--vngine-color-main-hover);
+    border: var(--vngine-border-thickness) solid var(--vngine-color-border-hover);
+}
+#vngine-div input[type=range]:active::-webkit-slider-thumb {
+    background-color: var(--vngine-color-input-range-thumb-focus);
+}
+
+#vngine-div input[type=range]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background-color: var(--vngine-color-main);
+    border: var(--vngine-border-thickness) solid var(--vngine-color-border);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 200ms, border 200ms;
+}
+#vngine-div input[type=range]:hover::-moz-range-thumb {
+    background-color: var(--vngine-color-main-hover);
+    border: var(--vngine-border-thickness) solid var(--vngine-color-border-hover);
+}
+#vngine-div input[type=range]:active::-moz-range-thumb {
+    background-color: var(--vngine-color-input-range-thumb-focus);
+}
+
+/* select */
+#vngine-div select {
+    width: 50%;
+    height: 35px;
+    border: var(--vngine-border-thickness-small) solid var(--vngine-color-border);
+    background-color: var(--vngine-color-main);
+    cursor: pointer;
+    font-size: var(--vngine-text-small-buffed);
+
+    transition: background-color 200ms, border-color 200ms;
+}
+#vngine-div select:hover {
+    background-color: var(--vngine-color-main-hover);
+    border-color: var(--vngine-color-border-hover);
+}
+#vngine-div select:active {
+    background-color: var(--vngine-color-main-hover);
+    border-color: var(--vngine-color-border-hover);
+}
+
+/* text */
+#vngine-div input[type=text] {
+    outline: none;
+    width: 75%;
+    height: 30px;
+    font-size: var(--vngine-text-small-buffed);
+    color: var(--vngine-color-input-text);
+    background-color: var(--vngine-color-input-background);
+    border: var(--vngine-border-thickness-small) solid var(--vngine-color-border);
+
+    transition: background-color 200ms, color 200ms;
+}
+
+#vngine-div input[type=text]:focus {
+    color: var(--vngine-color-input-text-focus);
+    background-color: var(--vngine-color-input-background-focus);
+}
+
+/* buttons */
+.vngine-btn-group {
+    z-index: 2;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+}
+
+.vngine-btn {
+    /* display */
+    display: block;
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 25px;
+    margin-bottom: 25px;
+
+    /* text */
+    font-size: var(--vngine-text-medium);
+    text-align: center;
+
+    /* colors and border */
+    background-color: var(--vngine-color-btn-main);
+    color: var(--vngine-color-text);
+    border: var(--vngine-border-thickness) solid var(--vngine-color-border);
+    border-radius: 10px;
+
+    transition: background-color 200ms, border-color 200ms, color 200ms;
+}
+
+.vngine-btn:hover {
+    /* colors and border */
+    background-color: var(--vngine-color-btn-main-hover);
+    color: var(--vngine-color-text-hover);
+    border-color: var(--vngine-color-border-hover);
+}
+
+.vngine-btn-small {
+    margin: 0;
+    margin-top: 5px;
+    width: auto;
+    font-size: var(--vngine-text-small);
+    border: var(--vngine-border-thickness-small) solid var(--vngine-color-border);
+    border-radius: 5px;
+}
+
+.vngine-btn-medium {
+    margin: 0;
+    margin-top: 5px;
+    font-size: var(--vngine-text-medium);
+    width: 200px;
+    border-radius: 5px;
+}
+
+.vngine-back-btn {
+    position: absolute;
+    margin: 0;
+    margin-left: 10px;
+    width: 150px;
+}
+
+.vngine-btn-inline {
+    display: inline-block;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+/*-----------------------------------*/
+/*              MODAL                */
+/*-----------------------------------*/
+
+.vngine-dialog-modal {
+    display: none;
+    position: absolute;
+    z-index: 5;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--vngine-color-modal-background);
+}
+
+.vngine-dialog-modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 35%;
+    background-color: var(--vngine-color-main);
+    padding: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: var(--vngine-border-thickness) solid var(--vngine-color-border);
+    border-radius: 15px;
+    text-align: center;
+}
+
+.vngine-dialog-modal-msg {
+    font-size: var(--vngine-text-small-buffed);
+}
+
+/*-----------------------------------*/
+/*              HEADER               */
+/*-----------------------------------*/
+
+.vngine-header {
+    display: flex;
+    position: sticky;
+    margin: 0;
+    height: 10%;
+    align-items: center;
+    max-height: 100px;
+    background-color: var(--vngine-color-main);
+}
+
+.vngine-header-text {
+    margin-left: auto;
+    margin-right: auto;
+    font-size: var(--vngine-text-medium);
+    font-weight: bold;
+    color: var(--vngine-color-text);
+}
+
+/*---------------------------------*/
+/*              MENU               */
+/*---------------------------------*/
+
+.vngine-menu {
+    color: var(--vngine-color-text);
+}
+
+.vngine-menu-title {
+    font-size: var(--vngine-text-large);
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.vngine-menu-logo {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    width: 150px;
+    height: auto;
+    cursor: pointer;
+}
+
+/*---------------------------------*/
+/*            SAVEFILES            */
+/*---------------------------------*/
+
+.vngine-savefiles {
+    color: var(--vngine-color-text);
+    overflow-y: scroll;
+}
+
+.vngine-savefile-list {
+    width: 100%;
+    height: 90%;
+}
+
+.vngine-savefile {
+    width: 70%;
+    height: 200px;
+    
+    background-color: var(--vngine-color-main);
+    
+    padding-top: 20px;
+
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+
+    border-radius: 15px;
+}
+
+.vngine-savefile-picture {
+    float: left;
+    margin-left: 20px;
+    margin-right: 30px;
+    
+    min-width: 320px;
+    min-height: 180px;
+
+    background-color: black;
+    background-size: cover;
+}
+
+.vngine-savefile-name {
+    /* text border */
+    text-shadow: 2px  0   0 var(--vngine-color-border),
+                -2px  0   0 var(--vngine-color-border),
+                 0    2px 0 var(--vngine-color-border),
+                 0   -2px 0 var(--vngine-color-border),
+                 1px  1px   var(--vngine-color-border),
+                -1px -1px 0 var(--vngine-color-border),
+                 1px -1px 0 var(--vngine-color-border),
+                -1px  1px 0 var(--vngine-color-border);
+}
+
+.vngine-savefile-sentence {
+    margin-top: -20px;
+    margin-bottom: 20px;
+}
+
+/*---------------------------------*/
+/*            SETTINGS             */
+/*---------------------------------*/
+
+.vngine-settings {
+    color: var(--vngine-color-text);
+}
+
+.vngine-settings-body {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    padding: 20px;
+    padding-bottom: 0px;
+    grid-gap: 20px;
+    height: 90%;
+    font-size: var(--vngine-text-medium-nerfed);
+}
+
+.vngine-settings-text-speed {
+    grid-row: 1 / 5;
+    grid-column: 1;
+    background-color: rgba(0,0,0,0.4);
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.vngine-settings-sound {
+    grid-row: 1 / 5;
+    grid-column: 2;
+    background-color: rgba(0,0,0,0.4);
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.vngine-settings-footer {
+    grid-row: 6;
+    grid-column: 1 / 3;
+}
+
+
+/*---------------------------------*/
+/*              GAME               */
+/*---------------------------------*/
+
+.vngine-game-background {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+
+    width: 100%;
+    height: 100%;
+
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.vngine-game-click-detector {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+
+    min-width: 100%;
+    min-height: 100%;
+    
+    z-index: 1;
+    cursor: pointer;
+}
+
+.vngine-characters-div {
+    display: flexbox;
+    width: 100%;
+    height: 100%;
+
+    position: absolute;
+    bottom: 0;
+    
+    padding: 0;
+}
+
+.vngine-character {
+    position: absolute;
+    bottom: 0;
+    max-height: 100%;
+}
+
+.vngine-dialog-box {
+    position: absolute;
+    bottom: 0%;
+    width: calc(100% - 10px - 2*var(--vngine-border-thickness));
+    height: 20%;
+    margin: 5px;
+
+    opacity: var(--vngine-dialog-box-opacity);
+
+    background-color: var(--vngine-color-dialog-box-background);
+    color: var(--vngine-color-text);
+    border: var(--vngine-border-thickness) solid var(--vngine-color-border);
+    border-radius: 10px;
+}
+
+.vngine-dialog-character {
+    color: var(--vngine-color-dialog-box-character);
+    font-size: var(--vngine-dialog-box-character-text-size);
+    margin-top: 15px;
+    margin-left: 15px;
+    font-weight: bold;
+}
+
+.vngine-dialog-text {
+    display: inline-block;
+    vertical-align: middle;
+    color: var(--vngine-color-dialog-box-text);
+    margin-left: 30px;
+    font-size: var(--vngine-dialog-box-text-size);
+}
+
+.vngine-option-text-container {
+    z-index: 3;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.vngine-option-text {
+    margin-left: 8px;
+    cursor: pointer;
+    color: var(--vngine-color-option-text);
+}
+
+.vngine-option-text-hold {
+    color: var(--vngine-color-option-text-hover);
+}
+
+.vngine-option-text:hover {
+    color: var(--vngine-color-option-text-hover);
+}
+
+/*------------------------------------*/
+/*              BACKLOG               */
+/*------------------------------------*/
+
+.vngine-backlog {
+    color: var(--vngine-color-text);
+}
+
+.vngine-backlog-body {
+    height: 90%;
+    overflow-y: scroll;
+    text-align: center;
+}
+
+.vngine-backlog-list {
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+    list-style: none;
+}
+
+.vngine-backlog-list li {
+    background-color: var(--vngine-color-backlog-list-item-background);
+    color: var(--vngine-color-backlog-list-item-text);
+    transition: background-color 100ms, transform 100ms;
+    margin-bottom: 3px;
+    border-radius: 5px;
+    font-size: var(--vngine-text-small-buffed);
+    padding:2px;
+    align-self: center;
+}
+
+.vngine-backlog-list li:hover {
+    background-color: var(--vngine-color-backlog-list-item-background-hover);
+    transform: scale(102%);
+}
+
+/*------------------------------------*/
+/*              GALLERY               */
+/*------------------------------------*/
+
+.vngine-gallery {
+    color: var(--vngine-color-text);
+}
+
+.vngine-gallery-body {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    padding: 20px;
+    padding-bottom: 0px;
+    grid-gap: 20px;
+    height: 70%;
+}
+
+.vngine-gallery-item {
+    display: flex;
+    align-self: center;
+    margin-right: auto;
+    margin-left: auto;
+    width: 95%;
+    transition: width 50ms;
+    transition-timing-function: ease-out;
+}
+
+.vngine-gallery-item:hover {
+    width: 100%;
+}
+
+.vngine-gallery-item-fullscreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    z-index: 1;
+}
+
+.vngine-gallery-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 10%;
+    text-align: center;
+}
+
+.vngine-gallery-page-text {
+    font-size: var(--vngine-text-medium);
+    color: var(--vngine-color-page-text);
+    margin-right: 3px;
+    margin-left: 3px;
+}
+
+.vngine-gallery-page-text:hover {
+    color: var(--vngine-color-page-text-hover);
+}
+
+.vngine-gallery-page-text-selected {
+    color: var(--vngine-color-page-text-selected);
+}
+
+.vngine-gallery-page-text-selected:hover {
+    color: var(--vngine-color-page-text-selected);
+}
