@@ -409,7 +409,7 @@ gameJSON = {
                     ],
                     "playEffect": "explosion.wav",
                     "character": 3,
-                    "text": "Like this!"
+                    "text": "Explooooosion!"
                 },
                 {
                     "changeCharacterPicture": [
@@ -426,6 +426,7 @@ gameJSON = {
                     "text": "Anyways, as I was saying, it is also possible to change the music in any part of the dialog."
                 },
                 {
+                    "playMusic": "coolermusic.mp3",
                     "character": 3,
                     "text": "See? It's that simple."
                 },
