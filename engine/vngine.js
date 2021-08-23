@@ -778,7 +778,7 @@
             if (e.target && e.target.id == "saveText") {
                 Audio.playEffect(audioUITap);
                 let now = new Date();
-                let key = now.getUTCFullYear() + "-" + (now.getMonth()+1) + "-" + (now.getDay()+1) + "   "
+                let key = now.getUTCFullYear() + "-" + (now.getMonth()+1) + "-" + (now.getUTCDate()) + "   "
                         + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
                 save(key);
             }

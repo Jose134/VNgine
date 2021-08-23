@@ -9,7 +9,9 @@ gameJSON = {
         "mcname": "MC",
         "mcnameattempts": 0,
         "mcnamekun": "{mcname}-kun",
-        "guidechanname": "Guide-chan"
+        "guidechanname": "Guide-chan",
+        "audiochanvisits": 0,
+        "calledguidechancute": 0
     },
     "characters": [
         {
@@ -44,6 +46,27 @@ gameJSON = {
                 "audio-chan-sleepy.png",
                 "audio-chan-smile.png",
                 "audio-chan-smug.png"
+            ]
+        },
+        {
+            "name": "Hensuu",
+            "pictures": [
+                "hensuu-kun-normal.png",
+                "hensuu-kun-sad.png",
+                "hensuu-kun-smile.png",
+                "hensuu-kun-smug.png",
+                "hensuu-kun-supersmile.png",
+                "hensuu-kun-surprised.png"
+            ]
+        },
+        { //I'm gonna cheese the fuck out of my engine
+            "name": "Computer Screen",
+            "pictures": [
+                "screen-init.png",
+                "screen-input.png",
+                "screen-decisionset.png",
+                "screen-logicbranch.png",
+                "screen-charactername.png"
             ]
         }
     ],
@@ -250,7 +273,7 @@ gameJSON = {
             ],
             "nextNode": 12
         },
-        {
+        { //Node 12, Route selection
             "setBackground": "living-room.png",
             "setCharacters": [
                 { "index": 2, "left": 0, "picture": 0 }
@@ -262,11 +285,23 @@ gameJSON = {
                 },
                 {
                     "text": "I was trying to add audio effects and music to my VN.",
+                    "setVariable": {
+                        "variable": "audiochanvisits",
+                        "expression": "{audiochanvisits} + 1"
+                    },
                     "targetNode": 14,
+                },
+                {
+                    "text": "I want to learn about variables, what are those for?",
+                    "targetNode": 21
+                },
+                {
+                    "text": "I want to know how I can customize the UI for my game.",
+                    "targetNode": 36
                 }
             ]
         },
-        {
+        { //Node 13, I have no idea route
             "dialog": [
                 {
                     "character": 2,
@@ -300,7 +335,7 @@ gameJSON = {
             ],
             "nextNode": 12
         },
-        {
+        { //Node 14, Audio-chan route
             "dialog": [
                 {
                     "character": 2,
@@ -366,15 +401,556 @@ gameJSON = {
                 },
                 {
                     "character": 3,
-                    "text": "Actually, I have no idea of how this works. All I know is that I can say \"playEffect\" or \"playMusic\" and the sound will come out."
+                    "text": "Actually, I have no idea of how any of this works. But I can play music and sound effects at my will."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 3, "picture": 3}
+                    ],
+                    "playEffect": "explosion.wav",
+                    "character": 3,
+                    "text": "Like this!"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 3, "picture": 1 }
+                    ],
+                    "character": 3,
+                    "text": "Sorry, I really like explosions, they make me feel great."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 3, "picture": 0 }
+                    ],
+                    "character": 3,
+                    "text": "Anyways, as I was saying, it is also possible to change the music in any part of the dialog."
                 },
                 {
                     "character": 3,
-                    "text": ""
+                    "text": "See? It's that simple."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 3, "picture": 5 }
+                    ],
+                    "character": 3,
+                    "text": "I've heard you can also define a track for the menu, but since I live in the game I never had the opportunity to check it out."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 3, "picture": 0 }
+                    ],
+                    "character": 3,
+                    "text": "Anyways, that's all I got for you. Now I'm going back to sleep. See you!"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 3, "picture": 6 }
+                    ],
+                    "character": 3,
+                    "text": "Yawn..."
                 }
             ],
             "nextNode": 16
+        },
+        {
+            "setBackground": "living-room.png",
+            "setCharacters": [
+                { "index": 2, "left": 0 }
+            ],
+            "dialog": [
+                {
+                    "character": 2,
+                    "text": "I told you, Audio-chan knows so much about this sort of things. That must have answered your questions, right?"
+                }
+            ],
+            "nextNode": 17
+        },
+        {
+            "decision": [
+                {
+                    "text": "Yes",
+                    "targetNode": 18
+                },
+                {
+                    "text": "No",
+                    "targetNode": 19
+                }
+            ]
+        },
+        {
+            "dialog": [
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 4 }
+                    ],
+                    "character": 2,
+                    "text": "I knew it!"
+                }
+            ],
+            "nextNode": 20
+        },
+        {
+            "dialog": [
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 3 }
+                    ],
+                    "character": 2,
+                    "text": "Oh, I guess I just wasted your time then... Sorry about that."
+                }
+            ],
+            "nextNode": 20
+        },
+        {
+            "setCharacters": [
+                { "index": 2, "left": 0 }
+            ],
+            "dialog": [
+                {
+                    "character": 2,
+                    "text": "Anyways, do you need help with anything else?"
+                }
+            ],
+            "nextNode": 12
+        },
+        { //Node 21, Start of game-variables explanation
+            "dialog": [
+                {
+                    "character": 2,
+                    "text": "I don't know much about that topic, but we can ask {character4.name}-kun. He's our programmer."
+                }
+            ],
+            "nextNode": 22
+        },
+        {
+            "setBackground": "bedroom.png",
+            "setCharacters": [
+                { "index": 2, "picture": 0, "left": 0 },
+                { "index": 4, "picture": 0, "right": 0 }
+            ],
+            "dialog": [
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 2 }
+                    ],
+                    "character": 4,
+                    "text": "Hey Guide-chan, what are you doing over here?"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 0 }
+                    ],
+                    "character": 2,
+                    "text": "Hello {character4.name}-kun, this is {mcnamekun}, he wants to learn about variables. Can you help him out?"
+                },
+                {
+                    "character": 4,
+                    "text": "I guess I can."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 4 }
+                    ],
+                    "character": 2,
+                    "text": "Perfect! I'll go back to the living room meanwhile."
+                },
+                {
+                    "changeCharacterPosition": [
+                        { "character": 2, "left": -50, "time": 300, "type": "ease-in" }
+                    ],
+                    "character": 2,
+                    "text": "Have fun~"
+                },
+                {
+                    "character": 4,
+                    "text": "Okay {mcname}, lets start by defining what a variable is."
+                },
+                {
+                    "character": 4,
+                    "text": "Variables are a way of storing information. We can read and modify their values through the game to make it more dynamic."
+                }
+            ],
+            "nextNode": 23
+        },
+        {
+            "logicBranch": [
+                {
+                    "expression": "{audiochanvisits} > 0",
+                    "targetNode": 24
+                }   
+            ],
+            "nextNode": 28
+        },
+        {
+            "dialog": [
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 3 }
+                    ],
+                    "character": 4,
+                    "text": "There's a variable in this demo that let me knows you have already visited the beautiful {character3.name}."
+                },
+                {
+                    "character": 1,
+                    "text": "Wow! That's kinda spooky."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 2 }
+                    ],
+                    "character": 4,
+                    "text": "Oh there's nothing to worry about, trust me."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 0 }
+                    ],
+                    "character": 4,
+                    "text": "By the way, did she say anything about me or something?"
+                },
+                {
+                    "character": 1,
+                    "text": "No, she didn't. She talked about what options I had for audio."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 1 }
+                    ],
+                    "character": 4,
+                    "text": "Oh, I see..."
+                },
+                {
+                    "character": 1,
+                    "text": "She also talked about how much she likes explosions."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 2 }
+                    ],
+                    "character": 4,
+                    "text": "Yeah, she really loves explosions."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 4 }
+                    ],
+                    "character": 4,
+                    "text": "Isn't she like the cutest thing ever?"
+                }
+            ],
+            "nextNode": 25
+        },
+        {
+            "decision": [
+                {
+                    "text": "Yes, I agree.",
+                    "targetNode": 26
+                },
+                {
+                    "text": "I don't know, {guidechanname} seems cuter to me.",
+                    "setVariable":
+                    {
+                        "variable": "calledguidechancute",
+                        "expression": "1"
+                    },
+                    "targetNode": 27
+                },
+                {
+                    "text": "She isn't that beautiful.",
+                    "targetNode": 27
+                }
+            ]
+        },
+        {
+            "dialog": [
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 2 }
+                    ],
+                    "character": 4,
+                    "text": "I knew you would appreciate her beauty."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 5 }
+                    ],
+                    "character": 4,
+                    "text": "Wait, don't tell me you are after her too!"
+                },
+                {
+                    "character": 1,
+                    "text": "Seriously? Don't worry man, you can have her."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 0 }
+                    ],
+                    "character": 4,
+                    "text": "That's a relief..."
+                }
+            ],
+            "nextNode": 29
+        },
+        {
+            "dialog": [
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 5 }
+                    ],
+                    "character": 4,
+                    "text": "No way!"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 1 }
+                    ],
+                    "character": 4,
+                    "text": "Ah, I'm the only one who understands how great you are, {character3.name}"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 3 }
+                    ],
+                    "character": 4,
+                    "text": "But that means I don't have to compete with anyone for your love, my queen."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 0 }
+                    ],
+                    "character": 1,
+                    "text": "..."
+                }
+            ],
+            "nextNode": 29
+        },
+        {
+            "dialog": [
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 3 }
+                    ],
+                    "character": 4,
+                    "text": "There's a variable in this demo that let me knows you haven't met the beautiful {character3.name} yet."
+                },
+                {
+                    "character": 1,
+                    "text": "Wow! That's kinda spooky."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 2 }
+                    ],
+                    "character": 4,
+                    "text": "Oh there's nothing to worry about, trust me."
+                },
+                {
+                    "character": 4,
+                    "text": "However, you really should try her route."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 4 }
+                    ],
+                    "character": 4,
+                    "text": "{character3.name} is the most beautiful woman you'll ever see!"
+                },
+                {
+                    "character": 1,
+                    "text": "Guess I'll visit her after this, then."
+                },
+            ],
+            "nextNode": 29
+        },
+        {
+            "dialog": [
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 0 }
+                    ],
+                    "character": 4,
+                    "text": "Well, sorry for deviating from the main point."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 2 }
+                    ],
+                    "character": 4,
+                    "text": "I can't help it when it's about {character3.name}."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 0 }
+                    ],
+                    "character": 4,
+                    "text": "Let's get to the computer and learn how to use variables."
+                },
+            ],
+            "nextNode": 30
+        },
+        {
+            "setBackground": "computer-screen.png",
+            "setCharacters": [
+                { "index": 5, "left": 0 }
+            ],
+            "dialog": [
+                {
+                    "character": 4,
+                    "text": "The first thing we have to do is to create the \"customVariables\" object."
+                },
+                {
+                    "character": 4,
+                    "text": "Every property in this object will be a variable we can use, also notice that the values we assign here will be the initial values."
+                },
+                {
+                    "character": 4,
+                    "text": "To read their values we just write the variable name between curly brackets \{\}."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 5, "picture": 1 }
+                    ],
+                    "character": 4,
+                    "text": "We can store user input in a variable using an input node."
+                },
+                {
+                    "character": 4,
+                    "text": "This example is from when Guide-chan asked you your name."
+                },
+                {
+                    "character": 4,
+                    "text": "Now, lets take a look at how I was able to tell if you visited {character3.name} or not."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 5, "picture": 2 }
+                    ],
+                    "character": 4,
+                    "text": "The first thing we have to do is increment the audiochanvisits variable when you select her route."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 5, "picture": 3 }
+                    ],
+                    "character": 4,
+                    "text": "After that, when you visit me I can jump to different nodes depending on the value of that variable using a Logic Branching Node."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 5, "picture": 4 }
+                    ],
+                    "character": 4,
+                    "text": "Another cool trick you can do is accessing a character's name using this notation. You can change the number for the index of any character and you will get his name."
+                }
+            ],
+            "nextNode": 31
+        },
+        {
+            "setBackground": "bedroom.png",
+            "setCharacters": [
+                { "index": 4, "right": 0 }
+            ],
+            "dialog": [
+                {
+                    "character": 4,
+                    "text": "Well, that's all I have for you. Did you understand it?"
+                },
+                {
+                    "character": 1,
+                    "text": "Kind of, I'll need some practice but I have it much clear now. Thank you."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 2 }
+                    ],
+                    "character": 4,
+                    "text": "That's good to hear."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 0 }
+                    ],
+                    "character": 1,
+                    "text": "Well, I'm going back with {guidechanname} now, see you!"
+                },
+                {
+                    "character": 4,
+                    "text": "Goodbye."
+                },
+            ],
+            "nextNode": 32
+        },
+        {
+            "setBackground": "living-room.png",
+            "setCharacters": [
+                { "index": 2, "left": 0 }
+            ],
+            "dialog": [
+                {
+                    "character": 2,
+                    "text": "Hello {mcnamekun}, are you back already?"
+                },
+                {
+                    "character": 1,
+                    "text": "Yeah, {character4.name} was really helpful."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 4 }
+                    ],
+                    "character": 2,
+                    "text": "I'm happy for you! {calledguidechancute}"
+                }
+            ],
+            "nextNode": 33
+        },
+        {
+            "logicBranch": [
+                {
+                    "expression": "{calledguidechancute} == 1",
+                    "targetNode": 34
+                }
+            ],
+            "nextNode": 35
+        },
+        {
+            "dialog": [
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 5 }
+                    ],
+                    "character": 2,
+                    "text": "By the way... I've heard you think there's someone who's kinda cute..."
+                },
+                {
+                    "character": 1,
+                    "text": "Were you listening?!"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 1 }
+                    ],
+                    "character": 2,
+                    "text": "Maybe I was, or maybe I looked up a variable for it... Who knows? hahaha."
+                }
+            ],
+            "nextNode": 35
+        },
+        {
+            "dialog": [
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 0 }
+                    ],
+                    "character": 2,
+                    "text": "Well, is there any other think you want to ask?"
+                }
+            ],
+            "nextNode": 12
+        },
+        { //Node 36, start of UI customization route
+            
         }
-
     ]
 }
