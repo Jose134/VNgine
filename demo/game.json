@@ -11,6 +11,7 @@ gameJSON = {
         "mcnamekun": "{mcname}-kun",
         "guidechanname": "Guide-chan",
         "audiochanvisits": 0,
+        "hensuuvisits": 0,
         "calledguidechancute": 0
     },
     "characters": [
@@ -31,7 +32,13 @@ gameJSON = {
                 "guide-chan-sad.png",
                 "guide-chan-smile.png",
                 "guide-chan-smug.png",
-                "guide-chan-worried.png"
+                "guide-chan-worried.png",
+                "guide-chan-question.png",
+                "guide-chan-unhappy.png",
+                "guide-chan-angry.png",
+                "guide-chan-tsundere.png",
+                "guide-chan-guilty.png",
+                "guide-chan-delighted-blush.png"
             ]
         },
         {
@@ -293,11 +300,19 @@ gameJSON = {
                 },
                 {
                     "text": "I want to learn about variables, what are those for?",
+                    "setVariable": {
+                        "variable": "hensuuvisits",
+                        "expression": "{hensuuvisits} + 1"
+                    },
                     "targetNode": 21
                 },
                 {
                     "text": "I want to know how I can customize the UI for my game.",
                     "targetNode": 36
+                },
+                {
+                    "text": "That's all I wanted to know, thank you!",
+                    "targetNode": 44
                 }
             ]
         },
@@ -951,7 +966,313 @@ gameJSON = {
             "nextNode": 12
         },
         { //Node 36, start of UI customization route
-            
+            "dialog": [
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 5 }
+                    ],
+                    "character": 2,
+                    "text": "I see, it's finally my time to shine!"
+                },
+                {
+                    "character": 2,
+                    "text": "I've been studying this section for more years than you could imagine."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 7 }
+                    ],
+                    "character": 1,
+                    "text": "Wait a second!"
+                },
+                {
+                    "character": 1,
+                    "text": "How old are you?"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 2 }
+                    ],
+                    "character": 2,
+                    "text": "{mcnamekun}, you're not supposed to ask a lady her age."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 8 }
+                    ],
+                    "character": 2,
+                    "text": "Anyways, I'm 177013 years old. My creator really took a long time to make this damn game so it is what it is."
+                }
+            ],
+            "nextNode": 37
+        },
+        {
+            "decision": [
+                {
+                    "text": "You're so old! How did dinasours look back when they weren't extinct?",
+                    "targetNode": 38
+                },
+                {
+                    "text": "I wasn't expecting that at all! You look so young!",
+                    "targetNode": 39
+                }
+            ]
+        },
+        {
+            "dialog": [
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 9 }
+                    ],
+                    "character": 2,
+                    "text": "Dare to make a joke like that again and I'll kill you."
+                },
+                {
+                    "character": 1,
+                    "text": "Sorry, I just had to."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 2 }
+                    ],
+                    "character": 2,
+                    "text": "I won't forgive you the next time."
+                }
+            ],
+            "nextNode": 40
+        },
+        {
+            "dialog": [
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 10 }
+                    ],
+                    "character": 2,
+                    "text": "B-Baka! Are you trying to c-compliment me?!"
+                },
+                {
+                    "character": 1,
+                    "text": "Hahaha you're so cute when you do that!"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 2 }
+                    ],
+                    "character": 2,
+                    "text": "Stop making fun of me!"
+                }
+            ],
+            "nextNode": 40
+        },
+        {
+            "dialog": [
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 0 }
+                    ],
+                    "character": 2,
+                    "text": "Anyways, lets get back to the real topic."
+                },
+                {
+                    "character": 2,
+                    "text": "One of the biggests strengths of VNgine is that it allows you to customize every single element you can see in the screen."
+                },
+                {
+                    "character": 2,
+                    "text": "There are some properties in the Game Object that allow for basic customization. But if you really want to make the UI in your game look the way you want we recommend you check the \"Advanced\" Customization with CSS section."
+                },
+                {
+                    "character": 1,
+                    "text": "Did you just read that from the wiki?"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 11 }
+                    ],
+                    "character": 2,
+                    "text": "... No."
+                },
+                {
+                    "character": 1,
+                    "text": "..."
+                },
+                {
+                    "character": 1,
+                    "text": "Amazing! You know so much!"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 12 }
+                    ],
+                    "character": 2,
+                    "text": "Haha thanks! If you work hard you will know all that too!"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 1 }
+                    ],
+                    "character": 2,
+                    "text": "Lets say you want to change the colors of the UI."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 0 }
+                    ],
+                    "character": 2,
+                    "text": "To do that you need to add the \"uiColors\" thing to the game and write the colors with the things of the colors thing we added."
+                },
+                {
+                    "character": 2,
+                    "text": "And remember to put everything with the thingies or it won't work."
+                },
+                {
+                    "character": 1,
+                    "text": "Wait, wait, I didn't quite get that."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 6 }
+                    ],
+                    "character": 2,
+                    "text": "Oh, you know, you need to write the thing on the game and inside it write the things to make it change."
+                },
+                {
+                    "character": 1,
+                    "text": "(... I don't think I will ever be able to understand it if she explains like that.)"
+                },
+                {
+                    "character": 1,
+                    "text": "(It might be better to read about this on the wiki.)"
+                }
+            ],
+            "nextNode": 41
+        },
+        {
+            "logicBranch": [
+                {
+                    "expression": "{calledguidechancute} == 1",
+                    "targetNode": 42
+                }
+            ],
+            "nextNode": 43
+        },
+        {
+            "dialog": [
+                {
+                    "character": 1,
+                    "text": "(... But she's trying so hard, it's so cute... I might let her continue a bit longer)"
+                },
+                {
+                    "character": 1,
+                    "text": "Oh I see, is it really that simple?"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 4 }
+                    ],
+                    "character": 2,
+                    "text": "Yes!"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 0 }
+                    ],
+                    "character": 2,
+                    "text": "If you really want to get everything exactly as you like you will need to use SCS but that's more complicated so we'll leave it for now."
+                },
+                {
+                    "character": 1,
+                    "text": "Okay! That should be good for now, thank you very much {guidechanname}!"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 1 }
+                    ],
+                    "character": 2,
+                    "text": "You're welcome!"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 0 }
+                    ],
+                    "character": 2,
+                    "text": "Can I help you with anything else?"
+                }
+            ],
+            "nextNode": 12
+        },
+        {
+            "dialog": [
+                {
+                    "character": 1,
+                    "text": "Sorry {guidechanname}, this isn't quite working out."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 3 }
+                    ],
+                    "character": 2,
+                    "text": "I'm sorry. You'll have to figure out on your own. I'm not very good at explaining."
+                },
+                {
+                    "character": 1,
+                    "text": "Don't worry, it's fine."
+                },
+                {
+                    "character": 2,
+                    "text": "Thank you."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 0 }
+                    ],
+                    "character": 2,
+                    "text": "Can I help you with anything else?"
+                }
+            ],
+            "nextNode": 12
+        },
+        { //Node 44, Ending
+            "dialog": [ //Guide-chan dialog
+                {
+                    "character": 2,
+                    "text": "Oh, finished already?"
+                }
+            ],
+            "nextNode": 45
+        }
+        { 
+            "logicBranch": [ //Check for hensuu
+                {
+                    "expression": "{hensuuvisits} > 0",
+                    "targetNode": 46
+                }
+            ],
+            "nextNode": 47
+        },
+        { 
+            "dialog": [ //Hensuu dialog
+
+            ],
+            "nextNode": 47
+        },
+        { 
+            "logicBranch": [ //Check for Audio-chan
+                {
+                    "expression": "{audiochanvisits} > 0",
+                    "targetNode": 48
+                }
+            ],
+            "nextNode": 49
+        },
+        {
+            "dialog": [ //Audio-chan dialog
+
+            ],
+            "nextNode": 49
+        },
+        { //Final Node
+            "nextNode": null
         }
     ]
 }
