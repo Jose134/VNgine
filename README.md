@@ -8,7 +8,7 @@ VNgine is designed to make integration into an existing website as simple as pos
 
 ## Demo
 
-Check our [demo game]().
+You can download our demo game on the [releases](https://github.com/Jose134/VNgine/releases) page. Please check it out.
 
 The following assets are used in the demo:
 - [Female Character Sprite for Visual Novel](https://sutemo.itch.io/female-character) by [Sutemo](https://itch.io/profile/sutemo).
