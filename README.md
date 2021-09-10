@@ -14,10 +14,10 @@ The following assets are used in the demo:
 - [Female Character Sprite for Visual Novel](https://sutemo.itch.io/female-character) by [Sutemo](https://itch.io/profile/sutemo).
 - [Female Mature Character Sprite for VN](https://sutemo.itch.io/female-mature-anime-sprite) by [Sutemo](https://itch.io/profile/sutemo).
 - [annako's Interior Rooms Backgrounds](https://alte.itch.io/annako-rooms) by [Alte](https://alte.itch.io/).
-- White Petals by Keys of Moon | https://soundcloud.com/keysofmoon \
-Attribution 4.0 International (CC BY 4.0) \
-https://creativecommons.org/licenses/by/4.0/ \
-Music promoted by https://www.chosic.com/
+- Menu music: [White Petals](https://soundcloud.com/keysofmoon/white-petals-romantic-piano-music-free-download) by [Keys of Moon](https://soundcloud.com/keysofmoon)
+- Game music:
+  - Track 1: [Starlight Tale](https://soundcloud.com/keysofmoon/starlight-tale-soft-classical-piano-music-free-download) by [Keys of Moon](https://soundcloud.com/keysofmoon)
+  - Track 2: [Techno-drive](https://opengameart.org/content/techno-drive) by [Centurion of war](https://opengameart.org/users/centurionofwar)
 
 
 

@@ -1,10 +1,17 @@
 gameJSON = {
-    "title": "Test Game",
+    "title": "Isekai'd into making a VN",
     "displayTitle": true,
-    "author": "DarkBird",
+    "author": "DarkBird (https://github.com/Jose134)",
     "enableVNgineLogo": true,
     "VNgineLogoVersion": "light",
     "menuMusic": "music/menu.mp3",
+    "menuBackground": "mainmenu.png",
+    "gallery": [
+        "cgGuideend.png",
+        "cgGuideaudioend.png",
+        "cgGuidehensuuend.png",
+        "cgGuideaudiohensuuend.png"
+    ],
     "customVariables": {
         "mcname": "MC",
         "mcnameattempts": 0,
@@ -63,7 +70,8 @@ gameJSON = {
                 "hensuu-kun-smile.png",
                 "hensuu-kun-smug.png",
                 "hensuu-kun-supersmile.png",
-                "hensuu-kun-surprised.png"
+                "hensuu-kun-surprised.png",
+                "hensuu-kun-looking-right.png"
             ]
         },
         { //I'm gonna cheese the fuck out of my engine
@@ -83,7 +91,7 @@ gameJSON = {
             "setCharacters": null,
             "dialog": [
                 {
-                    "playMusic": "main_loop.mp3",
+                    "playMusic": "music/main.mp3",
                     "character": 1,
                     "text": "What's this? Where am I?"
                 }
@@ -441,7 +449,7 @@ gameJSON = {
                     "text": "Anyways, as I was saying, it is also possible to change the music in any part of the dialog."
                 },
                 {
-                    "playMusic": "coolermusic.mp3",
+                    "playMusic": "music/racing tecno_v2.6.mp3",
                     "character": 3,
                     "text": "See? It's that simple."
                 },
@@ -476,6 +484,7 @@ gameJSON = {
             ],
             "dialog": [
                 {
+                    "playMusic": "music/main.mp3",
                     "character": 2,
                     "text": "I told you, Audio-chan knows so much about this sort of things. That must have answered your questions, right?"
                 }
@@ -916,7 +925,7 @@ gameJSON = {
                         { "character": 2, "picture": 4 }
                     ],
                     "character": 2,
-                    "text": "I'm happy for you! {calledguidechancute}"
+                    "text": "I'm happy for you!"
                 }
             ],
             "nextNode": 33
@@ -1232,15 +1241,63 @@ gameJSON = {
             ],
             "nextNode": 12
         },
-        { //Node 44, Ending
+        { //Node 44, Ending, More engine cheesing is gonna happen here
+            "setCharacters": [
+                { "index": 2, "left":     0, "picture": 0 }, //Guide-chan
+                { "index": 3, "right": -100, "picture": 0 }, //Audio-chan (off-screen)
+                { "index": 4, "right": -100, "picture": 0 }  //Hensuu (off-screen)
+            ],
             "dialog": [ //Guide-chan dialog
                 {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 8 }
+                    ],
                     "character": 2,
                     "text": "Oh, finished already?"
+                },
+                {
+                    "character": 1,
+                    "text": "Yes, I feel like now I have all I need to continue on my own."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 6 }
+                    ],
+                    "character": 2,
+                    "text": "I'm not so sure about that, you still seem lost to me."
+                },
+                {
+                    "character": 1,
+                    "text": "Oh god, don't be mean now."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 4 }
+                    ],
+                    "character": 2,
+                    "text": "Hahaha, are you sure you don't need me to do some more teaching?"
+                },
+                {
+                    "character": 1,
+                    "text": "Do you really want my attention so badly now?"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 10 }
+                    ],
+                    "character": 2,
+                    "text": "It's not like that! B-baka!"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 0 }
+                    ],
+                    "character": 1,
+                    "text": "Of course, it's not."
                 }
             ],
             "nextNode": 45
-        }
+        },
         { 
             "logicBranch": [ //Check for hensuu
                 {
@@ -1248,30 +1305,222 @@ gameJSON = {
                     "targetNode": 46
                 }
             ],
-            "nextNode": 47
+            "nextNode": 49
         },
-        { 
+        {
             "dialog": [ //Hensuu dialog
-
+                {
+                    "changeCharacterPosition": [
+                        { "character": 4, "right": 25, "time": 1000, "type": "ease-out" },
+                        { "character": 2, "left": -10, "time": 300, "type": "ease-in" }
+                    ],
+                    "character": 2,
+                    "text": "Oh look, {character4.name} is here too."
+                },
+                {
+                    "character": 4,
+                    "text": "Of course I'm here! I heard {mcname} is leaving so it would be rude of me to not show up."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 5 }
+                    ],
+                    "character": 2,
+                    "text": "Did you lose insterest in {character3.name} and are going for {mcnamekun} now?"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 0 },
+                        { "character": 4, "picture": 3 }
+                    ],
+                    "character": 4,
+                    "text": "No way that would ever happen! {character3.name} is the most beautiful woman ever in existance."
+                },
+                {
+                    "character": 4,
+                    "text": "I would never lose interest in such a wonderful and intelligent person like her."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 8 }
+                    ],
+                    "character": 2,
+                    "text": "... Alright."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 2, "picture": 0 },
+                        { "character": 4, "picture": 0 }
+                    ],
+                    "character": 4,
+                    "text": "Well, leaving her beauty aside. I just wanted to say goodbye to {mcname}"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 2 }
+                    ],
+                    "character": 4,
+                    "text": "{mcname}, I hope you have a great time with you own project. But you can always come back if you need more help. Good luck!"
+                },
+                {
+                    "character": 1,
+                    "text": "Thank you, {character4.name}. Goodbye."
+                }
             ],
             "nextNode": 47
         },
         { 
-            "logicBranch": [ //Check for Audio-chan
+            "logicBranch": [ //Check for Audio-chan (for hensuu)
                 {
                     "expression": "{audiochanvisits} > 0",
                     "targetNode": 48
                 }
             ],
-            "nextNode": 49
+            "nextNode": 51
+        },
+        {
+            //Make hensuu look at audio-chan NEEDS TESTING
+            "dialog": [
+                {
+                    "character": 4,
+                    "text": "Oh, {character3.name} is coming!"
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 4, "picture": 6 },
+                        { "character": 3, "picture": 6 }
+                    ],
+                    "changeCharacterPosition": [
+                        { "character": 3, "right": -10, "time": 1000, "type": "ease-out" }
+                    ],
+                    "character": 0,
+                    "text": ""
+                },
+                {
+                    "changeCharacterPosition": [
+                        { "character": 4, "right": 20, "time": 300, "type": "linear" }
+                    ],
+                    "character": 0,
+                    "text": ""
+                }
+            ],
+            "nextNode": 50
+        },
+        { 
+            "logicBranch": [ //Check for Audio-chan (if not hensuu)
+                {
+                    "expression": "{audiochanvisits} > 0",
+                    "targetNode": 50
+                }
+            ],
+            "nextNode": 51
         },
         {
             "dialog": [ //Audio-chan dialog
-
+                {
+                    "changeCharacterPosition": [
+                        { "character": 3, "right": -10, "time": 1000, "type": "ease-out" }
+                    ],
+                    "changeCharacterPicture": [
+                        { "character": 3, "picture": 6 }
+                    ],
+                    "character": 3,
+                    "text": "Hey {mcname}, I woke up from my nap and heard you are leaving already."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 3, "picture": 0 }
+                    ],
+                    "character": 1,
+                    "text": "Yeah, I got my questions answered so I'll go back to my project. Thank you for your help."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 3, "picture": 7 }
+                    ],
+                    "character": 3,
+                    "text": "You're welcome."
+                },
+                {
+                    "changeCharacterPicture": [
+                        { "character": 3, "picture": 0 }
+                    ],
+                    "character": 1,
+                    "text": "Well, I'll let you go back to sleeping. Goodbye, {character3.name}."
+                },
+                {
+                    "character": 3,
+                    "text": "Thanks. see you next time, {mcname}."
+                }
             ],
-            "nextNode": 49
+            "nextNode": 51
+            
         },
-        { //Final Node
+        { //51
+            "logicBranch": [
+                {
+                    "expression": "{audiochanvisits} > 0",
+                    "targetNode": 52
+                }
+            ],
+            "nextNode": 53
+        },
+        { //52
+            "logicBranch": [
+                {
+                    "expression": "{hensuuvisits} > 0",
+                    "targetNode": 57
+                }
+            ],
+            "nextNode": 55
+        },
+        { //53
+            "logicBranch": [
+                {
+                    "expression": "{hensuuvisits} > 0",
+                    "targetNode": 56
+                }
+            ],
+            "nextNode": 54
+        },
+        { // 54 Final Node (unlocks CG for guide-chan only)
+            "unlockCG": 0,
+            "dialog": [
+                {
+                    "character": 1,
+                    "text": "I'll make sure to visit you all next time I come back. See you!"
+                }
+            ],
+            "nextNode": null
+        },
+        { // 55 Final Node (unlocks CG for guide-chan + audio-chan)
+            "unlockCG": 1,
+            "dialog": [
+                {
+                    "character": 1,
+                    "text": "I'll make sure to visit you all next time I come back. See you!"
+                }
+            ],
+            "nextNode": null
+        },
+        { // 56 Final Node (unlocks CG for guide-chan + hensuu)
+            "unlockCG": 2,
+            "dialog": [
+                {
+                    "character": 1,
+                    "text": "I'll make sure to visit you all next time I come back. See you!"
+                }
+            ],
+            "nextNode": null
+        },
+        { // 57 Final Node (unlocks CG for guide-chan + audio-chan + hensuu)
+            "unlockCG": 3,
+            "dialog": [
+                {
+                    "character": 1,
+                    "text": "I'll make sure to visit you all next time I come back. See you!"
+                }
+            ],
             "nextNode": null
         }
     ]

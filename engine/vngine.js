@@ -889,6 +889,7 @@
 
         //Buttons div
         let btnGroup = document.createElement("div");
+        btnGroup.setAttribute("id", "vngine-menu-btn-group");
         btnGroup.classList.add("vngine-btn-group");
         
         //Buttons
@@ -925,7 +926,7 @@
         
         let galleryBtn = null;
         if (game.gallery && game.gallery.length > 0) {
-            document.createElement("button");
+            galleryBtn = document.createElement("button");
             galleryBtn.innerText = "CG Gallery";
             galleryBtn.setAttribute("id", "vngine-menu-gallery-btn");
             galleryBtn.classList.add("vngine-btn");
@@ -1632,7 +1633,7 @@
             console.error(`VNGINE_ERROR: can't render page ${page}, it's out of bounds`);
         }
 
-        let pageTexts = Array.from(document.getElementsByClassName("vngine-gallery-page-text")).forEach(e => {
+        Array.from(document.getElementsByClassName("vngine-gallery-page-text")).forEach(e => {
             if (e.getAttribute("id") == `vngine-gallery-page-text-${page}`) {
                 e.classList.add("vngine-gallery-page-text-selected");
             }
@@ -1646,6 +1647,8 @@
         galleryBody.innerHTML = "";
         for (let i = 0; i < 6; i++) {
             let cgIndex = page*6 + i;
+            if (cgIndex >= game.gallery.length) break; 
+
             let img = document.createElement("img");
             img.setAttribute("id", `vngine-gallery-item-${cgIndex}`);
             img.classList.add("vngine-gallery-item");
@@ -1702,10 +1705,10 @@
             let picURL = `${gameResDir}/img/characters/${game.characters[character.index].pictures[pictureIndex]}`;
             
             characterImgs[i].style.transition = "";
-            if (character.left != undefined) {
+            if (character.left !== undefined) {
                 characterImgs[i].style.left = `${character.left}%`;
             }
-            else if (character.right != undefined) {
+            else if (character.right !== undefined) {
                 characterImgs[i].style.right = `${character.right}%`;
             }
 
@@ -1862,6 +1865,7 @@
             }
             else {
                 console.warn(`VNGINE_WARNING: node with index ${index} doesn't have a defined type`);
+                console.log(currentNode);
             }
         }
     }
@@ -2018,7 +2022,7 @@
 
     function gameBack () {
         if(ScreenManager.currentScreen != screens.GAME || Backlog.length() <= 1) return;
-
+        
         Backlog.pop();
         let entry = Backlog.top();
         Backlog.pop();
