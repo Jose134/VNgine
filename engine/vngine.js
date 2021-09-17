@@ -2053,7 +2053,7 @@
             cancelCharacterTransitions();
             clearTimeout(transitionTimeout);
         }
-        if (DialogBox.isWriting) {
+        else if (DialogBox.isWriting) {
             DialogBox.cancelWritingAnimation();
         }
         else {
