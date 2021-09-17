@@ -19,6 +19,8 @@
 
     //Characters DOM
     let characterImgs = [];
+    let characterTransition = false;
+    let transitionTimeout = null;
 
     //Game status
     let currentNode = null;
@@ -1717,6 +1719,17 @@
         });
     }
 
+    function cancelCharacterTransitions () {
+        console.log("hi from cancel");
+        if (characterTransition) {
+            let charactersDiv = document.getElementById("vngine-characters-div");
+            Array.from(charactersDiv.children).forEach(img => {
+                img.style.transition = "none";
+            });
+            characterTransition = false;
+        }
+    }
+
     //Display and sets up decision buttons for the given options
     function renderDecisionOptions (options) {
         //Remove old decision data
@@ -1898,10 +1911,17 @@
         
         //Change character position if needed
         let updatePosition = currentNode.dialog[currentDialogIndex].changeCharacterPosition;
+        let longestTransition = -1;
         if (updatePosition) {
             updatePosition.forEach(data => {
                 let e = getCharacterDOMimg(data.character);
                 if (e != null) {
+                    if (!characterTransition && data.time > 0) characterTransition = true;
+                    
+                    if (data.time > longestTransition) {
+                        longestTransition = data.time;
+                    }
+
                     if (data.left != undefined) {
                         e.style.transition = `left ${data.time ? data.time : 0}ms ${data.type ? data.type : "linear"}`;
                         e.style.right = "";
@@ -1914,6 +1934,10 @@
                     }
                 }
             });
+        }
+
+        if (longestTransition > 0) {
+            transitionTimeout = setTimeout(() => { characterTransition = false; }, longestTransition);
         }
 
         let music = currentNode.dialog[currentDialogIndex].playMusic;
@@ -1998,6 +2022,10 @@
     function gameClickEvent () {
         if(ScreenManager.currentScreen != screens.GAME || !DialogBox.visible || !currentNode.dialog) return;
 
+        if (characterTransition) {
+            cancelCharacterTransitions();
+            clearTimeout(transitionTimeout);
+        }
         if (DialogBox.isWriting) {
             DialogBox.cancelWritingAnimation();
         }
