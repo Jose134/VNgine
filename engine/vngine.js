@@ -54,19 +54,22 @@
     let customVariableKeys = [];
 
     const MathParser = class {
-        //Math expression evaluation by @Aaron R.
+        //Math expression evaluation by @Aaron R. and modified by DarkBird.
         //https://stackoverflow.com/questions/11422513/evaluate-an-equation-in-javascript-without-eval
         static parens = /\(([0-9+\-*/\^ .]+)\)/              // Regex for identifying parenthetical expressions
+        
         static exp = /(\d+(?:\.\d+)?) ?\^ ?(\d+(?:\.\d+)?)/  // Regex for identifying exponentials (x ^ y)
         static mul = /(\d+(?:\.\d+)?) ?\* ?(\d+(?:\.\d+)?)/  // Regex for identifying multiplication (x * y)
         static div = /(\d+(?:\.\d+)?) ?\/ ?(\d+(?:\.\d+)?)/  // Regex for identifying division (x / y)
         static add = /(\d+(?:\.\d+)?) ?\+ ?(\d+(?:\.\d+)?)/  // Regex for identifying addition (x + y)
-        static sub = /(\d+(?:\.\d+)?) ?- ?(\d+(?:\.\d+)?)/   // Regex for identifying subtraction (x - y)static
-        static gt  = /(\d+(?:\.\d+)?) ?> ?(\d+(?:\.\d+)?)/   // Regex for identifying greater than comparison (x > y)
+        static sub = /(\d+(?:\.\d+)?) ?-  ?(\d+(?:\.\d+)?)/  // Regex for identifying subtraction (x - y)static
+       
+        static gt  = /(\d+(?:\.\d+)?) ?>  ?(\d+(?:\.\d+)?)/  // Regex for identifying greater than comparison (x > y)
         static gte = /(\d+(?:\.\d+)?) ?>= ?(\d+(?:\.\d+)?)/  // Regex for identifying greate or equal comparison (x >= y)
-        static lt  = /(\d+(?:\.\d+)?) ?< ?(\d+(?:\.\d+)?)/   // Regex for identifying less than comparison (x < y)
+        static lt  = /(\d+(?:\.\d+)?) ?<  ?(\d+(?:\.\d+)?)/  // Regex for identifying less than comparison (x < y)
         static lte = /(\d+(?:\.\d+)?) ?<= ?(\d+(?:\.\d+)?)/  // Regex for identifying less or equal comparison (x <= y)
         static eq  = /(\d+(?:\.\d+)?) ?== ?(\d+(?:\.\d+)?)/  // Regex for identifying equal comparison (x == y)
+        static neq = /(\d+(?:\.\d+)?) ?!= ?(\d+(?:\.\d+)?)/  // Regex for identifying not equal comparison (x != y)
 
         /**
          * Evaluates a numerical expression as a string and returns a Number
@@ -152,6 +155,11 @@
                     });
                     return this.evaluate(newExpr);
                 }
+                else if (this.neq.test(expr)) {
+                    let newExpr = expr.replace(this.neq, function(match, a, b) {
+                        return Number(a) != Number(b);
+                    });
+                }
                 else
                 {
                     return expr;
@@ -224,14 +232,18 @@
         }
 
         static show = function (type, callback, customMsg) {
+            let animation = "vngine-modal-fade-in-animation var(--vngine-modal-animation-time)";
+
             switch (type) {
                 case UIDialogType.CONFIRM:
                     renderConfirmationDialog(callback, customMsg);
                     document.getElementById("vngine-dialog-modal").style.display = "block";
+                    document.getElementById("vngine-dialog-modal").style.animation = animation;
                     break;
                 case UIDialogType.INPUT:
                     renderInputDialog(callback, customMsg);
                     document.getElementById("vngine-dialog-modal").style.display = "block";
+                    document.getElementById("vngine-dialog-modal").style.animation = animation;
                     break;    
                 default:
                     console.error(`VNGINE_ERROR: ${type} not recognized as a UIDialogType`)
@@ -1428,14 +1440,21 @@
         msg.innerText = customMsg ? customMsg : "Are you sure?";
 
         let btnDiv = document.createElement("div");
-
+        
+        let animation = "vngine-modal-fade-out-animation var(--vngine-modal-animation-time)";
+        let animHandler = (event) => {
+            document.getElementById("vngine-dialog-modal").style.display = "none";
+            document.getElementById("vngine-dialog-modal").removeEventListener('animationend', animHandler, false);
+        };
+        
         let yesBtn = document.createElement("btn");
         yesBtn.innerText = "Yes";
         yesBtn.classList.add("vngine-btn", "vngine-btn-inline");
         yesBtn.addEventListener("click", e => {
             Audio.playEffect(audioUITap);
             callback("yes");
-            document.getElementById("vngine-dialog-modal").style.display = "none";
+            document.getElementById("vngine-dialog-modal").addEventListener('animationend', animHandler);
+            document.getElementById("vngine-dialog-modal").style.animation = animation;
         });
         
         let noBtn = document.createElement("div");
@@ -1444,7 +1463,8 @@
         noBtn.addEventListener("click", e => {
             Audio.playEffect(audioUITap);
             callback("no");
-            document.getElementById("vngine-dialog-modal").style.display = "none";
+            document.getElementById("vngine-dialog-modal").addEventListener('animationend', animHandler);
+            document.getElementById("vngine-dialog-modal").style.animation = animation;
         });
 
         //Appending
@@ -1458,6 +1478,12 @@
     function renderInputDialog (callback, customMsg) {
         let modalBody = document.getElementById("vngine-dialog-modal-body");
         modalBody.innerHTML = "";
+
+        let animation = "vngine-modal-fade-out-animation var(--vngine-modal-animation-time)";
+        let animHandler = (event) => {
+            document.getElementById("vngine-dialog-modal").style.display = "none";
+            document.getElementById("vngine-dialog-modal").removeEventListener('animationend', animHandler, false);
+        };
 
         let msg = document.createElement("p");
         msg.classList.add("vngine-dialog-modal-msg")
@@ -1473,7 +1499,8 @@
         okayBtn.addEventListener("click", e => {
             Audio.playEffect(audioUITap);
             callback(input.value);
-            document.getElementById("vngine-dialog-modal").style.display = "none";
+            document.getElementById("vngine-dialog-modal").addEventListener('animationend', animHandler);
+            document.getElementById("vngine-dialog-modal").style.animation = animation;
         });
 
         //Appending

@@ -55,6 +55,8 @@
     --vngine-text-small: 15px;
     --vngine-dialog-box-text-size: 20px;
     --vngine-dialog-box-character-text-size: 23px;
+
+    --vngine-modal-animation-time: 300ms;
 }
 
 #vngine-div {
@@ -278,6 +280,24 @@
 
 .vngine-dialog-modal-msg {
     font-size: var(--vngine-text-small-buffed);
+}
+
+@keyframes vngine-modal-fade-in-animation {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes vngine-modal-fade-out-animation {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
 }
 
 /*-----------------------------------*/
