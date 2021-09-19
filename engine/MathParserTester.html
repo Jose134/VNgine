@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        const MathParser = class {
+            static regex = new RegExp(/\(\s*(true|false|\d+(.\d+)?)(\s*(\+|\-|\*|\/|==|!=|>=|<=|>|<|\|\||&&)\s*(true|false|(\d+(?:\.\d+)?)))*\s*\)|\s*(true|false|\d+(.\d+)?)(\s*(\+|\-|\*|\/|==|!=|>=|<=|>|<|\|\||&&)\s*(true|false|(\d+(?:\.\d+)?)))*\s*/, 'g');
+
+            static evaluate = function (expr) {
+                let valid = false;
+                let previousExpr = '';
+                let testExpr = expr;
+                while (this.regex.test(testExpr) && previousExpr != testExpr) {                 
+                    previousExpr = testExpr;
+                    testExpr = testExpr.replaceAll(this.regex, "1");
+                    if (testExpr === "1") {
+                        valid = true;
+                        break;
+                    }
+                }
+
+                if (valid) {
+                    return eval(expr);
+                }
+                else {
+                    console.error(`VNGINE_ERROR: "${expr}" is not a valid expression`);
+                }
+            }
+        }
+
+        function runTests (tests, logOnlyFailed) {
+            let allTestsPassed = true;
+            tests.forEach((test, index) => {
+                let res = MathParser.evaluate(test.param);
+                if (res != test.expected) {
+                    console.error(`Test ${index} failed:\nparameter: ${test.param}\nexpected: ${test.expected}\nresult: ${res}`);
+                    allTestsPassed = false;
+                }
+                else if (!logOnlyFailed) {
+                    console.log(`Test ${index} passed`);
+                }
+            });
+
+            console.log(`${tests.length} tests run.`);
+            if (allTestsPassed) {
+                console.log("All tests passed!");
+            }
+        }
+
+        const tests = [
+            {param: "1 > 0", expected: true},
+            {param: "0 > 1", expected: false},
+
+            {param: "1 < 0", expected: false},
+            {param: "0 < 1", expected: true},
+            
+            {param: "1 >= 0", expected: true},
+            {param: "0 >= 0", expected: true},
+            {param: "1 >= 2", expected: false},
+            
+            {param: "1 <= 0", expected: false},
+            {param: "0 <= 0", expected: true},
+            {param: "1 <= 2", expected: true},
+
+            {param: "true || true", expected: true},
+            {param: "true || false", expected: true},
+            {param: "false || true", expected: true},
+            {param: "false || false", expected: false},
+            
+            {param: "true && true", expected: true},
+            {param: "true && false", expected: false},
+            {param: "false && true", expected: false},
+            {param: "false && false", expected: false},
+            
+            {param: "true == true", expected: true},
+            {param: "true == false", expected: false},
+            {param: "false == true", expected: false},
+            {param: "false == false", expected: true},
+            
+            {param: "true != true", expected: false},
+            {param: "true != false", expected: true},
+            {param: "false != true", expected: true},
+            {param: "false != false", expected: false},
+
+            {param: "2 + 4", expected: 6},
+            {param: "2 - 4", expected: -2},
+            {param: "2 * 4", expected: 8},
+            {param: "4 / 2", expected: 2},
+            {param: "2 / 4", expected: 0.5},
+
+            {param: "(2+2)/2==2", expected: true},
+            {param: "(2+2)/2!=2", expected: false},
+            {param: "(2+2)/2!=2    ||\t\n20", expected: 20},
+            {param: "fishyStuff()", expected: undefined},
+        ];
+        runTests(tests, true);
+    </script>
+</body>
+</html>

@@ -53,120 +53,146 @@
     //Game variables
     let customVariableKeys = [];
 
-    const MathParser = class {
-        //Math expression evaluation by @Aaron R. and modified by DarkBird.
-        //https://stackoverflow.com/questions/11422513/evaluate-an-equation-in-javascript-without-eval
-        static parens = /\(([0-9+\-*/\^ .]+)\)/              // Regex for identifying parenthetical expressions
+    // const MathParser = class {
+    //     //Math expression evaluation by @Aaron R. and modified by DarkBird.
+    //     //https://stackoverflow.com/questions/11422513/evaluate-an-equation-in-javascript-without-eval
+    //     static parens = /\(([0-9+\-*/\^ .]+)\)/              // Regex for identifying parenthetical expressions
         
-        static exp = /(\d+(?:\.\d+)?) ?\^ ?(\d+(?:\.\d+)?)/  // Regex for identifying exponentials (x ^ y)
-        static mul = /(\d+(?:\.\d+)?) ?\* ?(\d+(?:\.\d+)?)/  // Regex for identifying multiplication (x * y)
-        static div = /(\d+(?:\.\d+)?) ?\/ ?(\d+(?:\.\d+)?)/  // Regex for identifying division (x / y)
-        static add = /(\d+(?:\.\d+)?) ?\+ ?(\d+(?:\.\d+)?)/  // Regex for identifying addition (x + y)
-        static sub = /(\d+(?:\.\d+)?) ?-  ?(\d+(?:\.\d+)?)/  // Regex for identifying subtraction (x - y)static
+    //     static exp = /(\d+(?:\.\d+)?) ?\^ ?(\d+(?:\.\d+)?)/  // Regex for identifying exponentials (x ^ y)
+    //     static mul = /(\d+(?:\.\d+)?) ?\* ?(\d+(?:\.\d+)?)/  // Regex for identifying multiplication (x * y)
+    //     static div = /(\d+(?:\.\d+)?) ?\/ ?(\d+(?:\.\d+)?)/  // Regex for identifying division (x / y)
+    //     static add = /(\d+(?:\.\d+)?) ?\+ ?(\d+(?:\.\d+)?)/  // Regex for identifying addition (x + y)
+    //     static sub = /(\d+(?:\.\d+)?) ?-  ?(\d+(?:\.\d+)?)/  // Regex for identifying subtraction (x - y)static
        
-        static gt  = /(\d+(?:\.\d+)?) ?>  ?(\d+(?:\.\d+)?)/  // Regex for identifying greater than comparison (x > y)
-        static gte = /(\d+(?:\.\d+)?) ?>= ?(\d+(?:\.\d+)?)/  // Regex for identifying greate or equal comparison (x >= y)
-        static lt  = /(\d+(?:\.\d+)?) ?<  ?(\d+(?:\.\d+)?)/  // Regex for identifying less than comparison (x < y)
-        static lte = /(\d+(?:\.\d+)?) ?<= ?(\d+(?:\.\d+)?)/  // Regex for identifying less or equal comparison (x <= y)
-        static eq  = /(\d+(?:\.\d+)?) ?== ?(\d+(?:\.\d+)?)/  // Regex for identifying equal comparison (x == y)
-        static neq = /(\d+(?:\.\d+)?) ?!= ?(\d+(?:\.\d+)?)/  // Regex for identifying not equal comparison (x != y)
+    //     static gt  = /(\d+(?:\.\d+)?) ?>  ?(\d+(?:\.\d+)?)/  // Regex for identifying greater than comparison (x > y)
+    //     static gte = /(\d+(?:\.\d+)?) ?>= ?(\d+(?:\.\d+)?)/  // Regex for identifying greate or equal comparison (x >= y)
+    //     static lt  = /(\d+(?:\.\d+)?) ?<  ?(\d+(?:\.\d+)?)/  // Regex for identifying less than comparison (x < y)
+    //     static lte = /(\d+(?:\.\d+)?) ?<= ?(\d+(?:\.\d+)?)/  // Regex for identifying less or equal comparison (x <= y)
+    //     static eq  = /(\d+(?:\.\d+)?) ?== ?(\d+(?:\.\d+)?)/  // Regex for identifying equal comparison (x == y)
+    //     static neq = /(\d+(?:\.\d+)?) ?!= ?(\d+(?:\.\d+)?)/  // Regex for identifying not equal comparison (x != y)
 
-        /**
-         * Evaluates a numerical expression as a string and returns a Number
-         * Follows standard PEMDAS operation ordering
-         * @param {String} expr Numerical expression input
-         * @returns {Number} Result of expression
-         */
+    //     /**
+    //      * Evaluates a numerical expression as a string and returns a Number
+    //      * Follows standard PEMDAS operation ordering
+    //      * @param {String} expr Numerical expression input
+    //      * @returns {Number} Result of expression
+    //      */
+
+    //     static evaluate = function (expr) {
+    //         if(isNaN(Number(expr)))
+    //         {
+    //             if (this.parens.test(expr))
+    //             {
+    //                 let newExpr = expr.replace(this.parens, function(match, subExpr) {
+    //                     return this.evaluate(subExpr);
+    //                 });
+    //                 return this.evaluate(newExpr);
+    //             }
+    //             else if (this.exp.test(expr))
+    //             {
+    //                 let newExpr = expr.replace(this.exp, function(match, base, pow) {
+    //                     return Math.pow(Number(base), Number(pow));
+    //                 });
+    //                 return this.evaluate(newExpr);
+    //             }
+    //             else if (this.mul.test(expr))
+    //             {
+    //                 let newExpr = expr.replace(this.mul, function(match, a, b) {
+    //                     return Number(a) * Number(b);
+    //                 });
+    //                 return this.evaluate(newExpr);
+    //             }
+    //             else if (this.div.test(expr))
+    //             {
+    //                 let newExpr = expr.replace(this.div, function(match, a, b) {
+    //                     if (b != 0)
+    //                         return Number(a) / Number(b);
+    //                     else
+    //                         throw new Error('Division by zero');
+    //                 });
+    //                 return this.evaluate(newExpr);
+    //             }
+    //             else if (this.add.test(expr))
+    //             {
+    //                 let newExpr = expr.replace(this.add, function(match, a, b) {
+    //                     return Number(a) + Number(b);
+    //                 });
+    //                 return this.evaluate(newExpr);
+    //             }
+    //             else if (this.sub.test(expr))
+    //             {
+    //                 let newExpr = expr.replace(this.sub, function(match, a, b) {
+    //                     return Number(a) - Number(b);
+    //                 });
+    //                 return this.evaluate(newExpr);
+    //             }
+    //             else if (this.gt.test(expr)) {
+    //                 let newExpr = expr.replace(this.gt, function(match, a, b) {
+    //                     return Number(a) > Number(b);
+    //                 });
+    //                 return this.evaluate(newExpr);
+    //             }
+    //             else if (this.gte.test(expr)) {
+    //                 let newExpr = expr.replace(this.gte, function(match, a, b) {
+    //                     return Number(a) >= Number(b);
+    //                 });
+    //                 return this.evaluate(newExpr);
+    //             }
+    //             else if (this.lt.test(expr)) {
+    //                 let newExpr = expr.replace(this.lt, function(match, a, b) {
+    //                     return Number(a) < Number(b);
+    //                 });
+    //                 return this.evaluate(newExpr);
+    //             }
+    //             else if (this.lte.test(expr)) {
+    //                 let newExpr = expr.replace(this.lte, function(match, a, b) {
+    //                     return Number(a) <= Number(b);
+    //                 });
+    //                 return this.evaluate(newExpr);
+    //             }
+    //             else if (this.eq.test(expr)) {
+    //                 let newExpr = expr.replace(this.eq, function(match, a, b) {
+    //                     return Number(a) == Number(b);
+    //                 });
+    //                 return this.evaluate(newExpr);
+    //             }
+    //             else if (this.neq.test(expr)) {
+    //                 let newExpr = expr.replace(this.neq, function(match, a, b) {
+    //                     return Number(a) != Number(b);
+    //                 });
+    //             }
+    //             else
+    //             {
+    //                 return expr;
+    //             }
+    //         }
+            
+    //         return Number(expr);
+    //     }
+    // }
+
+    const MathParser = class {
+        static regex = new RegExp(/\(\s*(true|false|\d+(.\d+)?)(\s*(\+|\-|\*|\/|==|!=|>=|<=|>|<|\|\||&&)\s*(true|false|(\d+(?:\.\d+)?)))*\s*\)|\s*(true|false|\d+(.\d+)?)(\s*(\+|\-|\*|\/|==|!=|>=|<=|>|<|\|\||&&)\s*(true|false|(\d+(?:\.\d+)?)))*\s*/, 'g');
+
         static evaluate = function (expr) {
-            if(isNaN(Number(expr)))
-            {
-                if (this.parens.test(expr))
-                {
-                    let newExpr = expr.replace(this.parens, function(match, subExpr) {
-                        return this.evaluate(subExpr);
-                    });
-                    return this.evaluate(newExpr);
-                }
-                else if (this.exp.test(expr))
-                {
-                    let newExpr = expr.replace(this.exp, function(match, base, pow) {
-                        return Math.pow(Number(base), Number(pow));
-                    });
-                    return this.evaluate(newExpr);
-                }
-                else if (this.mul.test(expr))
-                {
-                    let newExpr = expr.replace(this.mul, function(match, a, b) {
-                        return Number(a) * Number(b);
-                    });
-                    return this.evaluate(newExpr);
-                }
-                else if (this.div.test(expr))
-                {
-                    let newExpr = expr.replace(this.div, function(match, a, b) {
-                        if (b != 0)
-                            return Number(a) / Number(b);
-                        else
-                            throw new Error('Division by zero');
-                    });
-                    return this.evaluate(newExpr);
-                }
-                else if (this.add.test(expr))
-                {
-                    let newExpr = expr.replace(this.add, function(match, a, b) {
-                        return Number(a) + Number(b);
-                    });
-                    return this.evaluate(newExpr);
-                }
-                else if (this.sub.test(expr))
-                {
-                    let newExpr = expr.replace(this.sub, function(match, a, b) {
-                        return Number(a) - Number(b);
-                    });
-                    return this.evaluate(newExpr);
-                }
-                else if (this.gt.test(expr)) {
-                    let newExpr = expr.replace(this.gt, function(match, a, b) {
-                        return Number(a) > Number(b);
-                    });
-                    return this.evaluate(newExpr);
-                }
-                else if (this.gte.test(expr)) {
-                    let newExpr = expr.replace(this.gte, function(match, a, b) {
-                        return Number(a) >= Number(b);
-                    });
-                    return this.evaluate(newExpr);
-                }
-                else if (this.lt.test(expr)) {
-                    let newExpr = expr.replace(this.lt, function(match, a, b) {
-                        return Number(a) < Number(b);
-                    });
-                    return this.evaluate(newExpr);
-                }
-                else if (this.lte.test(expr)) {
-                    let newExpr = expr.replace(this.lte, function(match, a, b) {
-                        return Number(a) <= Number(b);
-                    });
-                    return this.evaluate(newExpr);
-                }
-                else if (this.eq.test(expr)) {
-                    let newExpr = expr.replace(this.eq, function(match, a, b) {
-                        return Number(a) == Number(b);
-                    });
-                    return this.evaluate(newExpr);
-                }
-                else if (this.neq.test(expr)) {
-                    let newExpr = expr.replace(this.neq, function(match, a, b) {
-                        return Number(a) != Number(b);
-                    });
-                }
-                else
-                {
-                    return expr;
+            let valid = false;
+            let previousExpr = '';
+            let testExpr = expr;
+            while (this.regex.test(testExpr) && previousExpr != testExpr) {                 
+                previousExpr = testExpr;
+                testExpr = testExpr.replaceAll(this.regex, "1");
+                if (testExpr === "1") {
+                    valid = true;
+                    break;
                 }
             }
-            
-            return Number(expr);
+
+            if (valid) {
+                return eval(expr);
+            }
+            else {
+                console.error(`VNGINE_ERROR: "${expr}" is not a valid expression`);
+            }
         }
     }
 
@@ -1747,7 +1773,6 @@
     }
 
     function cancelCharacterTransitions () {
-        console.log("hi from cancel");
         if (characterTransition) {
             let charactersDiv = document.getElementById("vngine-characters-div");
             Array.from(charactersDiv.children).forEach(img => {
@@ -2027,7 +2052,7 @@
         if (logicBranch.length > 0) {
             for (let i = 0; i < logicBranch.length; i++) {
                 let expr = processString(logicBranch[i].expression);
-                if (MathParser.evaluate(expr) == "true" ) {
+                if (MathParser.evaluate(expr) == true ) {
                     loadNode(logicBranch[i].targetNode);
                     return;
                 }
