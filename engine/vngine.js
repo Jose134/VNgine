@@ -1813,18 +1813,14 @@
                     if (options[i].setVariable) {
                         let variable = options[i].setVariable.variable;
                         let expression = options[i].setVariable.expression;
-                        if (variable === undefined) {
-                            console.error(`VNGINE_ERROR: variable property not found in setVariable of option ${i} in node ${currentScreen}`);
-                        }
-                        else if (expression === undefined) {
-                            console.error(`VNGINE_ERROR: expression property not found in setVariable of option ${i} in node ${currentScreen}`);
-                        }
-                        else if (!customVariableKeys.includes(variable)) {
-                            console.error(`VNGINE_ERROR: ${variable} is not a custom game variable`);
-                        }
-                        else {
-                            game.customVariables[variable] = MathParser.evaluate(processString(expression));
-                        }
+                        setVariable(variable, expression);
+                    }
+                    else if (options[i].setVariables) {
+                        options[i].setVariables.forEach(set => {
+                            let variable = set.variable;
+                            let expression = set.expression;
+                            setVariable(variable, expression);
+                        });
                     }
 
                     //Loads the target node of the decision
@@ -1838,6 +1834,22 @@
         
         //Show decision buttons
         decisionButtonsDiv.style.display = "block";
+    }
+
+    //Modifies a game variable
+    function setVariable (variable, expression) {
+        if (variable === undefined) {
+            console.error(`VNGINE_ERROR: variable property not found in setVariable of option ${i} in node ${currentScreen}`);
+        }
+        else if (expression === undefined) {
+            console.error(`VNGINE_ERROR: expression property not found in setVariable of option ${i} in node ${currentScreen}`);
+        }
+        else if (!customVariableKeys.includes(variable)) {
+            console.error(`VNGINE_ERROR: ${variable} is not a custom game variable`);
+        }
+        else {
+            game.customVariables[variable] = MathParser.evaluate(processString(expression));
+        }
     }
 
     //Returns the background that should be displayed given the current backlog

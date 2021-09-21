@@ -19,7 +19,8 @@ gameJSON = {
         "guidechanname": "Guide-chan",
         "audiochanvisits": 0,
         "hensuuvisits": 0,
-        "calledguidechancute": 0
+        "calledguidechancute": 0,
+        "test": false
     },
     "characters": [
         {
@@ -156,10 +157,16 @@ gameJSON = {
                 },
                 {
                     "text": "No",
-                    "setVariable": {
+                    "setVariables": [
+                        {
                         "variable": "mcnameattempts",
                         "expression": "{mcnameattempts} + 1"
-                    },
+                        },
+                        {
+                            "variable": "test",
+                            "expression": "true"
+                        }
+                    ],
                     "targetNode": 5
                 }
             ]

@@ -6,5 +6,7 @@
 - Visual improvements:
   - Added fade-in and fade-out animations for the dialog modal.
 
+- Bulk variable setting
+
 ## Version 1.0:
 - Initial release
